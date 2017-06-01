@@ -1,0 +1,982 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MyStuff</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<link href="images/favicon.png" rel="icon" type="image/png" />
+    <link href="https://fonts.googleapis.com/css?family=Varela" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
+    <link href="css/nouislider.min.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/respond.min.js"></script>
+
+</head>
+<body>
+	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="customerSession()">
+
+
+    <!------------------------ Side nav ------------------------->
+    <div id="mySidenav" class="sidenav">
+        <img src="images/logo_dark.png" alt="" />
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="my-account.html"><img src="images/account_icon_side.png" alt="" />My Account</a>
+        <a href="javascript:void(0)" data-ng-click="getCart() ; getCartSum(); getCartsize()"><img src="images/cart_icon_side.png" alt="" />My Cart</a>
+        <a href="javascript:void(0)"><img src="images/info_icon_side.png" alt="" />About</a>
+        <a href="javascript:void(0)"><img src="images/contact_icon_side.png" alt="" />Contact</a>
+    </div>
+    
+    <!-- About Modal -->
+    <div id="about_modal" class="modal">
+        <div class="modal_content">
+            <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+            <h2 class="uppearcase spaced">About MyStuff</h2>		
+            <!-- <hr align="left" style="width:60px; background-color:#e4e4e4; margin-top: 35px; margin-bottom: 30px;" /> -->
+            <p style="margin-bottom: 0px; margin-top:20px;">Create an account to track your orders, make a wishlist and more :)</p>
+        </div>
+    </div>
+    
+    <!-- Contact Modal -->
+    <div id="contact_modal" class="modal">
+        <div class="modal_content">
+            <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+            <h2 class="uppearcase spaced">Contact us</h2>		  
+            <p style="margin-bottom: 0px; margin-top:20px;">Email: orenhoffman1777@gmail.com | LinkedIn: </p>
+            <hr align="left" style="width:60px; background-color:#e4e4e4; margin-top: 35px; margin-bottom: 30px;" />
+            <form>
+            	<input type="text" maxlength="50" placeholder="Name" />
+            	<input type="text" maxlength="50" placeholder="Email" />
+            	<textarea type="text" rows="3" placeholder="Message"></textarea>
+            	<button type="submit" id="send_msg_btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+    
+  
+
+    <!------------------------ HEADER ------------------------->
+    <header id="header" class="page_header" style="margin-bottom:0px;">
+
+    <div id="banner">
+            <img src="images/logo_dark.png" alt="" class="img-responsive" />    
+        </div>
+        
+        <div class="login_btns">
+         <a id="login" class="uppearcase" style="margin-left: 200px;" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a> 
+    <input type="submit" ng-click="test()">
+        </div>
+
+        <div id="page_title" class="uppearcase">
+            <a href="index.html">Home</a> > <span>My Account</span>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="login_modal" class="modal">
+            <div class="modal_content">
+                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+                <h2 class="uppearcase spaced">Login</h2>
+                <input type="text" placeholder="Email Address"  data-ng-model="email" style="margin-top:35px;" />
+                <input type="password" placeholder="Password" data-ng-model="password"/>
+
+                <div id="remember_me">
+                    <input type="checkbox" id="c0" /><label for="c0"><span></span>Remember me</label>
+                    <a href="#">Forgot my password</a>
+                </div>
+				<div id="login_msg">{{logingood}}</div>
+				
+                <button id="login_btn" data-ng-click="login()" onclick="show_login_msg()">Login</button>
+                
+                <button id="fblogin_btn">
+                    <i class="fa fa-facebook-square" aria-hidden="true"></i>
+                    <span>Login with Facebook</span>
+                </button>
+						
+                <hr align="left" style="width:60px; background-color:#e4e4e4; margin-top: 35px; margin-bottom: 30px;" />
+
+                <h2 class="uppearcase spaced">New User?</h2>
+                <p style="margin-bottom: 0px; margin-top:20px;">Create an account to track your orders, make a wishlist and more :)</p>
+                <button id="create_acc_btn" onclick="goto_signup()">Create Account</button>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div id="signup_modal" class="modal">
+            <div class="modal_content">
+                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+                <h2 class="uppearcase spaced">Create an Account</h2>
+
+                <p>Create an account to track your orders, make a wishlist and more :)</p>
+
+                <input type="text" placeholder="First Name" data-ng-model="name" style="width:49%; margin-right:5px" />
+                <input type="text" placeholder="Last Name" data-ng-model="f_name" style="width:49%;" />
+                <input type="password" placeholder="Password" data-ng-model="password"/>
+                <input type="password" placeholder="Repeat Password" data-ng-model="secondPassword"/>
+                <input type="text" placeholder="Email Address" data-ng-model="email" />
+                
+				<div id="signup_msg">{{signupgood}}</div>
+				
+                <button id="create_acc_btn" data-ng-click="signUp()" onclick="show_signup_msg()" >Create Account</button>	
+            </div>
+        </div>
+    </header>
+
+    <!----------------------- NAV BAR ------------------------->
+    <div id="navbar" class="row">
+        <div class="nav_left col-md-6 col-sm-5 col-xs-8">
+            <span onclick="openNav()" class="fa fa-bars"></span>
+            <img class="nav_logo" src="images/logo_light.png" alt="" />
+        </div>
+
+        <div class="nav_right col-md-6 col-sm-7 col-xs-4" >
+            <div class="nav_search hidden-xs">
+                <input type="text" maxlength="50" data-ng-model="searchPro" placeholder="Search something to buy..." />
+                <span id="nav_search" class="fa fa-search" data-ng-click="searchProductByName()"></span>
+            </div>
+            <div class="nav_right_icons">
+                <div id="cart" class="notification-container" data-ng-click="getCart() ; getCartSum(); getCartsize()" >
+                    <img src="images/cart_icon.png" alt="" style="width:16px;" />
+                    <span class="notification-counter">0</span>
+                </div>
+                <a href="index.html"><img src="images/favicon.png" alt="" style="width:16px;" /></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nav Bar > Cart Modal -->
+    <div id="cart_modal" class="modal">
+        <div class="modal_content" style="max-width:960px">
+            <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+            <h2 class="uppearcase spaced">Your Cart</h2>
+
+            <table class="cart_table" >
+
+                <tr class="cart_titles">
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+
+                <tr class="cart_row" data-ng-repeat="product in PrintCart">
+                    <td class="td_prod">
+                        <div>
+                            <img src="{{product.imagePath}}" alt="" />
+                        </div>
+                        <div>
+                            <span>{{product.name}}</span>
+                            <span>{{product.type}}</span>
+
+                        </div>
+                    </td>
+                    <td class="td_qty">
+                        <div class="prod_quantity">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </button>
+                                </span>
+                                <input type="text" name="quant[1]" class="form-control input-number" value="1" min="1" max="10">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="td_total">{{product.price}}$</td>
+                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.id) ; getCart() ; getCartSum()"/></td>
+                </tr>
+
+            </table>
+
+            <div class="cart_sum">
+                <span>Total</span>
+                <span>{{sum}}</span>
+                <span>{{conformation}}</span>
+                <span>{{errormessage}}</span>
+                <button id="checkout_btn" data-ng-click="checkOut()">Proceed to Checkout</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <a href="javascript:" id="return-to-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+    <!---------------------- Main section ------------------------>
+    <div id="products_container" class="row">
+
+        <!--------------------- Products ----------------------->
+        <!-- Product Modal --> 
+        <div id="prod_modal" class="modal" data-ng-init="getAllProductById(product.id)" >
+            <div class="prod_modal_container" data-ng-repeat="product in PrintAllProductsById">
+
+                <div class="prod_img">
+                    <img src="{{product.imagePath}}" alt="" />
+                    <i class="enlarge_prod_img fa fa-expand" onmouseenter="maximize()" onmouseleave="minimize()" aria-hidden="true"></i>
+                </div>
+
+                <div class="prod_modal_content">
+                    <img class="close" src="images/close_icon.png" onclick="close_modal()" />
+
+                    <!--<button class="con_shopping_btn">< &nbsp; Continue Shopping</button>-->
+                    <span class="prod_cat">{{product.type}}</span>
+                    <h2 class="spaced">{{product.name}}</h2>
+                    <span class="prod_code uppearcase">Sku: {{product.id}}</span>
+
+                    <div class="prod_actions" data-ng-controller="CustomerController">
+                        <span class="prod_price">{{product.price}}$</span>
+                        <div class="prod_quantity">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </button>
+                                </span>
+                                <input type="text" name="quant[1]" class="form-control input-number" value="{{product.quantity}}" min="1" max="10" >
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.id); getCartsize()" onclick="count_prods()">+ Add to cart</button>
+                        <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
+                    </div>
+
+                    <ul class="tabs_nav">
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_desc');">Description</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_ship');">Shipping</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_return');">Return</a></li>
+                        <li class="slider"></li>
+                    </ul>
+
+                    <div id="prod_desc" class="prod_tabs">
+                        <p>
+                          {{product.description}}
+                        </p>
+                    </div>
+                    <div id="prod_ship" class="prod_tabs">
+                        <p>
+                            {{product.description}}{{product.description}}
+                        </p>
+                    </div>
+                    <div id="prod_return" class="prod_tabs">
+                        <p>
+                            {{product.description}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products -->
+      
+        <div id="orders" class="col-md-12 col-sm-12 col-xs-12" >
+           <h1 style="padding-left: 40px;">My last orders</h1>
+            <ul class="row list" id="PrintAllProducs" data-ng-init="getAllCustomerOrdersById()">
+                <li id="{{product.id}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="order in CustomerOrders" >
+                
+                    <div class="order_details">
+	                    <div class="order_idprods">
+		                    <span class="order_id">Order ID: {{order.orderId}}</span>
+		                    <div class="order_prods">
+		                        <span class="order_prod">{{order.productsArray}}</span></br>
+		                      
+		                    </div>
+		                 </div>
+	                    <div class="order_pricedate" data-ng-controller="CustomerController">
+	                        <span class="order_price">Total price: {{order.payment}}</span>
+	                        <span class="date_stamp">Date: {{order.dateStamp}}</span>
+	                    </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    </div>
+  
+
+    <!------------- Javascript --------------->
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/nouislider.min.js"></script>
+
+
+    <script type="text/javascript">
+    var min_price;
+    var max_price;
+    var enlarge = document.getElementsByClassName("enlarge_prod_img");
+    //var prod_counter = 0;
+
+        $(document).ready(function () {
+            $(this).scrollTop(0);
+
+            
+            $("#prod_modal").on("click", ".tabs_nav li", function(e) {
+              // what tab was pressed
+          	  var whatTab = $(this).index();
+          	  // How far the slider needs to go
+          	  var howFar = 95 * whatTab;
+          	  $(".slider").css({left: + howFar + "px"});          	
+         	 });
+            
+            
+			// Counter++ for cart icon
+			$('#prods').on("click", ".add_to_cart_btn", function () {
+                var $counter = $('.notification-counter');
+                var val = parseInt($counter.text());
+                val++;
+                return $counter.css({ opacity: 0 }).text(val).css({ top: '-10px' }).animate({ top: '-1px', opacity: 1 }, 500);
+            });
+			// Counter-- for cart icon
+			$(".cart_table").on("click", ".td_remove", function(){
+				var $counter = $('.notification-counter');
+                var val = parseInt($counter.text());
+                if ($counter.text() > 0) val--;
+                return $counter.css({ opacity: 0 }).text(val).css({ top: '-10px' }).animate({ top: '-1px', opacity: 1 }, 500);
+			});
+			
+
+			
+			// Price sort dynamic arrow setup
+            $(".price_sort").click(function () {
+            	
+                if ($("#sort_by_price").hasClass("fa-arrow-down"))
+                	{
+                	$("#sort_by_price").removeClass("fa fa-arrow-down", function(){
+                		$("#sort_by_price").addClass("fa fa-arrow-up");
+                	});
+                	}
+                    
+                else{
+	                	$("#sort_by_price").removeClass("fa fa-arrow-up", function(){
+	                		$("#sort_by_price").addClass("fa fa-arrow-down");
+	                	}); 	
+                }
+            });
+            
+            
+            var timeout = setTimeout(getUpdates, 0);
+            getUpdates();
+            // Update the "items found" number
+            function getUpdates() {
+	            var n = $(".prod").length;
+	            $(".items_found").text(n);
+	            timeout = setTimeout(getUpdates, 50);
+            }
+            
+
+
+            // Tooltips
+            $(".wishlist_icon").tooltip();
+
+            $(function () {
+                var wish_icon = $(".wishlist_icon");
+                wish_icon.hover(function () {
+                    if (wish_icon.hasClass("fa-heart")) {
+                        wish_icon.attr('data-original-title', 'Remove from wishlist');
+                    }
+                    else { wish_icon.attr('data-original-title', 'Add to wishlist'); }
+                });
+            });
+
+            // Wishlist icon on/off
+            var wishlist = $('.wishlist_icon_1');
+            wishlist.click(function () {
+                if (wishlist.hasClass("fa-heart-o")) {
+                    wishlist.switchClass("fa-heart-o", "fa-heart");
+
+                }
+                else {
+                    wishlist.switchClass("fa-heart", "fa-heart-o");
+                }
+            });
+
+            // Sticky #navbar
+            var menu = document.querySelector('#navbar');
+            var menuPosition = menu.getBoundingClientRect();
+            var placeholder = document.createElement('div');
+            placeholder.style.width = menuPosition.width + 'px';
+            placeholder.style.height = menuPosition.height + 'px';
+
+            var isAdded = false;
+
+            window.addEventListener('scroll', function () {
+                if (window.pageYOffset >= menuPosition.top && !isAdded) {
+                    menu.classList.add('sticky');
+                    menu.parentNode.insertBefore(placeholder, menu);
+                    isAdded = true;
+                } else if (window.pageYOffset < menuPosition.top && isAdded) {
+                    menu.classList.remove('sticky');
+                    menu.parentNode.removeChild(placeholder);
+                    isAdded = false;
+                }
+            });
+            
+
+
+
+            $(".price_sort").click(function () {
+                if ($("#sort_by_price").hasClass("fa-arrow-up"))
+                    $("#sort_by_price").removeClass("fa-arrow-up").addClass("fa-arrow-down");
+                else
+                    $("#sort_by_price").removeClass("fa-arrow-down").addClass("fa-arrow-up");
+            });
+
+
+            $('#toggle').click(function () {
+                if ($('.toggle').css('display') == 'none') {
+                    $('#tog_img').attr('src', 'images/toggle_off.png');
+                }
+                else {
+                    $('#tog_img').attr('src', 'images/toggle_on.png');
+                }
+                $('.toggle').toggle('slow')
+                return false;
+            });
+
+            $('#toggle2').click(function () {
+                if ($('.toggle2').css('display') == 'none') {
+                    $('#tog_img').attr('src', 'images/toggle_off.png');
+                }
+                else {
+                    $('#tog_img').attr('src', 'images/toggle_on.png');
+                }
+                $('.toggle2').toggle('slow')
+                return false;
+            });
+            
+            $('.check_id').trigger('click');
+             
+            
+        });
+
+        
+     // Product description tabs setup
+        $("#prod_desc").css("display", "block");
+        
+     	function openTab(evt, tabName) {
+        	var i, x, tablinks;
+                x = document.getElementsByClassName("prod_tabs");
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablink");
+                for (i = 0; i < x.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" selected_tab", "");
+                }
+                
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " selected_tab";
+        }
+        
+		    // Enlarge product image        
+	        function maximize() {
+	            $(".prod_img img").css("margin", "0");
+	            $(".prod_img").css({ "overflow-x": "visible", "z-index": "999" });
+	        }
+	     
+	        function minimize() {
+	            $(".prod_img").css({ "overflow-x": "hidden", "z-index": "999" });
+	            $(".prod_img img").css("margin", "0 -100%");
+	        } 
+        
+            // Get the modals
+            var login_modal = document.getElementById('login_modal');
+            var signup_modal = document.getElementById('signup_modal');
+            var prod_modal = document.getElementById('prod_modal');
+            var cart_modal = document.getElementById('cart_modal');
+            var about_modal = document.getElementById('about_modal');
+            var contact_modal = document.getElementById('contact_modal');
+            var account_modal = document.getElementById('account_modal');
+            
+            // Get the buttons that opens the modals
+            var login_btn = document.getElementById("login");
+            var signup_btn = document.getElementById("signup");
+            var prod_over = document.getElementsByClassName("prod_overlay");
+            var prod_det = document.getElementsByClassName("prod_details");
+            var cart_btn = document.getElementById("cart");
+
+            // When the user clicks on the buttons, open the modals
+            login_btn.onclick = function () {
+                login_modal.style.display = "block";
+            }
+            signup_btn.onclick = function () {
+                signup_modal.style.display = "block";
+            }
+            cart_btn.onclick = function () {
+                cart_modal.style.display = "block";
+            }
+            
+         	// Side nav > my account link
+            $("#mySidenav > a:nth-of-type(2)").click(function(){
+            	account_modal.style.display = "block";
+            });
+            // Side nav > my cart link
+            $("#mySidenav > a:nth-of-type(3)").click(function(){
+            	cart_modal.style.display = "block";
+            });  
+         	// Side nav > about link
+            $("#mySidenav > a:nth-of-type(4)").click(function(){
+            	about_modal.style.display = "block";
+            });
+         	// Side nav > contact link
+            $("#mySidenav > a:nth-of-type(5)").click(function(){
+            	contact_modal.style.display = "block";
+            });
+            
+            $("#prods").on('click', prod_over, function(e) {
+           		if (e.target.className == "prod_overlay") {
+           			prod_modal.style.display = "block";
+           		}
+           		else if(e.target.className == "prod_overlay_title ng-binding") { 
+           			prod_modal.style.display = "block";
+           		}
+           		else if(e.target.className == "prod_overlay_cat ng-binding") { 
+           			prod_modal.style.display = "block";
+           		}	
+           		else {  		
+           		}	
+         	 });
+            
+            $("#PrintAllProducs").on('click', prod_det, function(e) {
+           		if (e.target.className == "prod_details") {
+           			prod_modal.style.display = "block";
+           		}
+           		else {  		
+           		}	
+         	 });
+
+            
+            $("#cart_modal .close").click(function(){
+            
+            });
+            
+            // When the user clicks on (x), close the modals
+            function close_modal() {
+            	prod_modal.style.display = "none";
+            	cart_modal.style.display = "none";
+            	signup_modal.style.display = "none";
+            	login_modal.style.display = "none";
+            	login_msg.style.display = "none";  
+            	signup_msg.style.display = "none";
+            	about_modal.style.display = "none";
+            	contact_modal.style.display = "none";
+            	account_modal.style.display = "none";
+            }
+
+            
+            function goto_signup(){
+            	login_modal.style.display = "none";
+            	signup_modal.style.display = "block";
+            }
+             
+            
+            var login_msg = document.getElementById("login_msg");
+			var signup_msg = document.getElementById("signup_msg");
+
+		
+            function show_signup_msg () {
+                signup_msg.style.display = "block";   
+            }
+            
+            function show_login_msg () {
+                login_msg.style.display = "block";   
+            }
+
+            
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == login_modal) {
+                    login_modal.style.display = "none";
+                }
+                if (event.target == signup_modal) {
+                    signup_modal.style.display = "none";
+                }
+                if (event.target == prod_modal) {
+                    prod_modal.style.display = "none";
+                }
+                if (event.target == cart_modal) {
+                    cart_modal.style.display = "none";
+                }
+                if (event.target == about_modal) {
+                	about_modal.style.display = "none";
+                }
+                if (event.target == about_modal) {
+                	contact_modal.style.display = "none";
+                }
+                if (event.target == about_modal) {
+                	account_modal.style.display = "none";
+                }
+            }
+
+            
+            
+            // Bootstrap plugin minus and plus
+            $('.btn-number').click(function (e) {
+                e.preventDefault();
+
+                fieldName = $(this).attr('data-field');
+                type = $(this).attr('data-type');
+                var input = $("input[name='" + fieldName + "']");
+                var currentVal = parseInt(input.val());
+                if (!isNaN(currentVal)) {
+                    if (type == 'minus') {
+
+                        if (currentVal > input.attr('min')) {
+                            input.val(currentVal - 1).change();
+                        }
+                        if (parseInt(input.val()) == input.attr('min')) {
+                            $(this).attr('disabled', true);
+                        }
+
+                    } else if (type == 'plus') {
+
+                        if (currentVal < input.attr('max')) {
+                            input.val(currentVal + 1).change();
+                        }
+                        if (parseInt(input.val()) == input.attr('max')) {
+                            $(this).attr('disabled', true);
+                        }
+
+                    }
+                } else {
+                    input.val(0);
+                }
+            });
+            $('.input-number').focusin(function () {
+                $(this).data('oldValue', $(this).val());
+            });
+            $('.input-number').change(function () {
+
+                minValue = parseInt($(this).attr('min'));
+                maxValue = parseInt($(this).attr('max'));
+                valueCurrent = parseInt($(this).val());
+
+                name = $(this).attr('name');
+                if (valueCurrent >= minValue) {
+                    $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
+                } else {
+                    alert('Sorry, the minimum value was reached');
+                    $(this).val($(this).data('oldValue'));
+                }
+                if (valueCurrent <= maxValue) {
+                    $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
+                } else {
+                    alert('Sorry, the maximum value was reached');
+                    $(this).val($(this).data('oldValue'));
+                }
+            });
+            $(".input-number").keydown(function (e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
+                    // Allow: Ctrl+A
+                    (e.keyCode == 65 && e.ctrlKey === true) ||
+                    // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+        // Set the width of the side navigation to 250px
+        function openNav() {
+            document.getElementById("mySidenav").style.left = "0";
+            document.getElementById("main").style.visibility = "visible";
+            document.getElementById("main").style.opacity = "1";
+        }
+
+        // Set the width of the side navigation to 0
+        function closeNav() {
+            document.getElementById("mySidenav").style.left = "-250px";
+        }
+
+        // Back to top arrow
+        $(window).scroll(function () {
+            if ($(this).scrollTop() >= 1200) {        // If page is scrolled more than 1000px
+                $('#return-to-top').fadeIn(200);    // Fade in the arrow
+            } else {
+                $('#return-to-top').fadeOut(200);   // Else fade out the arrow
+            }
+
+            $("#banner").css("opacity", 1 - $(window).scrollTop() / 600);
+            $("#browse_stuff").css("opacity", 1 - $(window).scrollTop() / 800);
+
+        });
+        $('#return-to-top').click(function () {      // When arrow is clicked
+            $('body,html').animate({
+                scrollTop: $('#options_bar').offset().top - 70     // Scroll to top of #options_bar
+            }, 500);
+        });
+    </script>
+
+    <script type="text/javascript">
+    
+        
+ 
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('a[href*="#"]:not([href="#"])').click(function () {
+                if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+                    var target = $(this.hash);
+                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                    if (target.length) {
+                        $('html, body').animate({
+                            scrollTop: target.offset().top
+                        }, 1000);
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <script type="text/javascript">
+    var nonLinearSlider = document.getElementById('price_slider');
+
+    noUiSlider.create(nonLinearSlider, {
+        connect: true,
+        behaviour: 'tap',
+        start: [0, 800],
+        tooltips: true,
+        //format: wNumb({
+        //    decimals: 0
+        //}),
+        range: {
+            // Starting at 500, step the value by 500,
+            // until 4000 is reached. From there, step by 1000.
+            'min': [0, 5],
+            '10%': [50, 10],
+            '50%': [400, 50],
+            'max': [800]
+        }
+    });
+    
+     
+   	var nodes = [
+             	document.getElementById('value-lower'), // 0
+             	document.getElementById('value-upper') // 1
+             ];
+
+	nonLinearSlider.noUiSlider.on('update', function( values, handle ) {
+		nodes[handle].innerHTML = values[handle];
+		min_price = $("#value-lower").html();
+		max_price = $("#value-upper").html();
+	});
+
+	function returnMinPrice(){
+		return min_price;
+	}
+	function returnMaxPrice(){
+		return max_price;
+	}
+    </script>
+    
+    <script type="text/javascript">
+    var CustomerAccountApp = angular.module("CustomerAccountApp", []);
+
+    CustomerAccountApp.controller("CustomerAccountController", function($scope, $window, $http, $rootScope,$location){
+    	
+    	
+    	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer";
+
+    	
+    	$scope.reverse =true ; 
+		$scope.bool = true ;
+
+		$scope.customerSession = function(){
+    		url = $scope.baseUrl+"/customerSession" ; 
+    		$http.get(url).then(
+    				function(response){
+    					if(response.data.email!=null) {
+    						jQuery('#login_modal').hide();
+    						jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +response.data.name + '!</div>');
+    					}
+    					if (response.data==""){
+    						$window.location.href = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/" ;
+    					}
+    				}, function(response){   
+    					if(response.data.message=="You'r not looged in"){
+    						$window.location.href = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/" ;
+    					}
+    					
+    				});
+    	}
+
+    	$scope.getProductByName = function(){
+    		url = $scope.restUrl + "/getProductByName/"+ $scope.name;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.getProductArrayById = function(giveme){
+    		url = $scope.restUrl + "/getProductArrayById/"+ giveme;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProductsById = response.data ;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+
+    	$scope.test = function(){
+    		url = $scope.restUrl + "/getAllCustomerOrdersById/";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.CustomerOrders = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    	}
+    	
+    	
+    	$scope.getAllCustomerOrdersById = function(){
+    	
+    		$http.get("http://localhost:8080/stuff.web/rest/customer/getAllCustomerOrdersById").then(
+    				function(response){
+    					$scope.CustomerOrders = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.addToCart = function(prodIdNum){
+    		url = $scope.restUrl + "/addToCart/" + prodIdNum ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProducts = response.data;
+    				}, function(response){
+    					$scope.PrintAllProducts = response.data;
+    				});
+    		
+    		
+    	}
+
+    	$scope.getCartSum = function(){
+    		url = $scope.restUrl + "/getCartSum";
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.sum = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.getCartSize = function(){
+    		url = $scope.baseUrl + "/getCartsize";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.getCart();
+    					$scope.cartAmount = response.data; 
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    	}
+
+
+    	
+    	$scope.removeFromCart = function(removeIdNum){
+    		url = $scope.restUrl + "/removeFromCart/" + removeIdNum;
+    		$http.get(url).then(
+    				function(response){
+    					$scope.getCart();
+    					$scope.getCartSum();
+    					$scope.PrintCart = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+
+    	}
+    	
+    	$scope.getCart = function(){
+    		url = $scope.restUrl + "/getCart" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintCart = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.checkOut = function(){
+    		url = $scope.restUrl + "/checkOut" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.conformation = response.data.message;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+
+    	$scope.ClearCart = function(){
+    		url = $scope.restUrl + "/ClearCart/" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+
+    	$scope.logout = function(){
+    		url = $scope.restUrl + "/logout";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message ;
+    				}, function(response){
+    					$scope.errormessage = "Please log in first ! ";
+    				});
+    	};
+
+    	});
+
+    	
+    
+    </script>
+    <!---------------------------------------->
+</body>
+</html>

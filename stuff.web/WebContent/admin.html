@@ -1,0 +1,582 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MyStuff: Admin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<link href="images/favicon.png" rel="icon" type="image/png" />
+    <link href="https://fonts.googleapis.com/css?family=Varela" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
+    <link href="css/nouislider.min.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/respond.min.js"></script>
+
+</head>
+<body>
+	<div id="admin_main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" >
+
+    <!------------------------ HEADER ------------------------->
+	    <header id="admin_header">
+	
+	        <div class="login_btns">
+	            <a id="login" class="uppearcase" href="index.html">Back to MyStuff</a>
+	        </div>
+	
+	        <div id="side_logo">
+	            <img src="images/logo_dark.png" alt="" class="img-responsive" />          
+	        </div>
+	 	</header>
+
+        <div id="admin_wrapper" class="">
+                <h2 class="uppearcase spaced">Welcome, Admin!</h2>
+                <ul class="admin_nav">
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_mng');">Manage Products</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'cust_mng');">Manage Customers</a></li>
+                        <li class="slider"></li>
+                    </ul>
+
+                    <div id="prod_mng" class="admin_tabs">
+                        
+                        <div class="actions_list">
+                        	<ul>
+	                        	<li class="actionlink selected_action" onclick="openAction(event, 'createProd');">Create a Product</li>
+	                        	<li class="actionlink" onclick="openAction(event, 'updateProd');">Update a Product</li>
+	                        	<li class="actionlink" onclick="openAction(event, 'removeProd');">Remove a Product</li>
+                        	</ul>
+                        </div>
+                        
+                        <div class="action_forms">
+	                        <div id="create_prod" class="action_form visible">
+	                        	<input id="prod_name_input" type="text" placeholder="Name" />
+	                        	<textarea id="prod_desc_input" placeholder="Desc" rows="4"></textarea>
+	                        	<select id="prod_type_input">
+								  <option disabled selected>Choose a category</option>
+								  <option value="Appliances" >Appliances</option>
+								  <option value="Clothing">Clothing</option>
+								  <option value="Decoration">Decoration</option>
+								  <option value="Furniture">Furniture</option>
+								  <option value="Music">Music</option>
+								  <option value="Sport">Sport</option>
+								  <option value="Technology">Technology</option>
+								</select>
+								<input id="prod_price_input" type="text" placeholder="Price" />
+								<input id="prod_stock_input" type="text" placeholder="Stock" />
+								<input id="prod_image_input" type="file" name="img" accept="image/*">
+								<button id="add_prod_btn" onclick="">Create Product</button>
+	                        </div>
+	                        <div id="update_prod" class="action_form">
+	                        	create product
+	                        </div>
+	                        <div id="remove_prod" class="action_form">
+	                        	create product
+	                        </div>
+                        </div>
+                        
+                    </div>
+                    <div id="cust_mng" class="admin_tabs">
+                        
+                        <table class="cust_list">
+                        	<tr>
+	                        	<th>#</th>
+	                        	<th>Name</th>
+	                        	<th>Email</th>
+	                        	<th>Password</th>
+	                        	<th>Delete</th>
+                        	</tr>
+                        	<tr>
+	                        	<td></td>
+	                        	<td></td>
+	                        	<td></td>
+	                        	<td></td>
+	                        	<td></td>
+                        	</tr>
+                        </table>
+                        
+                    </div>
+    </div>
+
+    <!------------- Javascript --------------->
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/nouislider.min.js"></script>
+
+    <script type="text/javascript"> 
+
+        $(this).scrollTop(0);
+
+        $("#admin_wrapper").on("click", ".admin_nav li", function(e) {
+          // what tab was pressed
+      	  var whatTab = $(this).index();
+      	  // How far the slider needs to go
+      	  var howFar = 193 * whatTab;
+      	  $(".slider").css({left: + howFar + "px"});          	
+     	 });
+
+       // Product description tabs setup
+       $("#prod_mng").css("display", "block");
+       
+    	function openTab(evt, tabName) {
+       	var i, x, tablinks;
+               x = document.getElementsByClassName("admin_tabs");
+               for (i = 0; i < x.length; i++) {
+                   x[i].style.display = "none";
+               }
+               tablinks = document.getElementsByClassName("tablink");
+               for (i = 0; i < x.length; i++) {
+                   tablinks[i].className = tablinks[i].className.replace(" selected_tab", "");
+               }
+               
+               document.getElementById(tabName).style.display = "block";
+               evt.currentTarget.className += " selected_tab";
+       }      
+    	
+    	// Action tabs css switch setup
+    	function openAction(evt, actionName) { 
+	      	var i, x;
+	      	x = $(".actionlink");
+	      	
+	        for (i = 0; i < x.length; i++) {
+	        	x[i].className = x[i].className.replace(" selected_action", "");
+	        }
+	        evt.currentTarget.className += " selected_action";
+
+	        if(evt.currentTarget == $(".actions_list ul li:first-of-type")){
+	        	$("#create_prod").show();
+	        	$("#create_prod").switchClass(" ", "visible");
+	        	$("#update_prod").hide();
+	        	$("#update_prod").switchClass(" visible", " ");
+	        	$("#remove_prod").hide();
+	        	$("#remove_prod").switchClass(" visible", " ");
+	        }
+        	else if(evt.currentTarget == $(".actions_list ul li:nth-of-type(2)")){
+	        	$("#create_prod").hide();
+	        	$("#create_prod").switchClass(" visible", " ");
+	        	$("#update_prod").show();
+	        	$("#update_prod").switchClass(" ", "visible");
+	        	$("#remove_prod").hide();
+	        	$("#remove_prod").switchClass(" visible", " ");
+	        }
+        	else {
+	        	$("#create_prod").hide();
+	        	$("#create_prod").switchClass(" visible", " ");
+	        	$("#update_prod").hide();
+	        	$("#update_prod").switchClass(" visible", " ");
+	        	$("#remove_prod").show();
+	        	$("#remove_prod").switchClass(" ", "visible");
+	        }
+
+     	}
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('a[href*="#"]:not([href="#"])').click(function () {
+                if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+                    var target = $(this.hash);
+                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                    if (target.length) {
+                        $('html, body').animate({
+                            scrollTop: target.offset().top
+                        }, 1000);
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <script type="text/javascript">
+    var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
+
+    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope){
+    	
+    	
+    	$scope.restUrl = "http://localhost:8080/stuff.web/rest/customer";
+    	$scope.email = "";
+    	$scope.password = "";
+    	$scope.sum = "";
+    	$scope.id = "";
+    	$scope.signupbad ="";
+    	$scope.signupgood ="";
+    	//-------------------------------------------------
+    	$scope.name ="";
+    	$scope.description ="";
+    	$scope.imagePath ="";
+    	$scope.price = "";
+    	$scope.protype = "";
+    	$scope.quantity = "";
+    	$scope.conformation = "";
+    	$scope.cartAmount = "0";
+    	$scope.infomessage = "";
+    	$scope.errormessage = "";
+    	$scope.loginbad = "";
+    	$scope.logingood = "";
+    	$scope.searchPro = "";
+    	$scope.PrintAllProducts = [] ; 
+    	$scope.PrintMyOrders = [] ; 
+    	$scope.PrintAllProductByPriceEx = [] ; 
+    	$scope.PrintAllProductByPriceChe = [] ; 
+    	$scope.PrintAllProductsByType = [] ; 
+    	$scope.PrintAllCustomerOrdersById = [] ;
+    	$scope.PrintAllProductsById = [] ;
+    	$scope.PrintAllsearches = [] ; 
+    	$scope.PrintAllsearchesByPriceRange = [] ;  
+    	$scope.PrintCart = [];
+    	$scope.min_price = $window.min_price;
+    	$scope.max_price = $window.max_price;
+    	$scope.productID = "";
+		$scope.bool = true ;
+		
+		
+
+    	$scope.login = function(){
+    		url = $scope.restUrl+"/login/"+ $scope.email +"/" + $scope.password;
+    		$http.get(url).then(
+    				function(response){
+				$scope.logingood = response.data.message;
+    					if ($scope.logingood=="true"){
+    						$scope.getMyinfo();
+    						$scope.logingood = response.data.message;
+    						jQuery('#modal_content').slideUp(function(){
+        						jQuery('#login_modal').hide();
+        							jQuery('.login_btns').hide();
+        							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + $scope.logingood + '!</div>');
+        					});		
+    						
+    					}
+    				
+    					
+    				}, function(response){
+    					$scope.logingood = "*Please fill all the empty fields";
+    				
+    				});
+
+    	}
+    	
+    	
+    	$scope.getMyinfo = function(){
+    		url = $scope.restUrl+"/getMyinfo" ; 
+    		$http.get(url).then(
+    				function(response){
+    					$scope.logingood = response.data.message;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+       	$scope.getAllProducts = function(){
+    		url = $scope.restUrl+"/getAllProducts" ; 
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProducts = response.data ;
+    					
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    					
+    				});
+    		
+    		
+    	}
+    	
+    	
+    	
+    	
+    	$scope.signUp = function(){
+    		url = $scope.restUrl+"/signUp/" + $scope.name +"/" + $scope.f_name +"/"+ $scope.password+"/"+ $scope.secondPassword+"/"+$scope.email ;
+    		$http.post(url).then(
+    				function(response){
+    					$scope.signupgood = response.data.message;
+    					if ($scope.signupgood=="true") {
+    					$scope.getMyinfo();
+						$scope.infomessage = response.data.message;
+    					jQuery('#signup_modal .modal_content').slideUp(function(){
+    						jQuery('#signup_modal').hide();
+    							jQuery('.login_btns').hide();
+    							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + $scope.infomessage	 + '! and thank you for registered to Mystuff©</div>');
+    							
+    					});	
+    				}
+    				}, function(response){
+    					$scope.signupgood = "*Please fill all the empty fields";
+    				});
+    	}
+    
+
+
+    	
+
+    	$scope.updateCustomer = function(){
+    		url = $scope.restUrl + "/updateCustomer/"+ $scope.name +"/"+ $scopre.password +"/"+ $scopre.email;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+    	$scope.getProductByName = function(){
+    		url = $scope.restUrl + "/getProductByName/"+ $scope.name;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.getProductArrayById = function(giveme){
+    		url = $scope.restUrl + "/getProductArrayById/"+ giveme;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProductsById = response.data ;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+
+    	$scope.getAllProductByPriceEx = function(){
+    		url = $scope.restUrl + "/getAllProductByPriceEx/";
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+   
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx; 
+        					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+    	$scope.getAllProductByPriceChe = function(){
+    
+    		url = $scope.restUrl + "/getAllProductByPriceChe/";
+    		$http.get(url).then(
+    				function(response){
+    					if ($scope.bool==true){
+    						$scope.getAllProductByPriceEx();
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx;
+    						$scope.bool = false;
+    					}
+    					else{
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceChe; 
+        					$scope.PrintAllProducts = response.data ;
+        					$scope.bool = true;
+    					}
+    					
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+    	
+    	$scope.getAllProductsByType = function(){
+    		url = $scope.restUrl + "/getAllProductsByType/"+$scope.Type;
+    		$http.get(url).then(
+    				function(response){
+    					if(url == "http://localhost:8080/stuff.web/rest/customer/getAllProductsByType/false") {
+    						$scope.getAllProducts();
+    						$scope.PrintAllProducts = response.data;
+    						
+    					}
+    					else {
+    					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
+    					$scope.PrintAllProducts = response.data;
+    						
+    					}
+    				}, function(response){
+    				
+    				});
+    		
+    		
+    	}
+    	
+    	
+    	
+    	$scope.getAllCustomerOrdersById = function(){
+    		url = $scope.restUrl + "/getAllCustomerOrdersById/";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllCustomerOrdersById = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.addToCart = function(prodIdNum){
+    		url = $scope.restUrl + "/addToCart/" + prodIdNum ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProducts = response.data;
+    				}, function(response){
+    					$scope.PrintAllProducts = response.data;
+    				});
+    		
+    		
+    	}
+
+    	$scope.getCartSum = function(){
+    		url = $scope.restUrl + "/getCartSum";
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.sum = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+
+    	$scope.getCartsize = function(){
+    		url = $scope.restUrl + "/getCartsize";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.getCart();
+    					$scope.cartAmount = response.data.message;
+    					if($scope.cartAmount == 0){
+    						jQuery("<h2 id="+"empty_msg"+">Your cart is empty!</h2>").insertAfter(".cart_table");
+    						jQuery("#checkout_btn").prop('disabled', true).css("background-color","lightgrey");
+    	            	}
+    	            	else {
+    	            		jQuery("#empty_msg").remove();
+    	            		jQuery("#checkout_btn").prop('disabled', false).css("background-color","#e0452b");;
+    					}
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    	}
+
+    	
+    	$scope.removeFromCart = function(removeIdNum){
+    		url = $scope.restUrl + "/removeFromCart/" + removeIdNum;
+    		$http.get(url).then(
+    				function(response){
+    					$scope.getCart();
+    					$scope.getCartSum();
+    					$scope.PrintCart = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+
+    	}
+    	
+    	$scope.getCart = function(){
+    		url = $scope.restUrl + "/getCart" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintCart = response.data;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	$scope.checkOut = function(){
+    		url = $scope.restUrl + "/checkOut" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.conformation = response.data.message;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+
+    	$scope.ClearCart = function(){
+    		url = $scope.restUrl + "/ClearCart/" ;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+    	
+    	
+ 
+    	$scope.searchProductByName = function(){
+    		
+    		url = $scope.restUrl + "/searchProductByName/" + $scope.searchPro ;
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProducts = $scope.PrintAllsearches; 
+    					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+    					$scope.getAllProducts();
+						$scope.PrintAllProducts = response.data;
+    				});
+    		
+    	}
+    	
+    	$scope.searchProductByPrice = function(){
+    		$scope.min_price = returnMinPrice();
+    		$scope.max_price = returnMaxPrice();
+
+    		url = $scope.restUrl + "/searchProductByPrice/" + $scope.min_price + "/" + $scope.max_price ;
+    		$http.get(url).then(
+    				function(response){	
+    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
+    					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+    					$scope.getAllProducts();
+						$scope.PrintAllProducts = response.data;
+    				});
+    		
+    	}
+ 	
+    	$scope.logout = function(){
+    		url = $scope.restUrl + "/logout";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message ;
+    				}, function(response){
+    					$scope.errormessage = "Please log in first ! ";
+    				});
+    	};
+    });
+    </script>
+</body>
+</html>
