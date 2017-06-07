@@ -67,6 +67,7 @@ public class CustomerResource {
 			if (custf.login(loginDetails.getEmail(), loginDetails.getPassword())) {
 				customer = custf.getCustomerByEmail(loginDetails.getEmail());
 				session.setAttribute("custf", customer);
+				session.setMaxInactiveInterval(20*60);
 				return Response.status(200)
 						.entity(new CustomMessage("You have successfully logged in", true, customer.getName())).build();
 			} else {
@@ -161,27 +162,18 @@ public class CustomerResource {
 	@Path("/getAllCustomerOrdersById")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Order[] getCustomerOrderById(@Context HttpServletRequest request) {
-		Order newOrder;
-		List<Order> newOne = new ArrayList<>();
 		HttpSession session = request.getSession(false);
 		session.getAttribute("custf");
-		try {
-			List<Order> myOrders = custf.getCustomerOrderById(customer.getId());
-			for (Order order : myOrders) {
-				newOrder = new Order(order.getOrderId(), order.getDateStamp(), order.getPayment(),
-						order.getProducts().toString());
-				newOne.add(newOrder);
-				break;
-			}
-			if (!myOrders.isEmpty()) {
-				return newOne.toArray(new Order[0]);
-			} else {
-				new Message("You don't have any recent orders");
-			}
-		} catch (Exception e) {
-			new Message("You don't have any recent orders");
-		}
-		return null;
+		return custf.getCustomerOrderById(customer.getId()).toArray(new Order[0]);
+	}
+	
+	@POST
+	@Path("/getOrderByOrderId")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Order[] getOrderByOrderId(int OrderId,@Context HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("custf");
+		return custf.getOrderByOrderId(OrderId).toArray(new Order[0]);
 	}
 
 	@GET

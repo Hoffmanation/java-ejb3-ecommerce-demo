@@ -44,7 +44,7 @@ public class AdminDaoBean implements AdminDao, Serializable {
 	}
 
 	@Override
-	public Product updateProduct(int id, String description, String imagePath, int price, int quantity)
+	public boolean updateProduct(int id, String description, String imagePath, int price, int quantity)
 			throws MyStuffException {
 		if (id != 0) {
 			Product tempProduct = em.find(Product.class, id);
@@ -53,11 +53,10 @@ public class AdminDaoBean implements AdminDao, Serializable {
 			tempProduct.setPrice(price);
 			tempProduct.setQuantity(quantity);
 			em.merge(tempProduct);
-			return tempProduct;
+			return true;
 
 		} else {
-		
-			throw new MyStuffException("Invalid Product entity");
+		return false ; 
 		}
 	}
 
@@ -67,8 +66,7 @@ public class AdminDaoBean implements AdminDao, Serializable {
 			em.remove(em.find(Product.class, id));
 			return true;
 		} else {
-			Throwable e = new Throwable();
-			throw new MyStuffException("Invalid Product entity" ,e);
+			throw new MyStuffException("Invalid Product entity");
 		}
 	}
 
@@ -84,17 +82,26 @@ public class AdminDaoBean implements AdminDao, Serializable {
 	}
 
 	@Override
-	public List<Customer> getAllCutsomers() {
+	public List<Customer> getAllCutsomers() throws MyStuffException {
 		List<Customer> customers = em.createNamedQuery("getAllCustomers", Customer.class).getResultList();
-		return customers;
+		if (!customers.isEmpty()) {
+			return customers;
+		}
+		else {
+			throw new MyStuffException("getAllCustomers has faild");
+		}
 	}
 
-	// add &LIKE& SQL support
+
 	@Override
-	public Customer getCustomerByName(String name) {
-		Customer customer = em.createNamedQuery("getCustomerByName", Customer.class).setParameter("name", name)
-				.getSingleResult();
-		return customer;
+	public Customer getCustomerByName(String name) throws MyStuffException {
+		List<Customer >customer = em.createNamedQuery("getCustomerByName", Customer.class).setParameter("name", "%" + name + "%").getResultList();
+		if (!customer.isEmpty()){
+			return customer.get(0);
+		}
+		else {
+			throw new MyStuffException("Could find a match for your request!");
+		}
 	}
 
 	@Override
@@ -118,13 +125,13 @@ public class AdminDaoBean implements AdminDao, Serializable {
 	}
 
 	@Override
-	public Product createProduct(Product product) throws MyStuffException {
+	public boolean createProduct(Product product) throws MyStuffException {
 		if (product != null) {
 			em.persist(product);
+			return true  ;
 		} else {
-			throw new MyStuffException("Invalid product entity");
+			return false;			
 		}
-		return product;
 
 	}
 
@@ -161,7 +168,7 @@ public class AdminDaoBean implements AdminDao, Serializable {
 			em.remove(em.find(Customer.class, id));
 			return true;
 		} else {
-			throw new MyStuffException("Cusotomer not found");
+			return false ;
 		}
 	}
 

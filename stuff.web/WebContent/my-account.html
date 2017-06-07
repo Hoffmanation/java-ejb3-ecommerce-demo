@@ -17,7 +17,7 @@
 
 </head>
 <body>
-	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="customerSession()">
+	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="getAllCustomerOrdersById() ; customerSession()">
 
 
     <!------------------------ Side nav ------------------------->
@@ -51,7 +51,7 @@
             	<input type="text" maxlength="50" placeholder="Name" />
             	<input type="text" maxlength="50" placeholder="Email" />
             	<textarea type="text" rows="3" placeholder="Message"></textarea>
-            	<button type="submit" id="send_msg_btn">Create Account</button>
+            	<button type="submit" id="send_msg_btn">Send Mail</button>
             </form>
         </div>
     </div>
@@ -67,60 +67,10 @@
         
         <div class="login_btns">
          <a id="login" class="uppearcase" style="margin-left: 200px;" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a> 
-    <input type="submit" ng-click="test()">
         </div>
 
         <div id="page_title" class="uppearcase">
             <a href="index.html">Home</a> > <span>My Account</span>
-        </div>
-
-        <!-- Login Modal -->
-        <div id="login_modal" class="modal">
-            <div class="modal_content">
-                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
-                <h2 class="uppearcase spaced">Login</h2>
-                <input type="text" placeholder="Email Address"  data-ng-model="email" style="margin-top:35px;" />
-                <input type="password" placeholder="Password" data-ng-model="password"/>
-
-                <div id="remember_me">
-                    <input type="checkbox" id="c0" /><label for="c0"><span></span>Remember me</label>
-                    <a href="#">Forgot my password</a>
-                </div>
-				<div id="login_msg">{{logingood}}</div>
-				
-                <button id="login_btn" data-ng-click="login()" onclick="show_login_msg()">Login</button>
-                
-                <button id="fblogin_btn">
-                    <i class="fa fa-facebook-square" aria-hidden="true"></i>
-                    <span>Login with Facebook</span>
-                </button>
-						
-                <hr align="left" style="width:60px; background-color:#e4e4e4; margin-top: 35px; margin-bottom: 30px;" />
-
-                <h2 class="uppearcase spaced">New User?</h2>
-                <p style="margin-bottom: 0px; margin-top:20px;">Create an account to track your orders, make a wishlist and more :)</p>
-                <button id="create_acc_btn" onclick="goto_signup()">Create Account</button>
-            </div>
-        </div>
-
-        <!-- Signup Modal -->
-        <div id="signup_modal" class="modal">
-            <div class="modal_content">
-                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
-                <h2 class="uppearcase spaced">Create an Account</h2>
-
-                <p>Create an account to track your orders, make a wishlist and more :)</p>
-
-                <input type="text" placeholder="First Name" data-ng-model="name" style="width:49%; margin-right:5px" />
-                <input type="text" placeholder="Last Name" data-ng-model="f_name" style="width:49%;" />
-                <input type="password" placeholder="Password" data-ng-model="password"/>
-                <input type="password" placeholder="Repeat Password" data-ng-model="secondPassword"/>
-                <input type="text" placeholder="Email Address" data-ng-model="email" />
-                
-				<div id="signup_msg">{{signupgood}}</div>
-				
-                <button id="create_acc_btn" data-ng-click="signUp()" onclick="show_signup_msg()" >Create Account</button>	
-            </div>
         </div>
     </header>
 
@@ -208,99 +158,90 @@
 
     <a href="javascript:" id="return-to-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     <!---------------------- Main section ------------------------>
-    <div id="products_container" class="row">
-
-        <!--------------------- Products ----------------------->
-        <!-- Product Modal --> 
-        <div id="prod_modal" class="modal" data-ng-init="getAllProductById(product.id)" >
-            <div class="prod_modal_container" data-ng-repeat="product in PrintAllProductsById">
-
-                <div class="prod_img">
-                    <img src="{{product.imagePath}}" alt="" />
-                    <i class="enlarge_prod_img fa fa-expand" onmouseenter="maximize()" onmouseleave="minimize()" aria-hidden="true"></i>
-                </div>
-
-                <div class="prod_modal_content">
-                    <img class="close" src="images/close_icon.png" onclick="close_modal()" />
-
-                    <!--<button class="con_shopping_btn">< &nbsp; Continue Shopping</button>-->
-                    <span class="prod_cat">{{product.type}}</span>
-                    <h2 class="spaced">{{product.name}}</h2>
-                    <span class="prod_code uppearcase">Sku: {{product.id}}</span>
-
-                    <div class="prod_actions" data-ng-controller="CustomerController">
-                        <span class="prod_price">{{product.price}}$</span>
-                        <div class="prod_quantity">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                    </button>
-                                </span>
-                                <input type="text" name="quant[1]" class="form-control input-number" value="{{product.quantity}}" min="1" max="10" >
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.id); getCartsize()" onclick="count_prods()">+ Add to cart</button>
-                        <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
-                    </div>
-
-                    <ul class="tabs_nav">
-                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_desc');">Description</a></li>
-                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_ship');">Shipping</a></li>
-                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_return');">Return</a></li>
-                        <li class="slider"></li>
-                    </ul>
-
-                    <div id="prod_desc" class="prod_tabs">
-                        <p>
-                          {{product.description}}
-                        </p>
-                    </div>
-                    <div id="prod_ship" class="prod_tabs">
-                        <p>
-                            {{product.description}}{{product.description}}
-                        </p>
-                    </div>
-                    <div id="prod_return" class="prod_tabs">
-                        <p>
-                            {{product.description}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Products -->
+    <div id="products_container" class="row" data-ng-init="getAllCustomerOrdersById()">
+        <!-- order list -->
       
-        <div id="orders" class="col-md-12 col-sm-12 col-xs-12" >
+        <div id="orders" class="col-md-12 col-sm-12 col-xs-12">
            <h1 style="padding-left: 40px;">My last orders</h1>
-            <ul class="row list" id="PrintAllProducs" data-ng-init="getAllCustomerOrdersById()">
-                <li id="{{product.id}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="order in CustomerOrders" >
-                
+            <ul class="row list" id="PrintAllProducs" >
+                <li id="{{order.orderId}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="order in orders" >
+                	
+                    <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size: 50px;margin-right: 25px;"></i>
+                    
+                    <div class="order_details">
+	                    <div class="order_idprods">
+		                    <span class="order_id">Order No. {{order.orderId}}</span>
+		                    <div class="order_prods">
+		                        <span class="order_prod">{{order.productsArray}}</span></br>
+		                    </div>
+		                 </div>
+
+	                    <div class="order_pricedate">
+	                        <span class="order_price">{{order.cartSize}} products</span>
+	                        <span class="order_price">Total price: {{order.payment}}</span>
+	                        <span class="date_stamp">Date: {{order.dateStamp}}</span>
+	                    </div>
+                    </div>
+                    <div ng-click="show = !show" class="prod_overlay" style="width: 100%;height: 100%;position: absolute;top: 0;"></div>
+                    
+            <!-- Product Modal --> 
+        <div ng-show="show" id="order_prod_modal" class="modal" >
+            <div class="order_prod_modal_container">
+                <div class="prod_modal_content" >
+                	<!-------------- Order title ----------------->
+                    <i class="fa fa-shopping-cart" aria-hidden="true" style="font-size: 50px;margin-right: 25px;"></i>
                     <div class="order_details">
 	                    <div class="order_idprods">
 		                    <span class="order_id">Order ID: {{order.orderId}}</span>
 		                    <div class="order_prods">
 		                        <span class="order_prod">{{order.productsArray}}</span></br>
-		                      
 		                    </div>
 		                 </div>
-	                    <div class="order_pricedate" data-ng-controller="CustomerController">
+		                 
+	                    <div class="order_pricedate">
+	                        <span class="order_price">{{order.cartSize}} products</span>
 	                        <span class="order_price">Total price: {{order.payment}}</span>
 	                        <span class="date_stamp">Date: {{order.dateStamp}}</span>
 	                    </div>
                     </div>
+                    <img class="close" src="images/close_icon.png" onclick="close_modal()" ng-click="show=!show"/>
+
+					<!-------------- Order product list ----------------->      
+                    <div id="prods" class="col-md-10 col-sm-8 col-xs-12 table_wrapper" >
+			          	<ul class="row list" id="PrintAllProducs" data-ng-repeat="prod in order.products">
+			                <li id="{{prod.id}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" >
+			                    <div class="img_container">
+			                        <img src="{{prod.imagePath}}" alt="" />
+			                    </div>
+			                    <div class="prod_details">
+			                        <div class="prod_titlecat">          
+			                            <span class="prod_title">{{prod.name}}</span>
+			                            <span class="prod_cat">{{prod.type}}</span>
+			                        </div>
+			                        <span class="prod_price">{{prod.price}}$</span>
+			                    </div>
+			                </li>
+			            </ul> 
+			        </div>
+        
+
+                </div>
+            </div>
+        </div>
+                    
+                    
                 </li>
             </ul>
         </div>
-    </div>
+
+        
+        
     </div>
   
+        
+        
+
+    </div>
 
     <!------------- Javascript --------------->
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
@@ -489,28 +430,18 @@
 	        } 
         
             // Get the modals
-            var login_modal = document.getElementById('login_modal');
-            var signup_modal = document.getElementById('signup_modal');
-            var prod_modal = document.getElementById('prod_modal');
+            var order_prod_modal = document.getElementById('order_prod_modal');
             var cart_modal = document.getElementById('cart_modal');
             var about_modal = document.getElementById('about_modal');
             var contact_modal = document.getElementById('contact_modal');
             var account_modal = document.getElementById('account_modal');
             
             // Get the buttons that opens the modals
-            var login_btn = document.getElementById("login");
-            var signup_btn = document.getElementById("signup");
             var prod_over = document.getElementsByClassName("prod_overlay");
             var prod_det = document.getElementsByClassName("prod_details");
             var cart_btn = document.getElementById("cart");
 
             // When the user clicks on the buttons, open the modals
-            login_btn.onclick = function () {
-                login_modal.style.display = "block";
-            }
-            signup_btn.onclick = function () {
-                signup_modal.style.display = "block";
-            }
             cart_btn.onclick = function () {
                 cart_modal.style.display = "block";
             }
@@ -532,15 +463,15 @@
             	contact_modal.style.display = "block";
             });
             
-            $("#prods").on('click', prod_over, function(e) {
+            $("#orders").on('click', prod_over, function(e) {
            		if (e.target.className == "prod_overlay") {
-           			prod_modal.style.display = "block";
+           			order_prod_modal.style.display = "block";
            		}
            		else if(e.target.className == "prod_overlay_title ng-binding") { 
-           			prod_modal.style.display = "block";
+           			order_prod_modal.style.display = "block";
            		}
            		else if(e.target.className == "prod_overlay_cat ng-binding") { 
-           			prod_modal.style.display = "block";
+           			order_prod_modal.style.display = "block";
            		}	
            		else {  		
            		}	
@@ -548,7 +479,7 @@
             
             $("#PrintAllProducs").on('click', prod_det, function(e) {
            		if (e.target.className == "prod_details") {
-           			prod_modal.style.display = "block";
+           			order_prod_modal.style.display = "block";
            		}
            		else {  		
            		}	
@@ -561,48 +492,17 @@
             
             // When the user clicks on (x), close the modals
             function close_modal() {
-            	prod_modal.style.display = "none";
+            	order_prod_modal.style.display = "none";
             	cart_modal.style.display = "none";
-            	signup_modal.style.display = "none";
-            	login_modal.style.display = "none";
-            	login_msg.style.display = "none";  
-            	signup_msg.style.display = "none";
             	about_modal.style.display = "none";
             	contact_modal.style.display = "none";
-            	account_modal.style.display = "none";
-            }
-
-            
-            function goto_signup(){
-            	login_modal.style.display = "none";
-            	signup_modal.style.display = "block";
-            }
-             
-            
-            var login_msg = document.getElementById("login_msg");
-			var signup_msg = document.getElementById("signup_msg");
-
-		
-            function show_signup_msg () {
-                signup_msg.style.display = "block";   
-            }
-            
-            function show_login_msg () {
-                login_msg.style.display = "block";   
+           
             }
 
             
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function (event) {
-                if (event.target == login_modal) {
-                    login_modal.style.display = "none";
-                }
-                if (event.target == signup_modal) {
-                    signup_modal.style.display = "none";
-                }
-                if (event.target == prod_modal) {
-                    prod_modal.style.display = "none";
-                }
+ 
                 if (event.target == cart_modal) {
                     cart_modal.style.display = "none";
                 }
@@ -744,59 +644,18 @@
         });
     </script>
     
-    <script type="text/javascript">
-    var nonLinearSlider = document.getElementById('price_slider');
-
-    noUiSlider.create(nonLinearSlider, {
-        connect: true,
-        behaviour: 'tap',
-        start: [0, 800],
-        tooltips: true,
-        //format: wNumb({
-        //    decimals: 0
-        //}),
-        range: {
-            // Starting at 500, step the value by 500,
-            // until 4000 is reached. From there, step by 1000.
-            'min': [0, 5],
-            '10%': [50, 10],
-            '50%': [400, 50],
-            'max': [800]
-        }
-    });
-    
-     
-   	var nodes = [
-             	document.getElementById('value-lower'), // 0
-             	document.getElementById('value-upper') // 1
-             ];
-
-	nonLinearSlider.noUiSlider.on('update', function( values, handle ) {
-		nodes[handle].innerHTML = values[handle];
-		min_price = $("#value-lower").html();
-		max_price = $("#value-upper").html();
-	});
-
-	function returnMinPrice(){
-		return min_price;
-	}
-	function returnMaxPrice(){
-		return max_price;
-	}
-    </script>
     
     <script type="text/javascript">
     var CustomerAccountApp = angular.module("CustomerAccountApp", []);
 
     CustomerAccountApp.controller("CustomerAccountController", function($scope, $window, $http, $rootScope,$location){
     	
-    	
-    	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer";
-
-    	
+    	$scope.baseUrl =$location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer" ;
     	$scope.reverse =true ; 
 		$scope.bool = true ;
+		$scope.CustomerOrderProducts=[] ;
 
+		
 		$scope.customerSession = function(){
     		url = $scope.baseUrl+"/customerSession" ; 
     		$http.get(url).then(
@@ -812,12 +671,11 @@
     					if(response.data.message=="You'r not looged in"){
     						$window.location.href = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/" ;
     					}
-    					
     				});
     	}
 
     	$scope.getProductByName = function(){
-    		url = $scope.restUrl + "/getProductByName/"+ $scope.name;
+    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -825,12 +683,10 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-    		
-    		
     	}
     	
     	$scope.getProductArrayById = function(giveme){
-    		url = $scope.restUrl + "/getProductArrayById/"+ giveme;
+    		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -842,24 +698,18 @@
     		
     	}
     	
-
-    	$scope.test = function(){
-    		url = $scope.restUrl + "/getAllCustomerOrdersById/";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.CustomerOrders = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    	}
-    	
+    
     	
     	$scope.getAllCustomerOrdersById = function(){
-    	
-    		$http.get("http://localhost:8080/stuff.web/rest/customer/getAllCustomerOrdersById").then(
+    		url = $scope.baseUrl + "/getAllCustomerOrdersById/" ;
+    		$http.get(url).then(
     				function(response){
-    					$scope.CustomerOrders = response.data;
+    					$scope.orders = response.data;
+    			/* 		  for (var i=0; i<$scope.CustomerOrders.length; i++) {
+    						  $scope.CustomerOrderProducts.push($scope.CustomerOrders[i].products) ;
+    					    }
+    			
+    					$scope.CustomerOrderProducts ; */
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
@@ -867,8 +717,32 @@
     		
     	}
     	
+    	$scope.bindOrderId=function(orderId) {
+    			$scope.orederId =orderId  ; 
+    			return $scope.orederId ;
+    	}
+    	
+	 	$scope.getOrderByOrderId = function(){
+	 		$scope.customerOrederId = $scope.bindOrderId();
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl +"/getOrderByOrderId/",
+		        data : $scope.customerOrederId ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+		     
+		        	},
+		    }).then(function mySuccess(response) {
+		    	$scope.customerOrder = response.data;
+		    }, function myError(response) {
+		    	
+		    });
+		 	}
+    	
+	 	
     	$scope.addToCart = function(prodIdNum){
-    		url = $scope.restUrl + "/addToCart/" + prodIdNum ;
+    		url = $scope.baseUrl + "/addToCart/" + prodIdNum ;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -881,7 +755,7 @@
     	}
 
     	$scope.getCartSum = function(){
-    		url = $scope.restUrl + "/getCartSum";
+    		url = $scope.baseUrl + "/getCartSum";
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -907,7 +781,7 @@
 
     	
     	$scope.removeFromCart = function(removeIdNum){
-    		url = $scope.restUrl + "/removeFromCart/" + removeIdNum;
+    		url = $scope.baseUrl + "/removeFromCart/" + removeIdNum;
     		$http.get(url).then(
     				function(response){
     					$scope.getCart();
@@ -920,7 +794,7 @@
     	}
     	
     	$scope.getCart = function(){
-    		url = $scope.restUrl + "/getCart" ;
+    		url = $scope.baseUrl + "/getCart" ;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -933,7 +807,7 @@
     	}
     	
     	$scope.checkOut = function(){
-    		url = $scope.restUrl + "/checkOut" ;
+    		url = $scope.baseUrl + "/checkOut" ;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -948,7 +822,7 @@
     	
 
     	$scope.ClearCart = function(){
-    		url = $scope.restUrl + "/ClearCart/" ;
+    		url = $scope.baseUrl + "/ClearCart/" ;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -963,7 +837,7 @@
     	
 
     	$scope.logout = function(){
-    		url = $scope.restUrl + "/logout";
+    		url = $scope.baseUrl + "/logout";
     		$http.get(url).then(
     				function(response){
     					$scope.infomessage = response.data.message ;

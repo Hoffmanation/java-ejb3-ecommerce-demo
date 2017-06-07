@@ -23,7 +23,7 @@
 	    <header id="admin_header">
 	
 	        <div class="login_btns">
-	            <a id="login" class="uppearcase" href="index.html">Back to MyStuff</a>
+	            <a id="login" class="uppearcase" ng-click="logout()">Back to MyStuff</a>
 	        </div>
 	
 	        <div id="side_logo">
@@ -51,22 +51,22 @@
                         
                         <div class="action_forms">
 	                        <div id="create_prod" class="action_form visible">
-	                        	<input id="prod_name_input" type="text" placeholder="Name" />
-	                        	<textarea id="prod_desc_input" placeholder="Desc" rows="4"></textarea>
+	                        	<input id="prod_name_input" type="text" placeholder="Name" ng-model="name"/>
+	                        	<textarea id="prod_desc_input" placeholder="Desc" rows="4" ng-model="description"></textarea>
 	                        	<select id="prod_type_input">
 								  <option disabled selected>Choose a category</option>
-								  <option value="Appliances" >Appliances</option>
-								  <option value="Clothing">Clothing</option>
-								  <option value="Decoration">Decoration</option>
-								  <option value="Furniture">Furniture</option>
-								  <option value="Music">Music</option>
-								  <option value="Sport">Sport</option>
-								  <option value="Technology">Technology</option>
+								  <option value="Appliances" ng-model="type">Appliances</option>
+								  <option value="Clothing" ng-model="type">Clothing</option>
+								  <option value="Decoration" ng-model="type">Decoration</option>
+								  <option value="Furniture" ng-model="type">Furniture</option>
+								  <option value="Music" ng-model="type">Music</option>
+								  <option value="Sport" ng-model="type">Sport</option>
+								  <option value="Technology" ng-model="type">Technology</option>
 								</select>
-								<input id="prod_price_input" type="text" placeholder="Price" />
-								<input id="prod_stock_input" type="text" placeholder="Stock" />
-								<input id="prod_image_input" type="file" name="img" accept="image/*">
-								<button id="add_prod_btn" onclick="">Create Product</button>
+								<input id="prod_price_input" type="text" placeholder="Price" ng-model="price" />
+								<input id="prod_stock_input" type="text" placeholder="Stock" ng-model="stock" />
+								<input id="uploadedFile" type="file" name="uploadedFile" accept="image/*" ng-model="imagePath"  ng-file-model="files" ng-file-select="onFileSelect($files)">
+								<button id="add_prod_btn" ng-click="createProduct()" >Create Product</button>
 	                        </div>
 	                        <div id="update_prod" class="action_form">
 	                        	create product
@@ -97,8 +97,8 @@
                         </table>
                         
                     </div>
-    </div>
-
+   		 </div>
+	</div>
     <!------------- Javascript --------------->
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
@@ -193,142 +193,71 @@
     <script type="text/javascript">
     var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
 
-    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope){
+    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope,$location){
     	
     	
-    	$scope.restUrl = "http://localhost:8080/stuff.web/rest/customer";
-    	$scope.email = "";
-    	$scope.password = "";
-    	$scope.sum = "";
-    	$scope.id = "";
-    	$scope.signupbad ="";
-    	$scope.signupgood ="";
-    	//-------------------------------------------------
-    	$scope.name ="";
-    	$scope.description ="";
-    	$scope.imagePath ="";
-    	$scope.price = "";
-    	$scope.protype = "";
-    	$scope.quantity = "";
-    	$scope.conformation = "";
-    	$scope.cartAmount = "0";
-    	$scope.infomessage = "";
-    	$scope.errormessage = "";
-    	$scope.loginbad = "";
-    	$scope.logingood = "";
-    	$scope.searchPro = "";
-    	$scope.PrintAllProducts = [] ; 
-    	$scope.PrintMyOrders = [] ; 
-    	$scope.PrintAllProductByPriceEx = [] ; 
-    	$scope.PrintAllProductByPriceChe = [] ; 
-    	$scope.PrintAllProductsByType = [] ; 
-    	$scope.PrintAllCustomerOrdersById = [] ;
-    	$scope.PrintAllProductsById = [] ;
-    	$scope.PrintAllsearches = [] ; 
-    	$scope.PrintAllsearchesByPriceRange = [] ;  
-    	$scope.PrintCart = [];
-    	$scope.min_price = $window.min_price;
-    	$scope.max_price = $window.max_price;
-    	$scope.productID = "";
-		$scope.bool = true ;
-		
-		
+    	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/admin";
+    	
+        $scope.uploadImage = function(){
+       	 url = $scope.baseUrl+"/uploadImage" ; 
+   		 var f = document.getElementById('uploadedFile').files[0] ;
+            var fd = new FormData();
+            fd.append('uploadedFile', f); 
+           $http.post(url, fd, {
+              transformRequest: angular.identity,
+              headers: {'Content-Type': undefined}
+           })
+           .success(function(){
+           })
+           .error(function(){
+           });
+        }
+        
+	 	$scope.createProduct = function(){
+	 		var f = document.getElementById('uploadedFile').files[0] ;
+			var name = $scope.name ;
+			var description = $scope.description ; 
+			var imagePath = f.name 
+			var type = "MUSIC"; 
+			var price = $scope.price ; 
+			var stock = $scope.stock ; 
+			
+		 	var productDetails = {name , description, imagePath, type, price, stock} ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl +"/createProduct/",
+		        data : productDetails,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+		        	},
+		    }).then(function mySuccess(response) {
+		    	  $scope.uploadImage(); 
+		    	$scope.createProductMessage = response.data;
+			
 
-    	$scope.login = function(){
-    		url = $scope.restUrl+"/login/"+ $scope.email +"/" + $scope.password;
-    		$http.get(url).then(
-    				function(response){
-				$scope.logingood = response.data.message;
-    					if ($scope.logingood=="true"){
-    						$scope.getMyinfo();
-    						$scope.logingood = response.data.message;
-    						jQuery('#modal_content').slideUp(function(){
-        						jQuery('#login_modal').hide();
-        							jQuery('.login_btns').hide();
-        							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + $scope.logingood + '!</div>');
-        					});		
-    						
-    					}
-    				
-    					
-    				}, function(response){
-    					$scope.logingood = "*Please fill all the empty fields";
-    				
-    				});
+		    }, function myError(response) {
+		    	$scope.createProductMessage = response.data;
+		    });
+		 	}
+			
 
-    	}
-    	
-    	
-    	$scope.getMyinfo = function(){
-    		url = $scope.restUrl+"/getMyinfo" ; 
-    		$http.get(url).then(
-    				function(response){
-    					$scope.logingood = response.data.message;
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
+		
+   
+         
        	$scope.getAllProducts = function(){
-    		url = $scope.restUrl+"/getAllProducts" ; 
+    		url = $scope.baseUrl+"/getAllProducts" ; 
     		$http.get(url).then(
     				function(response){
     					$scope.PrintAllProducts = response.data ;
-    					
     				}, function(response){
     					$scope.errormessage = response.data.message;
-    					
-    				});
-    		
-    		
-    	}
-    	
-    	
-    	
-    	
-    	$scope.signUp = function(){
-    		url = $scope.restUrl+"/signUp/" + $scope.name +"/" + $scope.f_name +"/"+ $scope.password+"/"+ $scope.secondPassword+"/"+$scope.email ;
-    		$http.post(url).then(
-    				function(response){
-    					$scope.signupgood = response.data.message;
-    					if ($scope.signupgood=="true") {
-    					$scope.getMyinfo();
-						$scope.infomessage = response.data.message;
-    					jQuery('#signup_modal .modal_content').slideUp(function(){
-    						jQuery('#signup_modal').hide();
-    							jQuery('.login_btns').hide();
-    							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + $scope.infomessage	 + '! and thank you for registered to Mystuff©</div>');
-    							
-    					});	
-    				}
-    				}, function(response){
-    					$scope.signupgood = "*Please fill all the empty fields";
     				});
     	}
-    
 
-
-    	
-
-    	$scope.updateCustomer = function(){
-    		url = $scope.restUrl + "/updateCustomer/"+ $scope.name +"/"+ $scopre.password +"/"+ $scopre.email;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
+       	
     	$scope.getProductByName = function(){
-    		url = $scope.restUrl + "/getProductByName/"+ $scope.name;
+    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -336,12 +265,10 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-    		
-    		
     	}
     	
     	$scope.getProductArrayById = function(giveme){
-    		url = $scope.restUrl + "/getProductArrayById/"+ giveme;
+    		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
     		console.log(url);
     		$http.get(url).then(
     				function(response){
@@ -352,76 +279,10 @@
     		
     		
     	}
-    	
-    	
 
-    	$scope.getAllProductByPriceEx = function(){
-    		url = $scope.restUrl + "/getAllProductByPriceEx/";
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-   
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx; 
-        					$scope.PrintAllProducts = response.data ;
 
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-    	$scope.getAllProductByPriceChe = function(){
-    
-    		url = $scope.restUrl + "/getAllProductByPriceChe/";
-    		$http.get(url).then(
-    				function(response){
-    					if ($scope.bool==true){
-    						$scope.getAllProductByPriceEx();
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx;
-    						$scope.bool = false;
-    					}
-    					else{
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceChe; 
-        					$scope.PrintAllProducts = response.data ;
-        					$scope.bool = true;
-    					}
-    					
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-    	
-    	$scope.getAllProductsByType = function(){
-    		url = $scope.restUrl + "/getAllProductsByType/"+$scope.Type;
-    		$http.get(url).then(
-    				function(response){
-    					if(url == "http://localhost:8080/stuff.web/rest/customer/getAllProductsByType/false") {
-    						$scope.getAllProducts();
-    						$scope.PrintAllProducts = response.data;
-    						
-    					}
-    					else {
-    					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
-    					$scope.PrintAllProducts = response.data;
-    						
-    					}
-    				}, function(response){
-    				
-    				});
-    		
-    		
-    	}
-    	
-    	
-    	
     	$scope.getAllCustomerOrdersById = function(){
-    		url = $scope.restUrl + "/getAllCustomerOrdersById/";
+    		url = $scope.baseUrl + "/getAllCustomerOrdersById/";
     		$http.get(url).then(
     				function(response){
     					$scope.PrintAllCustomerOrdersById = response.data;
@@ -431,113 +292,10 @@
     		
     		
     	}
-    	
-    	$scope.addToCart = function(prodIdNum){
-    		url = $scope.restUrl + "/addToCart/" + prodIdNum ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProducts = response.data;
-    				}, function(response){
-    					$scope.PrintAllProducts = response.data;
-    				});
-    		
-    		
-    	}
 
-    	$scope.getCartSum = function(){
-    		url = $scope.restUrl + "/getCartSum";
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.sum = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
 
-    	$scope.getCartsize = function(){
-    		url = $scope.restUrl + "/getCartsize";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.cartAmount = response.data.message;
-    					if($scope.cartAmount == 0){
-    						jQuery("<h2 id="+"empty_msg"+">Your cart is empty!</h2>").insertAfter(".cart_table");
-    						jQuery("#checkout_btn").prop('disabled', true).css("background-color","lightgrey");
-    	            	}
-    	            	else {
-    	            		jQuery("#empty_msg").remove();
-    	            		jQuery("#checkout_btn").prop('disabled', false).css("background-color","#e0452b");;
-    					}
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-
-    	
-    	$scope.removeFromCart = function(removeIdNum){
-    		url = $scope.restUrl + "/removeFromCart/" + removeIdNum;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.getCartSum();
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-
-    	}
-    	
-    	$scope.getCart = function(){
-    		url = $scope.restUrl + "/getCart" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	$scope.checkOut = function(){
-    		url = $scope.restUrl + "/checkOut" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.conformation = response.data.message;
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-
-    	$scope.ClearCart = function(){
-    		url = $scope.restUrl + "/ClearCart/" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
- 
     	$scope.searchProductByName = function(){
-    		
-    		url = $scope.restUrl + "/searchProductByName/" + $scope.searchPro ;
+    		url = $scope.baseUrl + "/searchProductByName/" + $scope.searchPro ;
     		$http.get(url).then(
     				function(response){
     					$scope.PrintAllProducts = $scope.PrintAllsearches; 
@@ -549,29 +307,12 @@
     				});
     		
     	}
-    	
-    	$scope.searchProductByPrice = function(){
-    		$scope.min_price = returnMinPrice();
-    		$scope.max_price = returnMaxPrice();
 
-    		url = $scope.restUrl + "/searchProductByPrice/" + $scope.min_price + "/" + $scope.max_price ;
-    		$http.get(url).then(
-    				function(response){	
-    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
-    					$scope.PrintAllProducts = response.data ;
-
-    				}, function(response){
-    					$scope.getAllProducts();
-						$scope.PrintAllProducts = response.data;
-    				});
-    		
-    	}
- 	
     	$scope.logout = function(){
-    		url = $scope.restUrl + "/logout";
+    		url = $scope.baseUrl + "/logout";
     		$http.get(url).then(
     				function(response){
-    					$scope.infomessage = response.data.message ;
+    					$window.location.href ='index.html';
     				}, function(response){
     					$scope.errormessage = "Please log in first ! ";
     				});

@@ -1,8 +1,6 @@
 package myStuff.Pojo.Jpa;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,7 +15,7 @@ import javax.persistence.Table;
 @Table(name = "CUSTOMER_ORDER")
 
 @NamedQueries({
-		@NamedQuery(name = "getOrderByCustomerId", query = "SELECT c FROM Customer_order AS c WHERE c.customerId = :customerId"),
+	
 		@NamedQuery(name = "getAllCustomersOrder", query = "SELECT c FROM Customer_order AS c ORDER BY C.orderId asc"),
 })
 

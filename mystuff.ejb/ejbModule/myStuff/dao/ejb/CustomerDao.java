@@ -22,6 +22,8 @@ public interface CustomerDao {
 
 	public List<Order> getCustomerOrderById(int CustomerId);
 	
+	public List<Order> getOrderByOrderId(int orderId);
+	
 	public List<Product> getCurrProducts(List<Product> currProd,ProType type);
 
 	public boolean login(String email, String password);

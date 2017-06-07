@@ -16,11 +16,11 @@ public interface AdminDao {
 	
 	public Customer createCustomer(Customer customer) throws MyStuffException;
 	
-	public Product createProduct(Product product) throws MyStuffException;
+	public boolean createProduct(Product product) throws MyStuffException;
 
 	public Product createProduct(String name, String description, String imagePath, int price, ProType protype,int quantity)throws MyStuffException;
 
-	public Product updateProduct(int id, String description, String imagePath, int price, int quantity)throws MyStuffException;
+	public boolean updateProduct(int id, String description, String imagePath, int price, int quantity)throws MyStuffException;
 
 	public boolean removeProduct(int id)throws MyStuffException;
 	

@@ -74,24 +74,14 @@ public class CustomerDaoBean implements CustomerDao, Serializable {
 
 	@Override
 	public List<Order> getCustomerOrderById(int CustomerId) {
-		Customer_order orderObj = null;
-		Order o = null;
-		List<Order> myOrders = null;
-		List<Customer_order> customerOrder = em.createNamedQuery("getOrderByCustomerId", Customer_order.class)
-				.setParameter("customerId", CustomerId).getResultList();
-		myOrders = new ArrayList<>();
-		for (Customer_order tempObj : customerOrder) {
-			orderObj = tempObj;
-			break;
-		}
-		List<Order> orders = em.createNamedQuery("getAllOrders", Order.class).getResultList();
-		for (Order order : orders) {
-			if (order.getCustomerId() == orderObj.getCustomerId()) {
-				o = order;
-				myOrders.add(o);
-			}
-		}
-		return myOrders;
+		List<Order> customerOrder = em.createNamedQuery("getOrderByCustomerId", Order.class).setParameter("customerId", CustomerId).getResultList();
+		return customerOrder;
+	}
+	
+	@Override
+	public List<Order> getOrderByOrderId(int orderId) {
+		List<Order> customerOrder = em.createNamedQuery("getOrderByOrderId", Order.class).setParameter("orderId", orderId).getResultList();
+		return customerOrder;
 	}
 
 	@Override

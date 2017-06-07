@@ -45,7 +45,7 @@ public class MyStuffApp {
 	public void init() {
 		try {
 		// -- products
-		Product lenovo = new Product("Levono Edge 2 I7", 200, ProType.TECHNOLOGY,
+		Product lenovo = new Product("Lenovo Edge 2 I7", 200, ProType.TECHNOLOGY,
 				"Levono - Edge 2 15.6\" 2-in-1 Touch-Screen Laptop - Intel Core i7 - 8GB Memory - 1TB Hard Drive",
 				"images/computer.jpg", 10,0);
 		Product hp = new Product("HP Color Laser Jet 1025NW w/2", 22, ProType.TECHNOLOGY,

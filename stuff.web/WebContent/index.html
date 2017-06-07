@@ -136,6 +136,18 @@
         <a id="browse_stuff" class="uppearcase" href="#products_container">
             Browse stuff
         </a>
+        
+         <!-- Admin Modal -->
+        <div id="admin_modal" class="modal">
+            <div class="modal_content">
+                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+                <h2 class="uppearcase spaced">Admin Login</h2>
+                 <input type="text" placeholder="Username"  data-ng-model="email" style="margin-top:35px;" />
+                <input type="password" placeholder="Password" data-ng-model="password"/>
+                <div id="login_msg">{{AdminLoginMessage}}</div>
+                 <button id="login_btn" data-ng-click="adminLogin()" onclick="show_login_msg()">Login</button>
+            </div>
+        </div>
 
         <!-- Login Modal -->
         <div id="login_modal" class="modal">
@@ -147,7 +159,8 @@
 
                 <div id="remember_me">
                     <input type="checkbox" id="c0" /><label for="c0"><span></span>Remember me</label>
-                    <a href="#">Forgot my password</a>
+                    <a href="#">Forgot my password</a>                
+                    <a href="#" id="admin" style="margin-right: 92px;">Admin login</a>
                 </div>
 				<div id="login_msg">{{loginMessage}}</div>
 				
@@ -165,6 +178,10 @@
                 <button id="create_acc_btn" onclick="goto_signup()">Create Account</button>
             </div>
         </div>
+
+
+
+
 
         <!-- Signup Modal -->
         <div id="signup_modal" class="modal">
@@ -623,6 +640,7 @@
             var cart_modal = document.getElementById('cart_modal');
             var about_modal = document.getElementById('about_modal');
             var contact_modal = document.getElementById('contact_modal');
+            var contact_modal = document.getElementById('admin_modal');
             
             // Get the buttons that opens the modals
             var login_btn = document.getElementById("login");
@@ -630,6 +648,7 @@
             var prod_over = document.getElementsByClassName("prod_overlay");
             var prod_det = document.getElementsByClassName("prod_details");
             var cart_btn = document.getElementById("cart");
+            var admin_btn = document.getElementById("admin");
 
             // When the user clicks on the buttons, open the modals
             login_btn.onclick = function () {
@@ -640,6 +659,10 @@
             }
             cart_btn.onclick = function () {
                 cart_modal.style.display = "block";
+            }
+            admin_btn.onclick = function () {
+            	admin_modal.style.display = "block";
+            	 login_modal.style.display = "none";
             }
             
          	// Side nav > my account link
@@ -696,6 +719,7 @@
             	signup_msg.style.display = "none";
             	about_modal.style.display = "none";
             	contact_modal.style.display = "none";
+            	admin_modal.style.display = "none";
             	
             }
 
@@ -739,6 +763,9 @@
                 }
                 if (event.target == about_modal) {
                 	contact_modal.style.display = "none";
+                }
+                if (event.target == admin_modal) {
+                	admin_modal.style.display = "none";
                 }
             }
 
@@ -902,37 +929,10 @@
     <script type="text/javascript">
     var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
 
-    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location){
+    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location ,$timeout){
     	
     	
     	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer";
-    	
-/*     	$scope.sum = "";
-    	$scope.id = "";
-    	//-------------------------------------------------
-    
-    	$scope.description ="";
-    	$scope.imagePath ="";
-    	$scope.price = "";
-    	$scope.protype = "";
-    	$scope.quantity = "";
-    	$scope.conformation = "";
-    	$scope.cartAmount = 0 ;
-    	$scope.infomessage = "";
-    	$scope.errormessage = "";
-    	$scope.loginbad = "";
-    	$scope.logingood = "";
-    	$scope.searchPro = "";
-    	$scope.PrintAllProducts = [] ; 
-    	$scope.PrintMyOrders = [] ; 
-    	$scope.PrintAllProductByPriceEx = [] ; 
-    	$scope.PrintAllProductByPriceChe = [] ; 
-    	$scope.PrintAllProductsByType = [] ; 
-    	$scope.PrintAllCustomerOrdersById = [] ;
-    	$scope.PrintAllProductsById = [] ;
-    	$scope.PrintAllsearches = [] ; 
-    	$scope.PrintAllsearchesByPriceRange = [] ;  
-    	$scope.PrintCart = []; */
 
     	$scope.cartAmount =0 ;
     	$scope.reverse =true ; 
@@ -1017,6 +1017,7 @@
 					$scope.customerSession();
 				});		
 			}
+		
 			else {
 				$scope.loginMessage = $scope.loginMessage.message ;
 			}
@@ -1057,6 +1058,39 @@
 		 	}
 	 	
 
+
+		 	$scope.adminLogin = function(){
+				var email = $scope.email ;
+				var password = $scope.password ; 
+			 	var credentials = {email , password} ;
+				$http({
+			        method : "POST",
+			        url : $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/admin/login",
+			        data : credentials,
+			        headers: {
+			        	'Content-Type': 'application/json',
+			        	'Accept': 'application/json',
+			     
+			        	},
+			    }).then(function mySuccess(response) {
+			    	$scope.adminLoginMessage = response.data;
+					if ($scope.adminLoginMessage.flag==true){
+						jQuery('#admin_modal .modal_content').slideUp(function(){
+							jQuery('#login_modal').hide();
+						});	
+						
+					    $timeout(function () {
+					    	$window.location.href ='admin.html';	
+					    }, 1000);
+					}
+					$scope.adminLoginMessage = response.data.message;
+			    }, function myError(response) {
+			    	$scope.adminLoginMessage = "*Please fill all the empty fields";
+			    });
+			 	}
+		    
+		    
+		    
        	$scope.getAllProducts = function(){
     		url = $scope.baseUrl+"/getAllProducts" ; 
     		$http.get(url).then(
@@ -1237,7 +1271,7 @@
     	$scope.checkOut = function(){
     		url = $scope.baseUrl + "/checkOut" ;
     		$http.get(url).then(
-    				function(response){
+    				function(response){		
     					$scope.cartMessage = response.data.message;
     				}, function(response){
     					$scope.errormessage = response.data.message;

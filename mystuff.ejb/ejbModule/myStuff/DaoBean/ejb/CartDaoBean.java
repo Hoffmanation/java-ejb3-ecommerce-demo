@@ -85,7 +85,7 @@ public class CartDaoBean implements CartDao, Serializable {
 			Order tempOrder = null;
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Date date = new Date();
-			tempOrder = new Order(cust.getId(), dateFormat.format(date), getCartSum(), getCart());
+			tempOrder = new Order(cust.getId(), dateFormat.format(date), getCartSum(), getCart(),getCartsize());
 			Customer_order association = new Customer_order();
 			association.setCustomerId(cust.getId());
 			association.setOrderId(tempOrder.getOrderId());

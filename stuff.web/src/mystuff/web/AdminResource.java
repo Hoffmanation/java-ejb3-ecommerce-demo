@@ -1,9 +1,14 @@
 package mystuff.web;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 
 import javax.ejb.EJB;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
@@ -16,16 +21,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import myStuff.DaoBean.ejb.ProType;
+import myStuff.Pojo.Jpa.CustomMessage;
 import myStuff.Pojo.Jpa.Customer;
-import myStuff.Pojo.Jpa.Customer_order;
-import myStuff.Pojo.Jpa.Message;
+import myStuff.Pojo.Jpa.LoginModel;
 import myStuff.Pojo.Jpa.Order;
 import myStuff.Pojo.Jpa.Product;
+import myStuff.Pojo.Jpa.ProductDetail;
 import myStuff.dao.ejb.AdminDao;
+import myStuff.service.util.MyStuffException;
 
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,219 +42,163 @@ public class AdminResource {
 
 	@EJB
 	private AdminDao adminf;
-	HttpSession session;
 
-	// working plus exception
-	@GET
-	@Path("/login/{name}/{password}")
+	@POST
+	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Message login(@PathParam("name") String name, @PathParam("password") String password,
-			@Context HttpServletRequest request) throws Exception {
-		try {
-			if (adminf.login(name, password)) {
-				session = request.getSession(true);
-				session.setAttribute("adminf", adminf);
-				return new Message("Logged in as administrator ");
-			} else {
-				adminf = null;
-				session.invalidate();
-			}
-		} catch (Exception e) {
-			return new Message("Invalid password or username, Please try again");
+	public Response login(LoginModel loginModel, @Context HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession(true);
+		if (adminf.login(loginModel.getEmail(), loginModel.getPassword())) {
+			session.setAttribute("admin", loginModel.getEmail());
+			return Response.status(200).entity(new CustomMessage("Welcome Administrator.", true, loginModel.getEmail()))
+					.build();
+		} else {
+			session.invalidate();
+			return Response.status(200)
+					.entity(new CustomMessage("Invalid password or username, Please try again", false, null)).build();
 		}
-		return null;
 
 	}
 
-	// working ? exception
+/*	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Path("/uploadImage")
+	public boolean CopyImageToFoldar( MultipartFile file, @Context HttpServletRequest request) throws IOException {
+		String[] type = file.getContentType().split("/") ;
+		InputStream fileInputStream = new BufferedInputStream(file.getInputStream());
+		BufferedImage img = ImageIO.read(fileInputStream);
+		if (ImageIO.write(img,type[1] , new File("/WebContent/images/"+file.getOriginalFilename()))) {
+			return true;
+		}
+		return false;
+	}*/
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/createProduct/{name}/{description}/{imagePath}/{price}/{protype}/{quantity}")
-	public Message createProduct(@PathParam("name") String name, @PathParam("description") String description,
-			@PathParam("imagePath") String imagePath, @PathParam("price") int price,
-			@PathParam("protype") String protype, @PathParam("quantity") int quantity,
-			@Context HttpServletRequest request) throws Exception {
-		ProType newType = ProType.valueOf(protype.toUpperCase());
-		try {
-			adminf.createProduct(name, description, imagePath, price, newType, quantity);
-			return new Message("A new product was added to the site!");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Message("Server error! ");
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/createProduct")
+	public Response createProduct(ProductDetail product, @Context HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		if (adminf.createProduct(new Product(product.getName(), product.getPrice(), product.getType(),
+				product.getDescription(), product.getImagePath(), product.getStock(), 0))) {
+			return Response.status(200)
+					.entity(new CustomMessage("A new product added succssesfully", true, "" + product.getName()))
+					.build();
 		}
+		return Response.status(200).entity(new CustomMessage("Product was not added!", false, "" + product.getName()))
+				.build();
 	}
 
-	// working plus exception
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/updateProduct/{productId}/{name}/{description}/{imagePath}/{price}/{protype}/{quantity}")
-	public Message updateProduct(@PathParam("productId") int productId, @PathParam("name") String name,
-			@PathParam("description") String description, @PathParam("imagePath") String imagePath,
-			@PathParam("price") int price, @PathParam("protype") String protype, @PathParam("quantity") int quantity,
-			@Context HttpServletRequest request) throws Exception {
-		try {
-				ProType newType = ProType.valueOf(protype.toUpperCase());
-				adminf.updateProduct(productId, description, imagePath, price, quantity);
-				return new Message("Product #" + productId + ", " +name + "has been updated ");
-
-		} catch (Exception e) {
-			return new Message("Please insert all parameters accordingly !");
+	@Path("/updateProduct")
+	public Response updateProduct(int productId, String name, String description, String imagePath, int price,
+			String protype, int quantity, @Context HttpServletRequest request) throws Exception {
+		if (adminf.updateProduct(productId, description, imagePath, price, quantity)) {
+			return Response.status(200).entity(new CustomMessage("Product #" + productId + " was updated", true, ""))
+					.build();
 		}
+		return Response.status(200).entity(new CustomMessage("Product #" + productId + " was not updated", false, ""))
+				.build();
 	}
 
-	// working plus exception
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/removeProduct/{productId}")
-	public Message removeProduct(@PathParam("productId") int productId, @Context HttpServletRequest request)
-			throws Exception {
-		try {
-			Product tempProduct = adminf.getProductById(productId);
-			if (tempProduct.getName() != null) {
-				adminf.removeProduct(productId);
-				return new Message(
-						"Product #" + productId + ", " + tempProduct.getName() + " has been removed from the site");
-			}
-		} catch (Exception e) {
-			return new Message("Product #" + productId + " douse't exist, Please insert a valid id number !");
+	@Path("/removeProduct")
+	public Response removeProduct(int productId, @Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		if (adminf.removeProduct(productId)) {
+			return Response.status(200)
+					.entity(new CustomMessage("Product # " + adminf.getProductById(productId).getId() + " was removed",
+							true, new Date().toGMTString()))
+					.build();
+		} else {
+			return Response.status(200)
+					.entity(new CustomMessage(
+							"Product # " + adminf.getProductById(productId).getId() + " was not removed!", false,
+							new Date().toGMTString()))
+					.build();
 		}
-		return null;
+
 	}
 
-
-
-	// working ? exception
-	@GET
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getProductById/{id}")
-	public Product getProductById(@PathParam("id") int id, @Context HttpServletRequest request) {
-		try {
-			Product product = adminf.getProductById(id);
-			if (product.getName() != null) {
-				return product;
-			}
-		} catch (Exception e) {
-			new Message("Product #" + id + " douse't exist, Please insert a valid id number !");
-		}
-		return null;
+	@Path("/getProductById")
+	public Response getProductById(int productId, @Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		return Response.status(200).entity(adminf.getProductById(productId)).build();
 	}
 
-
-	// working ? exception
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getAllCutsomers")
-	public Customer[] getAllCutsomers(@Context HttpServletRequest request) {
-		try {
-			List<Customer> customers = adminf.getAllCutsomers();
-			if (!customers.isEmpty()) {
-				return customers.toArray(new Customer[0]);
-			} else {
-				throw new Exception();
-			}
-		} catch (Exception e) {
-			new Message("There are no customers registered in Mystuff's systems right now ");
-		}
-		return null;
+	public Response getAllCutsomers(@Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		return Response.status(200).entity(adminf.getAllCutsomers().toArray(new Customer[0])).build();
+
 	}
 
-	// working ? exception
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getCustomerByName/{name}")
-	public Customer getCustomerByName(@PathParam("name") String name, @Context HttpServletRequest request) {
-		try {
-			Customer customer = adminf.getCustomerByName(name);
-			WordUtils.capitalize(customer.getName());
-			return customer;
-		} catch (Exception e) {
-			new Message("No such customer registered in Mystuff systems !");
-		}
-		return null;
+	public Customer getCustomerByName(@PathParam("name") String name, @Context HttpServletRequest request)
+			throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		return adminf.getCustomerByName(name);
 	}
 
-
-
-	// working ? exception
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getOrderById/{id}")
-	public Order getOrderById(@PathParam("id") int id, @Context HttpServletRequest request) {
-		try {
-			Order order = adminf.getOrderById(id);
-			if (order.getOrderId() != 0) {
-				return order;
-			}
-		} catch (Exception e) {
-			new Message("Order #" + id + " douse't exist, Please insert a valid id number !");
-		}
-		return null;
+	public Order getOrderById(@PathParam("id") int id, @Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		return adminf.getOrderById(id);
 	}
 
-	// working plus exception
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/removeCustomer/{id}")
-	public Message removeCustomer(@PathParam("id") int id, @Context HttpServletRequest request) {
-
-		try {
-				adminf.removeCustomer(id);
-				return new Message(
-						"Customer #" + id +" has been removed from the site");
-		} catch (Exception e) {
-			return new Message("Customer #" + id + " douse't exist, Please insert a valid id number ");
+	@Path("/removeCustomer/")
+	public Response removeCustomer(int customerId, @Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		if (adminf.removeCustomer(customerId)) {
+			return Response.status(200).entity(new CustomMessage("Customer #" + customerId + " was deleted", true, ""))
+					.build();
+		} else {
+			return Response.status(200)
+					.entity(new CustomMessage("Customer #" + customerId + " was not deleted!", true, "")).build();
 		}
 	}
 
-	// working plus exception
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getCustomerById/{id}")
-	public Message getCustomerById(@PathParam("id") int id, @Context HttpServletRequest request) {
-		try {
-			Customer tempCustomer = adminf.getCustomerById(id);
-			if (tempCustomer.getName() != null) {
-				return new Message(tempCustomer.toString());
-			}
-		} catch (Exception e) {
-			return new Message("Customer #" + id + " douse't exist, Please insert a valid id number ");
-		}
-		return null;
-	}
-
-
-	//working plus exception
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getCustomerOrderById/{customerId}")
-	public Message getCustomerOrderById(@PathParam("customerId") int customerId, @Context HttpServletRequest request) {
-		try {
-			List<Customer_order> customerOrder = adminf.getCustomerOrderById(customerId);
-			if (!customerOrder.isEmpty()) {
-				return new Message("Customer's order/s: " + customerOrder.toString());
-			}
-			else {
-				return new Message("No order is associated with Customer #" + customerId);
-			}
-		} catch (Exception e) {
-			return new Message("No order is associated with Customer #" + customerId);
-		}
-
+	@Path("/getCustomerById}")
+	public Customer getCustomerById(int customerId, @Context HttpServletRequest request) throws MyStuffException {
+		HttpSession session = request.getSession(false);
+		session.getAttribute("admin");
+		return adminf.getCustomerById(customerId);
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/logout")
-	public Message logout(@Context HttpServletRequest request) throws Exception {
-		session = request.getSession(false);
-
-		if (session != null) {
+	public Response logout(@Context HttpServletRequest request) throws Exception {
+		HttpSession session = request.getSession(false);
+		try {
 			session.invalidate();
 			request = null;
-			return new Message("Logged out successfully, goodbye administrator");
-		}
-		else {
-		return new Message("Your are not looged in ! ");
+			return Response.status(200).entity(new CustomMessage("Admin logout successfully", true, "")).build();
+		} catch (Exception e) {
+			return Response.status(200).entity(new CustomMessage("Admin is not logged in ! ", false, "")).build();
 		}
 	}
+
 }

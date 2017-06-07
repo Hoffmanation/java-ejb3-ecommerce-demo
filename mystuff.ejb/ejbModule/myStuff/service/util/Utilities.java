@@ -1,12 +1,20 @@
 package myStuff.service.util;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
 
 import myStuff.Pojo.Jpa.Customer;
 import myStuff.dao.ejb.UtilDao;
@@ -35,5 +43,8 @@ public class Utilities implements UtilDao, Serializable {
 				}
 			return false ;
 			}
+
+	
+
 
 }

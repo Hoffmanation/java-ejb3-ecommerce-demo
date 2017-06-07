@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "CUSTOMERS")
 
 @NamedQueries({ @NamedQuery(name = "getAllCustomers", query = "SELECT c FROM Customer AS c ORDER BY c.id asc"),
-		@NamedQuery(name = "getCustomerByName", query = "SELECT c FROM Customer AS c WHERE c.name = :name"),
+		@NamedQuery(name = "getCustomerByName", query = "SELECT c FROM Customer AS c WHERE UPPER(c.name) LIKE :name"),
 		@NamedQuery(name = "getCustomerByEmail", query = "SELECT c FROM Customer AS c WHERE c.email = :email"),
 		@NamedQuery(name = "getCustomerById", query = "SELECT c FROM Customer AS c WHERE c.id = :id"),
 		@NamedQuery(name = "login", query = "SELECT c FROM Customer AS c WHERE c.password = :password AND c.email = :email"),

@@ -30,6 +30,7 @@ import org.hibernate.validator.HibernateValidator;
 @NamedQueries({
 @NamedQuery(name="getAllOrders" , query="SELECT o FROM Order  AS o ORDER BY o.orderId ASC"),
 @NamedQuery(name="getOrderByOrderId" , query="SELECT o FROM Order  AS o WHERE o.orderId = :orderId"),
+@NamedQuery(name="getOrderByCustomerId" , query="SELECT o FROM Order  AS o WHERE o.customerId = :customerId"),
 
 })
 public class Order implements Serializable{
@@ -43,19 +44,19 @@ public class Order implements Serializable{
 	private double payment ; 
 	private List<Product> products ; 
 	private String productsArray ; 
-	
+	private int cartSize ;
 	public Order() {
 		
 	}
 
-	public Order(int customerId,String dateStamp,double payment, List<Product>products) {
+	public Order(int customerId,String dateStamp,double payment, List<Product>products, int cartSize) {
 		super();
 		this.orderId = Counter++;
 		this.dateStamp = dateStamp;
 		this.payment=payment;
 		this.products = products ; 
 		this.customerId=customerId ; 
-		
+		this.cartSize = cartSize ;
 	}
 	
 	public Order(int customerId,String dateStamp,double payment, String productsArray) {
@@ -123,6 +124,14 @@ public class Order implements Serializable{
 
 	public void setProductsArray(String productsArray) {
 		this.productsArray = productsArray;
+	}
+
+	public int getCartSize() {
+		return cartSize;
+	}
+
+	public void setCartSize(int cartSize) {
+		this.cartSize = cartSize;
 	}
 
 	@Override
