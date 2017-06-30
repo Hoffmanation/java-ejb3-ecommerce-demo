@@ -58,7 +58,7 @@
     
     <!-- User account Modal -->
     <div id="account_modal" class="modal">
-        <div class="modal_content" style="max-width:960px">
+        <div class="modal_content">
             <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
             <h2 class="uppearcase spaced">My Account</h2>
             <table class="cart_table" >
@@ -73,7 +73,7 @@
                 <tr class="cart_row" data-ng-repeat="product in PrintCart">
                     <td class="td_prod">
                         <div>
-                            <img src="{{product.imagePath}}" alt="" />
+                            <img src="{{product.imagePath}}" alt="" /></img> 
                         </div>
                         <div>
                             <span>{{product.name}}</span>
@@ -89,7 +89,7 @@
                                         <span class="glyphicon glyphicon-minus"></span>
                                     </button>
                                 </span>
-                                <input type="text" name="quant[1]" class="form-control input-number" value="1" min="1" max="10">
+                                <input type="number" name="quant[1]" class="form-control input-number" value="1" min="1" max="99">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
                                         <span class="glyphicon glyphicon-plus"></span>
@@ -120,7 +120,7 @@
         <div class="login_btns">
             <a id="login" class="uppearcase" ng-show="loginBtnShow()" ng-click="cleanUpCredentials()">Login</a>
             <a id="signup" class="uppearcase" ng-show="signupBtnShow()" ng-click="cleanUpCredentials()">Sign up</a>
-            <a id="login" class="uppearcase" style="margin-left: 200px;" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a>
+            <a id="logout" class="uppearcase" style="margin-left: 200px;" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a>
         </div>
 
         <div id="banner">
@@ -144,7 +144,7 @@
                 <h2 class="uppearcase spaced">Admin Login</h2>
                  <input type="text" placeholder="Username"  data-ng-model="email" style="margin-top:35px;" />
                 <input type="password" placeholder="Password" data-ng-model="password"/>
-                <div id="login_msg">{{AdminLoginMessage}}</div>
+                <div id="login_msg">{{adminLoginMessage}}</div>
                  <button id="login_btn" data-ng-click="adminLogin()" onclick="show_login_msg()">Login</button>
             </div>
         </div>
@@ -260,7 +260,7 @@
                                         <span class="glyphicon glyphicon-minus"></span>
                                     </button>
                                 </span>
-                                <input type="text" name="quant[1]" class="form-control input-number" value="1" min="1" max="10">
+                                <input type="number" name="quant[1]" class="form-control input-number" value="1" min="1" max="99">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
                                         <span class="glyphicon glyphicon-plus"></span>
@@ -294,13 +294,14 @@
         <!---------------------- Options bar ------------------------>
         <div id="options_bar" class="col-lg-12 ">
             <div class="row">
-                <div class="col-md-2 col-sm-4 col-xs-5">
-                    <span class="items_found">6</span> items found
+                <div class="col-md-2 col-sm-4 col-xs-3">
+                    <span class="items_found"></span>
+                    <span id="items_found_a">items</span>
                 </div>
-                <div class="col-md-9 col-sm-6 col-xs-5">
+                <div class="col-md-9 col-sm-6 col-xs-6">
                     Sort by <a data-ng-click="getAllProductByPriceChe()" class="price_sort"><span>Price</span><i id="sort_by_price" class="fa fa-arrow-up" aria-hidden="true"></i></a>
                 </div>
-                <div class="col-md-1 col-sm-2 col-xs-2">
+                <div class="col-md-1 col-sm-2 col-xs-3">
                     <img src="images/gridview_on.png" alt="" class="grid" /><img src="images/listview_off.png" alt="" class="list" />
                 </div>
             </div>
@@ -358,7 +359,7 @@
                                         <span class="glyphicon glyphicon-minus"></span>
                                     </button>
                                 </span>
-                                <input type="text" name="quant[1]" class="form-control input-number" value="{{product.quantity}}" min="1" max="10" >
+                                <input type="number" name="quant[1]" class="form-control input-number" value="1" min="1" max="99" >
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
                                         <span class="glyphicon glyphicon-plus"></span>
@@ -441,14 +442,27 @@
     <script src="js/nouislider.min.js"></script>
 
 
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
     var min_price;
     var max_price;
     var enlarge = document.getElementsByClassName("enlarge_prod_img");
     //var prod_counter = 0;
 
+    if ($(window).width() < 960) {
+            	  $("button.add_to_cart_btn").html("+").width("5px");
+            	  $("span.prod_cat").hide();
+            	  $(".cart_row .td_prod span:nth-child(2)").hide();
+            	  $("i.enlarge_prod_img").hide();
+            	  $("#prod_modal .close").prependTo(".prod_modal_container");
+            	}
+    
         $(document).ready(function () {
             $(this).scrollTop(0);
+			
+            if ($(window).width() < 960) {
+            	  $("span#items_found_a").html(" ");
+            	  
+            	}
 
             
             $("#prod_modal").on("click", ".tabs_nav li", function(e) {
@@ -931,9 +945,12 @@
 
     MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location ,$timeout){
     	
-    	
+   
+        
+    	 
     	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer";
 
+    	
     	$scope.cartAmount =0 ;
     	$scope.reverse =true ; 
 		$scope.bool = true ;
@@ -949,9 +966,14 @@
 	    	$scope.name ="";
 	    	$scope.f_name ="";
 	    	$scope.secondPassword ="";
+	    	$scope.adminLoginMessage ="" ;
+	    	$scope.loginMessage ="" ;
+	    	$scope.signupMessage ="" ;
 		}
 		
-		
+		$scope.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+	 
+	
 		$scope.myAccountShow = function () {
 		    return $scope.myAccountKey ;
 		};
@@ -959,6 +981,7 @@
 		$scope.logoutBtnShow = function () {
 		    return $scope.logoutBtnKey ;
 		}; 
+		
 		$scope.loginBtnShow = function () {
 		    return $scope.loginBtnKey ;
 		}; 
@@ -985,7 +1008,7 @@
     						$scope.myAccountKey = false;
     					}
     				}, function(response){   
-    					if(response.data.message=="You'r not looged in"){
+    					if(response.data.message=="*You'r not looged in"){
     						$scope.logoutBtnKey = false;
     						$scope.loginBtnKey = true;
     						$scope.signupBtnKey = true;
@@ -1014,6 +1037,7 @@
 				jQuery('#login_modal .modal_content').slideUp(function(){
 					jQuery('#login_modal').hide();
 					jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +$scope.loginMessage.additionalAtt + '!</div>');
+					jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +$scope.loginMessage.additionalAtt + '!</div>');
 					$scope.customerSession();
 				});		
 			}
@@ -1034,6 +1058,7 @@
 			var secondPassword = $scope.secondPassword ; 
 			var email = $scope.email ;
 		 	var credentials = {name,f_name,password,secondPassword,email} ;
+		 	
 			$http({
 		        method : "POST",
 		        url : $scope.baseUrl +"/signUp/",
@@ -1044,11 +1069,12 @@
 		     
 		        	},
 		    }).then(function mySuccess(response) {
-		    	$scope.signupMessage = response.data;
-				if ($scope.signupMessage.flag==true){
+		    	$scope.signupMessage = response.data.message;
+				if (response.data.flag==true){
 					jQuery('#signup_modal .modal_content').slideUp(function(){
 						jQuery('#signup_modal').hide();
-							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + $scope.signupMessage.additionalAtt + '! and thank you for registered to Mystuff©</div>');
+							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + response.data.additionalAtt + '! and thank you for registered to Mystuff©</div>');
+							jQuery('#logout').attr("style","margin-left: 600px;");
 							$scope.customerSession();
 					});		
 				}
@@ -1060,6 +1086,8 @@
 
 
 		 	$scope.adminLogin = function(){
+		 		if($scope.isMobile!=true){
+		 			
 				var email = $scope.email ;
 				var password = $scope.password ; 
 			 	var credentials = {email , password} ;
@@ -1073,20 +1101,24 @@
 			     
 			        	},
 			    }).then(function mySuccess(response) {
-			    	$scope.adminLoginMessage = response.data;
-					if ($scope.adminLoginMessage.flag==true){
+			    	$scope.adminLoginMessage = response.data.message;
+					if (response.data.flag==true){
 						jQuery('#admin_modal .modal_content').slideUp(function(){
 							jQuery('#login_modal').hide();
 						});	
 						
 					    $timeout(function () {
 					    	$window.location.href ='admin.html';	
-					    }, 1000);
+					    }, 500);
 					}
-					$scope.adminLoginMessage = response.data.message;
 			    }, function myError(response) {
 			    	$scope.adminLoginMessage = "*Please fill all the empty fields";
 			    });
+		 		}
+		 		else {
+		 			
+		 			$scope.adminLoginMessage = "*Canot access Admin Console from this device." ;
+		 		}
 			 	}
 		    
 		    

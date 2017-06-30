@@ -50,6 +50,8 @@
                         </div>
                         
                         <div class="action_forms">
+                        
+                         <!--Create a Product  -->
 	                        <div id="create_prod" class="action_form visible">
 	                        	<input id="prod_name_input" type="text" placeholder="Name" ng-model="name"/>
 	                        	<textarea id="prod_desc_input" placeholder="Desc" rows="4" ng-model="description"></textarea>
@@ -68,35 +70,59 @@
 								<input id="uploadedFile" type="file" name="uploadedFile" accept="image/*" ng-model="imagePath"  ng-file-model="files" ng-file-select="onFileSelect($files)">
 								<button id="add_prod_btn" ng-click="createProduct()" >Create Product</button>
 	                        </div>
+	                        
+	                        <!--Update Product  -->
 	                        <div id="update_prod" class="action_form">
 	                        	create product
 	                        </div>
-	                        <div id="remove_prod" class="action_form">
-	                        	create product
+	                        
+	                        <!--Remove Product  -->
+	                        <div id="remove_prod" class="action_form" ng-init="getAllProducts()">
+				                 <table class="cart_table" >
+				                <tr class="cart_titles">
+				                    <th></th>
+				                    <th>#</th>
+				                    <th>name</th>
+				                    <th>price</th>
+				                    <th>type</th>
+				                </tr>
+				                <tr class="cart_row" data-ng-repeat="prod in PrintAllProducts">
+				                    <td class="td_prod">
+				                        <div>
+				                        <img src="{{prod.imagePath}}"></img>
+				                            <span>{{prod.id}}</span>
+				                            <span>{{prod.name}}</span>
+				                            <span>{{prod.price}}</span>
+				                            <span>{{prod.type}}</span>
+				                        </div>
+				                    </td>
+				                </tr>
+				            </table>
 	                        </div>
                         </div>
-                        
                     </div>
-                    <div id="cust_mng" class="admin_tabs">
-                        
-                        <table class="cust_list">
-                        	<tr>
-	                        	<th>#</th>
-	                        	<th>Name</th>
-	                        	<th>Email</th>
-	                        	<th>Password</th>
-	                        	<th>Delete</th>
-                        	</tr>
-                        	<tr>
-	                        	<td></td>
-	                        	<td></td>
-	                        	<td></td>
-	                        	<td></td>
-	                        	<td></td>
-                        	</tr>
-                        </table>
-                        
-                    </div>
+                    
+                    <!--Manage Customers  -->
+                    <div id="cust_mng" class="admin_tabs" ng-init="getAllCutsomers()">
+		              	<table class="cart_table" >
+			                <tr class="cart_titles">
+			                    <th>#</th>
+			                    <th>name</th>
+			                    <th>Password</th>
+			                    <th>Email</th>
+			                </tr>
+			                <tr class="cart_row" data-ng-repeat="cust in PrintAllCustomers">
+			                    <td class="td_prod">
+			                        <div>
+			                            <span>{{cust.id}}</span>
+			                            <span>{{cust.name}} {{cust.f_name}}</span>
+			                            <span>{{cust.password}}</span>
+			                            <span>{{cust.email}}</span>
+			                        </div>
+			                    </td>
+			                </tr>
+		            </table>
+			</div>
    		 </div>
 	</div>
     <!------------- Javascript --------------->
@@ -145,7 +171,7 @@
 	        }
 	        evt.currentTarget.className += " selected_action";
 
-	        if(evt.currentTarget == $(".actions_list ul li:first-of-type")){
+	        if(actionName == 'createProd'){
 	        	$("#create_prod").show();
 	        	$("#create_prod").switchClass(" ", "visible");
 	        	$("#update_prod").hide();
@@ -153,7 +179,7 @@
 	        	$("#remove_prod").hide();
 	        	$("#remove_prod").switchClass(" visible", " ");
 	        }
-        	else if(evt.currentTarget == $(".actions_list ul li:nth-of-type(2)")){
+        	else if(actionName == 'updateProd'){
 	        	$("#create_prod").hide();
 	        	$("#create_prod").switchClass(" visible", " ");
 	        	$("#update_prod").show();
@@ -217,7 +243,7 @@
 	 		var f = document.getElementById('uploadedFile').files[0] ;
 			var name = $scope.name ;
 			var description = $scope.description ; 
-			var imagePath = f.name 
+			var imagePath = "http://oren-hoffman.com/mystuff/"+f.name 
 			var type = "MUSIC"; 
 			var price = $scope.price ; 
 			var stock = $scope.stock ; 
@@ -244,10 +270,20 @@
 
 		
    
+     	$scope.getAllCutsomers = function(){
+    		url = $scope.baseUrl+"/getAllCutsomers" ; 
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllCustomers = response.data ;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    	}
+     	
          
        	$scope.getAllProducts = function(){
     		url = $scope.baseUrl+"/getAllProducts" ; 
-    		$http.get(url).then(
+    		$http.get($location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/stuff.web/rest/customer/getAllProducts").then(
     				function(response){
     					$scope.PrintAllProducts = response.data ;
     				}, function(response){
@@ -256,16 +292,7 @@
     	}
 
        	
-    	$scope.getProductByName = function(){
-    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
+
     	
     	$scope.getProductArrayById = function(giveme){
     		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
@@ -280,34 +307,7 @@
     		
     	}
 
-
-    	$scope.getAllCustomerOrdersById = function(){
-    		url = $scope.baseUrl + "/getAllCustomerOrdersById/";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllCustomerOrdersById = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-
-
-    	$scope.searchProductByName = function(){
-    		url = $scope.baseUrl + "/searchProductByName/" + $scope.searchPro ;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProducts = $scope.PrintAllsearches; 
-    					$scope.PrintAllProducts = response.data ;
-
-    				}, function(response){
-    					$scope.getAllProducts();
-						$scope.PrintAllProducts = response.data;
-    				});
-    		
-    	}
-
+ 
     	$scope.logout = function(){
     		url = $scope.baseUrl + "/logout";
     		$http.get(url).then(

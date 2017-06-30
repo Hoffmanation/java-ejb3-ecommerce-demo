@@ -55,24 +55,10 @@ public class AdminResource {
 		} else {
 			session.invalidate();
 			return Response.status(200)
-					.entity(new CustomMessage("Invalid password or username, Please try again", false, null)).build();
+					.entity(new CustomMessage("*Invalid password or username, Please try again", false, null)).build();
 		}
 
 	}
-
-/*	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Path("/uploadImage")
-	public boolean CopyImageToFoldar( MultipartFile file, @Context HttpServletRequest request) throws IOException {
-		String[] type = file.getContentType().split("/") ;
-		InputStream fileInputStream = new BufferedInputStream(file.getInputStream());
-		BufferedImage img = ImageIO.read(fileInputStream);
-		if (ImageIO.write(img,type[1] , new File("/WebContent/images/"+file.getOriginalFilename()))) {
-			return true;
-		}
-		return false;
-	}*/
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)

@@ -136,7 +136,7 @@ h2 {
 	height: 100%; /* 100% Full-height */
 	width: 250px; /* 0 width - change this with JavaScript */
 	position: fixed; /* Stay in place */
-	z-index: 99; /* Stay on top */
+	z-index: 101; /* Stay on top */
 	top: 0;
 	left: -250px;
 	background-color: #111;
@@ -266,7 +266,7 @@ header {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	text-align: center;
-	max-width: 60%;
+	max-width: 75%;
 }
 
 #banner img {
@@ -282,7 +282,7 @@ header {
 	-webkit-border-radius: 30px;
 	height: 65px;
 	width: 600px;
-	padding: 25px 35px 25px 35px;
+	padding: 25px;
 	color: #fff;
 	font-size: 20px;
 	max-width: 100%;
@@ -313,6 +313,8 @@ header {
 	left: 40px;
 }
 
+
+
 #welcome_msg {
 	position: absolute;
 	font-size: 20px;
@@ -327,7 +329,7 @@ header {
 	color: #fff;
 }
 
-#login {
+#login, #logout {
 	background-color: #e0452b;
 	padding: 10px 25px 10px 25px;
 	border-radius: 50px;
@@ -482,7 +484,7 @@ header {
 	-webkit-border-radius: 50px;
 	width: 100%;
 	margin-bottom: 10px;
-	padding: 15px 25px 15px 25px;
+	padding: 10px;
 }
 
 .modal_content textarea:focus, input:focus {
@@ -811,8 +813,8 @@ to {
 	background: #222;
 	padding-left: 12px;
 	padding-right: 12px;
-	padding-bottom: 6px;
-	padding-top: 6px;
+	padding-bottom: 7px;
+	padding-top: 7px;
 	vertical-align: middle;
 	border-radius: 100%;
 	-webkit-border-radius: 100%;
@@ -1456,7 +1458,7 @@ to {
 }
 
 .table_wrapper{
-	overflow:auto;
+	overflow:scroll;
 	max-height:85%;
 	margin-top:30px;
 	margin-bottom: 15px;
@@ -1854,6 +1856,18 @@ to {
 /* ------------------------MEDIA------------------------- */
 
 @media all and (max-width: 768px) {
+	.input-group {
+	    width: 85px;
+	}
+
+.table_wrapper::-webkit-scrollbar {
+	    width: 30px;
+	}
+	
+	.table_wrapper::-webkit-scrollbar-thumb {
+	    border: 12px white solid;
+	}
+		
 	.nav_right {
 		margin-top: 20px;
 	}
@@ -1868,11 +1882,106 @@ to {
 		width: 100% !important;
 	}
 	.modal_content {
-		padding: 60px 30px !important;
+		padding: 40px 30px !important;
 		max-width: 100%;
 		height: 100vh;
 		-webkit-border-radius: 0px;
 		-moz-border-radius: 0px;
 		border-radius: 0px;
+	}	
+	.login_btns {
+		top: 35px;
+		left: 25px;
 	}
+	#banner input {
+	font-size: 14px;
+}
+#prods .list li .prod_details{
+	    font-size: 12px;
+	    padding-right:15px;
+}
+.prod_titlecat{
+	width:120px;
+}
+#prods .list li .prod_details{
+	    padding-left: 120px!important;
+}
+#prods .list li .prod_pricebtns .wishlist_icon, #prods .list li .prod_pricebtns .add_to_cart_btn{
+	    margin-left: 8px;
+}
+#prods .list li .prod_pricebtns .prod_price{
+	    font-size: 18px;
+}
+
+#prod_modal .prod_modal_container, #order_prod_modal .order_prod_modal_container {
+	position: relative;
+	font-family: 'Lato', sans-serif;
+	background-color: #fefefe;
+	width: 100%;
+	top:0;
+	transform: initial;
+	margin: 0 auto;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.5s;
+	overflow: auto;
+	min-height: 100vh;
+}
+
+.order_prod_modal_container{
+	padding: 50px;
+	overflow-y: scroll;
+}
+
+#prod_modal .prod_modal_container .prod_img, #order_prod_modal .order_prod_modal_container .prod_img {
+	width: 100%;
+	height: 250px;
+	display: block;
+	overflow-x: hidden;
+	text-align: center;
+}
+
+#prod_modal .prod_modal_container .prod_img img {
+	min-height: 125%;
+    margin: 0 -100%;
+    z-index: 2;
+    position: relative;
+    min-width: 100%;
+}
+#prod_modal .prod_modal_container .prod_modal_content {
+	width: 100%;
+	display: block;
+	position: absolute;
+	padding: 35px;
+	z-index: 1;
+}
+#prod_modal .prod_modal_container .close {
+	top: 15px!important;
+	right: 25px!important;
+    z-index: 999;
+    background: white;
+    padding: 15px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+}
+#prod_modal .prod_modal_container .prod_modal_content>h2 {
+    margin-top:0px;
+}
+#prod_modal .prod_modal_container .prod_modal_content .prod_actions>* {
+    margin-right: 20px;
+}
+
+.table_wrapper{
+    margin-right: -28px;
+}
+#cart_modal .modal_content {
+    min-height: 100vh;
+}
+.cart_table .cart_row .td_prod {
+    width: 48%;
+}
 }

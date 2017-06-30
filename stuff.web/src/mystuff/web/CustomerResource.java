@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,7 +43,8 @@ public class CustomerResource {
 
 	@EJB
 	private CustomerDao custf;
-	private static Customer customer = null;
+	
+	private  Customer customer = null;
 
 	@GET
 	@Path("/customerSession")
@@ -53,7 +55,9 @@ public class CustomerResource {
 		try {
 			return Response.status(200).entity(session.getAttribute("custf")).build();
 		} catch (Exception e) {
-			return Response.status(404).entity(new CustomMessage("You'r not looged in", false, null)).build();
+			request = null;
+			customer = null;
+			return Response.status(404).entity(new CustomMessage("*You'r not looged in", false, "SessionIsDead")).build();
 		}
 	}
 
@@ -92,17 +96,21 @@ public class CustomerResource {
 	@POST
 	@Path("/signUp")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response signUp(SignupModel signupModel, @Context HttpServletRequest request,
+	public Response signUp(@NotNull SignupModel signupModel, @Context HttpServletRequest request,
 			@Context HttpServletResponse response) throws Exception {
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession(false);
 		session.getAttribute("custf");
 		if (signupModel.getPassword().equals(signupModel.getSecondPassword())) {
-			String msg = custf.signUp(signupModel.getName(), signupModel.getF_name(), signupModel.getPassword(),
-					signupModel.getEmail());
-			login(new LoginModel(signupModel.getEmail(), signupModel.getPassword()), request);
-			return Response.status(200).entity(new CustomMessage(msg, true, customer.getName())).build();
+			String msg = custf.signUp(signupModel.getName(), signupModel.getF_name(), signupModel.getPassword(),signupModel.getEmail());
+			if(msg=="You have succssfully loged in !"){
+				login(new LoginModel(signupModel.getEmail(), signupModel.getPassword()), request);
+				return Response.status(200).entity(new CustomMessage(msg, true, signupModel.getName())).build();
+			}
+			else {
+				return Response.status(200).entity(new CustomMessage(msg, false, signupModel.getName())).build();
+			}
 		}
-		return Response.status(404).entity(new CustomMessage("*Looks like these posswords don’t match", false, null))
+		return Response.status(200).entity(new CustomMessage("*Looks like these posswords don’t match", false, null))
 				.build();
 	}
 
@@ -121,7 +129,8 @@ public class CustomerResource {
 			@PathParam("password") String password, @PathParam("email") String email, @PathParam("phone") String phone,
 			@Context HttpServletRequest request) throws MyStuffException {
 		HttpSession session = request.getSession(false);
-		session.getAttribute("custf");
+		Object customerObject = session.getAttribute("custf");
+		customer = (Customer) customerObject ;
 		if (custf.updateCustomer(customer, password, email)) {
 			return new Message("Your acount detail has been updated successfully! ");
 		}
@@ -163,7 +172,8 @@ public class CustomerResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Order[] getCustomerOrderById(@Context HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
-		session.getAttribute("custf");
+		Object customerObject = session.getAttribute("custf");
+		customer = (Customer) customerObject ;
 		return custf.getCustomerOrderById(customer.getId()).toArray(new Order[0]);
 	}
 	
@@ -227,7 +237,8 @@ public class CustomerResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Message chackOut(@Context HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession(false);
-		session.getAttribute("custf");
+		Object customerObject = session.getAttribute("custf");
+		customer = (Customer) customerObject ;
 		CartDao cart = getStubFromSession(request);
 		if (cart.getCartsize() != 0) {
 			if (customer != null) {
