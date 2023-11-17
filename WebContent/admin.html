@@ -1,0 +1,323 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>MyStuff: Admin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<link href="images/favicon.png" rel="icon" type="image/png" />
+    <link href="https://fonts.googleapis.com/css?family=Varela" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
+    <link href="css/nouislider.min.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/respond.min.js"></script>
+
+</head>
+<body>
+	<div id="admin_main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" >
+
+    <!------------------------ HEADER ------------------------->
+	    <header id="admin_header">
+	
+	        <div class="login_btns">
+	            <a id="login" class="uppearcase" ng-click="logout()">Back to MyStuff</a>
+	        </div>
+	
+	        <div id="side_logo">
+	            <img src="images/logo_dark.png" alt="" class="img-responsive" />          
+	        </div>
+	 	</header>
+
+        <div id="admin_wrapper" class="">
+                <h2 class="uppearcase spaced">Welcome, Admin!</h2>
+                <ul class="admin_nav">
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_mng');">Manage Products</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'cust_mng');">Manage Customers</a></li>
+                        <li class="slider"></li>
+                    </ul>
+
+                    <div id="prod_mng" class="admin_tabs">
+                        
+                        <div class="actions_list">
+                        	<ul>
+	                        	<li class="actionlink selected_action" onclick="openAction(event, 'createProd');">Create a Product</li>
+	                        	<li class="actionlink" onclick="openAction(event, 'updateProd');">Update a Product</li>
+	                        	<li class="actionlink" onclick="openAction(event, 'removeProd');">Remove a Product</li>
+                        	</ul>
+                        </div>
+                        
+                        <div class="action_forms">
+                        
+                         <!--Create a Product  -->
+	                        <div id="create_prod" class="action_form visible">
+	                        	<input id="prod_name_input" type="text" placeholder="Name" ng-model="name"/>
+	                        	<textarea id="prod_desc_input" placeholder="Desc" rows="4" ng-model="description"></textarea>
+	                        	<select ng-model="type"  id="prod_type_input">
+								  <option disabled selected>Choose a category</option>
+								  <option value="Appliances" >Appliances</option>
+								  <option value="Clothing" >Clothing</option>
+								  <option value="Decoration" >Decoration</option>
+								  <option value="Furniture" >Furniture</option>
+								  <option value="Music" >Music</option>
+								  <option value="Sport" >Sport</option>
+								  <option value="Technology" >Technology</option>
+								</select>
+								<input id="prod_price_input" type="number" placeholder="Price" ng-model="price" />
+								<input id="prod_stock_input" type="number" placeholder="Stock" ng-model="stock" />
+								<input id="uploadedFile" type="file" name="uploadedFile" accept="image/*" ng-model="imagePath"  ng-file-model="files" ng-file-select="onFileSelect($files)">
+								<button id="add_prod_btn" ng-click="createProduct()" >Create Product</button>
+	                        </div>
+	                        
+	                        <!--Update Product  -->
+	                        <div id="update_prod" class="action_form">
+	                        	create product
+	                        </div>
+	                        
+	                        <!--Remove Product  -->
+	                        <div id="remove_prod" class="action_form" ng-init="getAllProducts()">
+				                 <table class="cart_table" >
+				                <tr class="cart_titles">
+				                    <th></th>
+				                    <th></th>
+				                    <th></th>
+				                    <th></th>
+				                    <th></th>
+				                    <th></th>
+				                </tr>
+				                <tr class="cart_row" data-ng-repeat="prod in PrintAllProducts">
+				                    <td class="td_prod">
+				                        <div>
+				                        <img src="{{prod.imagePath}}"></img>
+				                            <span>{{prod.id}}</span>
+				                            <span>{{prod.name}}</span>
+				                            <span>{{prod.price}}</span>
+				                            <span>{{prod.type}}</span>
+				                            <td><img src="images/remove_icon.png" alt="" data-ng-click="deleteProd(prod.id)" style="margin-right: 10px;"/> </td>
+				                                     
+				                        </div>
+				                    </td>
+				                </tr>
+				            </table>
+	                        </div>
+                        </div>
+                    </div>
+                    
+                    <!--Manage Customers  -->
+                    <div id="cust_mng" class="admin_tabs" ng-init="getAllCutsomers()">
+		              	<table class="cart_table" >
+			                <tr class="cart_titles">
+			                    <th>#</th>
+			                    <th>name</th>
+			                    <th>Password</th>
+			                    <th>Email</th>
+			                </tr>
+			                
+			                <tr class="cart_row" data-ng-repeat="cust in PrintAllCustomers">
+	                            <td>{{cust.id}}</td>
+	                            <td>{{cust.name}} {{cust.f_name}}</td>
+	                            <td>{{cust.password}}</td>
+	                            <td>{{cust.email}}</td>
+			                </tr>
+		            </table>
+			</div>
+   		 </div>
+	</div>
+    <!------------- Javascript --------------->
+    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/nouislider.min.js"></script>
+
+    <script type="text/javascript"> 
+
+        $(this).scrollTop(0);
+
+        $("#admin_wrapper").on("click", ".admin_nav li", function(e) {
+          // what tab was pressed
+      	  var whatTab = $(this).index();
+      	  // How far the slider needs to go
+      	  var howFar = 193 * whatTab;
+      	  $(".slider").css({left: + howFar + "px"});          	
+     	 });
+
+       // Product description tabs setup
+       $("#prod_mng").css("display", "block");
+       
+    	function openTab(evt, tabName) {
+       	var i, x, tablinks;
+               x = document.getElementsByClassName("admin_tabs");
+               for (i = 0; i < x.length; i++) {
+                   x[i].style.display = "none";
+               }
+               tablinks = document.getElementsByClassName("tablink");
+               for (i = 0; i < x.length; i++) {
+                   tablinks[i].className = tablinks[i].className.replace(" selected_tab", "");
+               }
+               
+               document.getElementById(tabName).style.display = "block";
+               evt.currentTarget.className += " selected_tab";
+       }      
+    	
+    	// Action tabs css switch setup
+    	function openAction(evt, actionName) { 
+	      	var i, x;
+	      	x = $(".actionlink");
+	      	
+	        for (i = 0; i < x.length; i++) {
+	        	x[i].className = x[i].className.replace(" selected_action", "");
+	        }
+	        evt.currentTarget.className += " selected_action";
+
+	        if(actionName == 'createProd'){
+	        	$("#create_prod").show();
+	        	$("#create_prod").switchClass(" ", "visible");
+	        	$("#update_prod").hide();
+	        	$("#update_prod").switchClass(" visible", " ");
+	        	$("#remove_prod").hide();
+	        	$("#remove_prod").switchClass(" visible", " ");
+	        }
+        	else if(actionName == 'updateProd'){
+	        	$("#create_prod").hide();
+	        	$("#create_prod").switchClass(" visible", " ");
+	        	$("#update_prod").show();
+	        	$("#update_prod").switchClass(" ", "visible");
+	        	$("#remove_prod").hide();
+	        	$("#remove_prod").switchClass(" visible", " ");
+	        }
+        	else {
+	        	$("#create_prod").hide();
+	        	$("#create_prod").switchClass(" visible", " ");
+	        	$("#update_prod").hide();
+	        	$("#update_prod").switchClass(" visible", " ");
+	        	$("#remove_prod").show();
+	        	$("#remove_prod").switchClass(" ", "visible");
+	        }
+
+     	}
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('a[href*="#"]:not([href="#"])').click(function () {
+                if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+                    var target = $(this.hash);
+                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                    if (target.length) {
+                        $('html, body').animate({
+                            scrollTop: target.offset().top
+                        }, 1000);
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <script type="text/javascript">
+    var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
+
+    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope,$location){
+    	
+    	
+    	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/admin";
+    	
+        $scope.uploadImage = function(){
+       	 url = $scope.baseUrl+"/uploadImage" ; 
+   		 var f = document.getElementById('uploadedFile').files[0] ;
+            var fd = new FormData();
+            fd.append('uploadedFile', f); 
+           $http.post(url, fd, {
+              transformRequest: angular.identity,
+              headers: {'Content-Type': undefined}
+           })
+           .success(function(){
+           })
+           .error(function(){
+           });
+        }
+        
+	 	$scope.createProduct = function(){
+	 		var f = document.getElementById('uploadedFile').files[0] ;
+			var name = $scope.name ;
+			var description = $scope.description ; 
+			var imagePath = "images/"+f.name 
+			var type = $scope.type.toUpperCase();; 
+			var price = $scope.price ; 
+			var stock = $scope.stock ; 
+			
+		 	var productDetails = {name , description, imagePath, type, price, stock} ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl +"/createProduct/",
+		        data : productDetails,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+		        	},
+		    }).then(function mySuccess(response) {
+		    	  $scope.uploadImage(); 
+		    	$scope.createProductMessage = response.data;
+			
+
+		    }, function myError(response) {
+		    	$scope.createProductMessage = response.data;
+		    });
+		 	}
+			
+
+		
+   
+     	$scope.getAllCutsomers = function(){
+    		url = $scope.baseUrl+"/getAllCutsomers" ; 
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllCustomers = response.data ;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    	}
+     	
+         
+       	$scope.getAllProducts = function(){
+    		url = $scope.baseUrl+"/getAllProducts" ; 
+    		$http.get($location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer/getAllProducts").then(
+    				function(response){
+    					$scope.PrintAllProducts = response.data ;
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+    				});
+    	}
+
+       	
+
+    	
+    	$scope.getProductArrayById = function(giveme){
+    		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProductsById = response.data ;
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+    				});
+    		
+    		
+    	}
+
+ 
+    	$scope.logout = function(){
+    		url = $scope.baseUrl + "/logout";
+    		$http.get(url).then(
+    				function(response){
+    					$window.location.href ='index.html';
+    				}, function(response){
+    					$scope.errormessage = "Please log in first ! ";
+    				});
+    	};
+    });
+    </script>
+</body>
+</html>

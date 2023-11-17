@@ -1,0 +1,7 @@
+package com.mystuff.obj;
+
+public enum ProType {
+
+	SPORT, MUSIC , TECHNOLOGY,CLOTHING,APPLIANCES,FURNITURE,DECORATION,FALSE
+	
+}

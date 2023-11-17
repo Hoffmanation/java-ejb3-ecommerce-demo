@@ -1,0 +1,266 @@
+[
+    {
+        "quantity": 0,
+        "name": "Lenovo Edge 2 I7",
+        "price": 200,
+        "type": "TECHNOLOGY",
+        "description": "Lenovo - Edge 2 15.6\" 2-in-1 Touch-Screen Laptop - Intel Core i7 - 8GB Memory - 1TB Hard Drive",
+        "imagePath": "images/computer.jpg",
+        "stock": 10
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "HP Color Laser Jet 1025NW w/2",
+        "price": 22,
+        "type": "TECHNOLOGY",
+        "description": "Geared with HP ePrint feature, the LaserJet Pro CP1025nw printer gives an easy printing experience from any place. .",
+        "imagePath": "images/printer.jpg",
+        "stock": 10
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "VTG 70's leather motorcycle",
+        "price": 66,
+        "type": "CLOTHING",
+        "description": "Vintage motorcycle leather jacket 60's Clothing",
+        "imagePath": "images/jacket.jpg",
+        "stock": 20
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "New Portable Refrigerator",
+        "price": 200,
+        "type": "APPLIANCES",
+        "description": "New Portable Refrigerator 4 Liter Mini Cooler & Warmer, Cosmetic Fridge Pink 4 Liter Cooler & Warmer [Hot & Cold] for Cosmetic, Anywhere , for Automobile",
+        "imagePath": "images/fridge.jpg",
+        "stock": 20
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Real Hand Carved Cow Skull & Horns",
+        "price": 66,
+        "type": "DECORATION",
+        "description": "This authentic cow skull with the intricate carving was hand crafted in Bali, the \"Island of the Gods\", Indonesia. Balinese Master Artim",
+        "imagePath": "images/bull.jpg",
+        "stock": 10
+       
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Whole wood coffee table from switz wood",
+        "price": 77,
+        "type": "FURNITURE",
+        "description": "A beautifully hand made mosaic  IKEA wood table / stool / plant standStacking (if you have more than 1)Japanese styleColours: Red White Black and Mirror glass tilesSquare round star designRed iridesce",
+        "imagePath": "images/table.jpg",
+        "stock": 222
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "New Hot 9 Solid Pure Colour Lounge Couch",
+        "price": 666,
+        "type": "FURNITURE",
+        "description": "Hot Sofa Cover Stretch Slipcover Sofa Cover Removable Sofa Protector FREE Pillowcase",
+        "imagePath": "images/sofa.jpg",
+        "stock": 8
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Goplus 500W Folding Electric Treadmill",
+        "price": 500,
+        "type": "SPORT",
+        "description": "Good condition but belt does make a noise as it moves around - may be fixable but I've not really used it much despite buying for 400 a few years back! ",
+        "imagePath": "images/tread.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Yamaha U3 52'' Studio Upright Piano",
+        "price": 500,
+        "type": "MUSIC",
+        "description": "The U3 is Yamaha's full-size \"flagship\" studio upright piano. With a string length equal to many baby grand pianos, it is an ideal choice for professional, school, studio, and home use.  Yamaha U-series pianos are phenomenal choices for ",
+        "imagePath": "images/yamaha.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Xbox One S Console \"sky\" Edition",
+        "price": 260,
+        "type": "TECHNOLOGY",
+        "description": "Microsoft's Xbox One S console is sleeker and more advanced than previous models. It features 4K Ultra HD video, High Dynamic Range, a 40% smaller console, and a sleeker controller. Stream 4K content on Netflix and Amazon Instant Video",
+        "imagePath": "images/xbox.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "ClosetMaid 1608 5ft. to 8 Ft. Closet Organizer Kit, White",
+        "price": 150,
+        "type": "FURNITURE",
+        "description": "All of the 5 feet to 8 feet. Fixed Mount Closet Organizer Kits include all of the necessary pieces that you need to build the closet of your dreams. The kit includes wire shelving, brackets, closet rods, support rod, easy instalation",
+        "imagePath": "images/closet.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Vermont Castings Encore Flexburn",
+        "price": 460,
+        "type": "APPLIANCES",
+        "description": "This the oven of the highest class available in the U.S. Burning on one bookmark - up to 12 hours, will continue to heat the heat storage for a few hours after the fire goes out in the furnace. Encore model - the most popular version",
+        "imagePath": "images/heater.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Heloise Women's A-Line Sleeveless Pleated Little Cocktail Party Dress",
+        "price": 90,
+        "type": "CLOTHING",
+        "description": "This dress is made of high quality stretchy fabric. Hlose Fashion's priority is to make stylish, beautiful and durable dresses with absolutely no compromise on quality.",
+        "imagePath": "images/dress.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Adidas Originals ARD1 Low Men's Court Sneakers Shoes",
+        "price": 50,
+        "type": "CLOTHING",
+        "description": "Made with flexible canvas upper for everyday comfort Lace up front for a customizable fit Padded collar and tongue for added comfort Contrast 3-Stripes at sides for a signature look Rubber outsole for grip green colored M size",
+        "imagePath": "images/shoes.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Men Women Tree Belt Buckle Round Silver Metal 60's Item",
+        "price": 150,
+        "type": "CLOTHING",
+        "description": "Tree Silver Metal Round Belt Buckle - for everyday wear work or a fashion accessory for a party , Made from strong quality matirial",
+        "imagePath": "images/beltB.JPG",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Gold's Gym Dumbbell Power Set",
+        "price": 210,
+        "type": "SPORT",
+        "description": "Add muscle tone to your body with this Gold's Gym Dumbbell Set. The power dumbbell weight set includes one pair of 3 lb dumbbells, one pair of 5 lb weights and one pair of 8 lb weights.",
+        "imagePath": "images/bumbbell.jpeg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Cobra KING F7 ONE Length Irons golf club",
+        "price": 785,
+        "type": "SPORT",
+        "description": "The KING F7 ONE LENGTH irons debut as COBRA?s first ever single-length iron set. Inspired by rising PGA star Bryson DeChambeau",
+        "imagePath": "images/golf.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Dali's The Metamorphosis of Narcissus",
+        "price": 115,
+        "type": "DECORATION",
+        "description": "Flamboyant and groundbreaking Spanish artist Salvador Dali is considered one of the 20th century?s greatest artists. An icon of the Surrealist movement his blend of eccentric perspectives and controversial influences.",
+        "imagePath": "images/picture.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Marshall JVM 100W Stack head",
+        "price": 115,
+        "type": "MUSIC",
+        "description": "This used Marshall JVM 100W Stack head and cab combo is in Excellent condition and a real powerhouse of an amp. You've got 100 watts of blistering power here plus an incredible array of effects at hand.",
+        "imagePath": "images/marshall.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Panasonic MC-CG917 Vacuum Cleaner",
+        "price": 115,
+        "type": "APPLIANCES",
+        "description": "Clean with ease using this MC-CG917 \"bag\" canister vacuum cleaner by Panasonic. Equipped with a powerful 12 amp system, the vacuum cleaner can handle everything from a quick once over before company arrives.",
+        "imagePath": "images/vacum.jpg",
+        "stock": 1
+       
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Bronze metal lion sculpture handmade",
+        "price": 2500,
+        "type": "DECORATION",
+        "description": "This Lion sculpture hand made by the famous artist \"Magneto\" is one of only 3 he made, Quality bronze metal material will last forever ",
+        "imagePath": "images/lion.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Jacaru ?Wallaroo Suede? Hat",
+        "price": 70,
+        "type": "CLOTHING",
+        "description": "Medium Size Brown Colored  Cowhide Material Braided Leather Trim, Water Repellent Brim3 inch Shape,Aussie",
+        "imagePath": "images/hat.jpg",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "GeForce GTX 1080 Graphics Card",
+        "price": 70,
+        "type": "TECHNOLOGY",
+        "description": "Play the world and incredible definition with the GeForce GTX 1080 graphics card. Designed to cope with 4K gaming, high frame rates and exquisite detail, the Pascal GPU architecture takes the GDDR5 memory inside this card to a whole new level.",
+        "imagePath": "images/card.JPG",
+        "stock": 1
+        
+        
+    },
+    {
+        "quantity": 0,
+        "name": "Juliette Teardrop Oval Mirror",
+        "price": 55,
+        "type": "DECORATION",
+        "description": "With generous curves and a name that means ?young,? our Juliette mirror will inspire a certain flirtatious joy in anyone who gazes upon it. The antiqued frame scrolls elegantly from top to bottom, with an overall gilded appeal not unlike a royal vanity.",
+        "imagePath": "images/mirror.jpg",
+        "stock": 1
+        
+        
+    }
+]
