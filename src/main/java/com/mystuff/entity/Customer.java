@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,9 +20,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.mystuff.obj.UserRole;
+
 @Entity
 @Table(name = "customer")
-
 @NamedQueries({ @NamedQuery(name = "getAllCustomers", query = "SELECT c FROM Customer AS c ORDER BY c.cusomerId asc"),
 		@NamedQuery(name = "getCustomerByName", query = "SELECT c FROM Customer AS c WHERE UPPER(c.firstName) LIKE :firstName"),
 		@NamedQuery(name = "getCustomerByEmail", query = "SELECT c FROM Customer AS c WHERE c.email = :email"),
@@ -50,17 +53,22 @@ public class Customer implements Serializable {
 	
 	@OneToMany(mappedBy="customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Order> orders = new ArrayList<>();
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false)
+	 private UserRole role;
 
 	public Customer() {
 
 	}
 	
-	public Customer(String firstName, String surName, String password, String email) {
+	public Customer(String firstName, String surName, String password, String email, UserRole role) {
 		super();
 		this.firstName = firstName;
 		this.surName = surName;
 		this.password = password;
 		this.email = email;
+		this.role = role;
 	}
 
 	public int getCusomerId() {
@@ -117,6 +125,14 @@ public class Customer implements Serializable {
 
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
 	}
 
 	@Override

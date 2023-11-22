@@ -14,9 +14,15 @@ import com.mystuff.entity.Product;
 import com.mystuff.obj.ProType;
 import com.mystuff.obj.dto.OrderDTO;
 import com.mystuff.obj.dto.ProductDTO;
+import com.mystuff.rest.CustomerController;
+import com.mystuff.rest.security.AppSecurityContext;
 import com.mystuff.util.MyStuffException;
 import com.mystuff.util.Utilities;
 
+/**
+ * Service to hold Customer ability method 
+ * Injected within {@link CustomerController}
+ */
 @Stateless
 public class CustomerService {
 

@@ -1,5 +1,7 @@
 package com.mystuff.obj.dto;
 
+import com.mystuff.obj.UserRole;
+
 public class CustomerDTO extends ModelDtoObject {
 
 	private int customerId;
@@ -7,6 +9,7 @@ public class CustomerDTO extends ModelDtoObject {
 	private String surName;
 	private String password;
 	private String email;
+	private UserRole role;
 
 	public CustomerDTO() {
 
@@ -50,6 +53,14 @@ public class CustomerDTO extends ModelDtoObject {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
 	}
 
 }

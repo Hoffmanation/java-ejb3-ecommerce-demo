@@ -5,7 +5,7 @@ import javax.ws.rs.core.Application;
 
 
 @ApplicationPath("/rest")
-public class MyStuffApplication extends Application {
+public class ApplicationPathHandler extends Application {
 
 
 }

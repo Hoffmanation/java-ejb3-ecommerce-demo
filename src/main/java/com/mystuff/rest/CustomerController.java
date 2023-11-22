@@ -1,8 +1,9 @@
 package com.mystuff.rest;
 
-import java.util.Enumeration;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
+
 import com.mystuff.obj.LoginWebModel;
 import com.mystuff.obj.ProType;
 import com.mystuff.obj.SignupWebModel;
@@ -29,11 +32,14 @@ import com.mystuff.service.CustomerService;
 import com.mystuff.service.SecurityService;
 import com.mystuff.util.AppConstants;
 import com.mystuff.util.MyStuffException;
+import com.mystuff.util.Utilities;
 
 @Path("/customer")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RolesAllowed({"CUSTOMER"})
 public class CustomerController {
+	private static final Logger logger= Logger.getLogger(CustomerController.class);
 
 	@EJB
 	private SecurityService securityService;
@@ -41,26 +47,11 @@ public class CustomerController {
 	@EJB
 	private CustomerService customerService;
 
-	@GET
-	@Path("/customerSession")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response customerSession(@Context HttpServletRequest request) throws Exception {
-		HttpSession session = request.getSession(false);
-		if (null != session) {
-			CustomerDTO currentCustomer = (CustomerDTO) session.getAttribute(AppConstants.CUSTOMER_SESSION_ATTR);
-			return Response.status(200).entity(currentCustomer).build();
-		}
-		return Response.status(404)
-				.entity(new WebResponse(AppConstants.NO_CUSTOMER_SESSION, false, "SessionIsDead"))
-				.build();
-	}
-
 	@POST
 	@Path("/signUp")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response signUp(@NotNull SignupWebModel signupModel, @Context HttpServletRequest request,
-			@Context HttpServletResponse response) {
+	@PermitAll
+	public Response signUp(@NotNull SignupWebModel signupModel, @Context HttpServletRequest request,@Context HttpServletResponse response) {
 		WebResponse webResponse = securityService.signUp(signupModel);
 		if (webResponse.isSuccesfullOpt()) {
 			this.login(new LoginWebModel(signupModel.getEmail(), signupModel.getPassword()), request);
@@ -73,11 +64,10 @@ public class CustomerController {
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response login(LoginWebModel loginDetails, @Context HttpServletRequest request) {
 		WebResponse webResponse = securityService.login(loginDetails.getEmail(), loginDetails.getPassword());
 		if (webResponse.isSuccesfullOpt()) {
-			HttpSession session = request.getSession(true);
-			session.setAttribute(AppConstants.CUSTOMER_SESSION_ATTR, webResponse.getAdditionalInfo());
 			return Response.status(200).entity(webResponse).build();
 		}
 		return Response.status(401).entity(webResponse).build();
@@ -86,6 +76,7 @@ public class CustomerController {
 	@GET
 	@Path("/getAllProducts")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response getAllProducts(@Context HttpServletRequest request) {
 		List<ProductDTO> productDto = customerService.getAllProducts();
 		return Response.status(200).entity(productDto).build();
@@ -95,8 +86,8 @@ public class CustomerController {
 	@GET
 	@Path("/searchProductByPrice/{min_price}/{max_price}/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchProductByPriceRange(@PathParam("min_price") double minPrice,
-			@PathParam("max_price") double maxPrice) {
+	@PermitAll
+	public Response searchProductByPriceRange(@PathParam("min_price") double minPrice,@PathParam("max_price") double maxPrice) {
 		List<ProductDTO> productDto = customerService.searchProductByPriceRange(minPrice, maxPrice);
 		return Response.status(200).entity(productDto).build();
 
@@ -105,6 +96,7 @@ public class CustomerController {
 	@GET
 	@Path("/getAllProductByPriceEx")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response getAllProductByPriceEx(@Context HttpServletRequest request) {
 		List<ProductDTO> productDto = customerService.getAllProductByPriceEx();
 		return Response.status(200).entity(productDto).build();
@@ -113,6 +105,7 @@ public class CustomerController {
 	@GET
 	@Path("/getAllProductByPriceChe")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response getAllProductByPriceChe(@Context HttpServletRequest request) {
 		List<ProductDTO> productDto = customerService.getAllProductByPriceChe();
 		return Response.status(200).entity(productDto).build();
@@ -121,6 +114,7 @@ public class CustomerController {
 	@GET
 	@Path("/getProductById/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response getProductById(@PathParam("id") int id, @Context HttpServletRequest request) {
 		try {
 			ProductDTO productDto = customerService.getProductById(id);
@@ -134,6 +128,7 @@ public class CustomerController {
 	@GET
 	@Path("/getAllProductsByType/{Type}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response getAllProductsByType(@PathParam("Type") String type, @Context HttpServletRequest request) {
 		List<ProductDTO> productDto =  customerService.getAllProductsByType(ProType.valueOf(type.toUpperCase())) ;
 		return Response.status(200).entity(productDto).build();
@@ -227,18 +222,5 @@ public class CustomerController {
 //		cart.ClearCart();
 //	}
 
-	@GET
-	@Path("/logout")
-	public Response logout(@Context HttpServletRequest request) throws Exception {
-		try {
-			HttpSession session = request.getSession(false);
-			CustomerDTO customer = (CustomerDTO) session.getAttribute(AppConstants.CUSTOMER_SESSION_ATTR);
-			session.invalidate();
-			request = null;
-			return Response.status(200).entity(new WebResponse(AppConstants.GOOD_LOGOUT, true, customer)).build();
-		} catch (Exception e) {
-			return Response.status(200).entity(new WebResponse(AppConstants.PLEASE_LOG_IN, false)).build();
-		}
-	}
 
 }

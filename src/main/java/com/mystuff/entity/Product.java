@@ -21,7 +21,6 @@ import com.mystuff.obj.ProType;
 
 @Entity
 @Table(name = "product")
-
 @NamedQueries({ @NamedQuery(name = "getAllProducts", query = "SELECT p FROM Product  AS p ORDER BY p.productId ASC"),
 		@NamedQuery(name = "getProductByName", query = "SELECT p FROM Product AS p WHERE p.name = :name"),
 		@NamedQuery(name = "getProductById", query = "SELECT p FROM Product AS p WHERE p.productId = :productId"),

@@ -34,10 +34,12 @@ public class ProductDaoImpl extends DaoBase<Product> {
 
 	@Override
 	public boolean delete(int productId) {
-		int isSuccessful = em.createNamedQuery("deleteProductById", Product.class)
-				.setParameter("productId", productId)
-				.executeUpdate();
-		return isSuccessful!=0;
+		Optional<Product> optionalProduct = this.get(productId) ;
+		if (optionalProduct.isPresent()) {
+			em.remove(optionalProduct.get());	
+			return true ;
+		}
+		return false ;
 	}
 
 	@Override
@@ -48,8 +50,7 @@ public class ProductDaoImpl extends DaoBase<Product> {
 
 	@Override
 	public List<Product> getAll() {
-		return  em.createNamedQuery("getAllProducts", Product.class)
-				.getResultList();
+		return  em.createNamedQuery("getAllProducts", Product.class).getResultList();
 	}
 
 	@Override

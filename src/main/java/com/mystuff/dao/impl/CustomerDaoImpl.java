@@ -39,13 +39,12 @@ public class CustomerDaoImpl extends DaoBase<Customer> {
 
 	@Override
 	public List<Customer> getAll() {
-		return  em.createNamedQuery("getAllCustomers", Customer.class)
-				.getResultList();
+		return  em.createNamedQuery("getAllCustomers", Customer.class).getResultList();
 	}
 
+	//Cannot Delete customer
 	@Override
 	public boolean delete(int id) {
-		// No Impl
 		return false;
 	}
 

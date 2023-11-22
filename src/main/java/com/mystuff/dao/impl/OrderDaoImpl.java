@@ -34,19 +34,18 @@ public class OrderDaoImpl extends DaoBase<Order> {
 
 	@Override
 	public List<Order> getAll() {
-		return  em.createNamedQuery("getAllOrders", Order.class)
-				.getResultList();
+		return  em.createNamedQuery("getAllOrders", Order.class).getResultList();
 	}
 
+	//Cannot Update Order
 	@Override
 	public Order update(Order t) {
-		// Not Implemented
 		return null;
 	}
 
+	//Cannot Update Order
 	@Override
 	public boolean delete(int id) {
-		// Not Implemented
 		return false;
 	}
 

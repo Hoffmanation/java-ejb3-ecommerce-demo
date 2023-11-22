@@ -30,6 +30,7 @@ import com.mystuff.entity.Order;
 import com.mystuff.entity.Product;
 import com.mystuff.entity.Wishlist;
 import com.mystuff.obj.SignupWebModel;
+import com.mystuff.obj.UserRole;
 import com.mystuff.obj.dto.ModelDtoObject;
 
 /* Utility class 
@@ -41,11 +42,24 @@ public abstract class Utilities {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private static final ModelMapper modelMapper = new ModelMapper();
 	
-	
+	/**
+	 * Convert Entity to ObjectDTO by {@link ModelMapper}
+	 * @param <T>
+	 * @param convertFrom
+	 * @param convertionClass
+	 * @return T new instance of the requested object
+	 */
 	public static <T> T convertToDto (Object convertFrom, Class<T> convertionClass) {
 	    return modelMapper.map(convertFrom, convertionClass);
 	}
 	
+	/**
+	 * Convert Array of Entities to ObjectDTO by {@link ModelMapper}
+	 * @param <T>
+	 * @param convertFrom
+	 * @param convertionClass
+	 * @return T new instance of the requested object
+	 */
 	public static <T> List<T> convertAllToDto (List<? extends Serializable> convertFrom, Class<T> convertionClass) {
 		return convertFrom.stream()
 		.map(entity -> modelMapper.map(entity, convertionClass))
@@ -116,140 +130,16 @@ public abstract class Utilities {
 		try {
 			logg.info("Attempting to create all products from products.json");
 			is = Utilities.class.getClassLoader().getResourceAsStream(AppConstants.DUMMY_PRODUCTS_FILE);
-			String productsToCreate = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)).lines()
+			String productsToCreate = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
+					.lines()
 					.collect(Collectors.joining("\n"));
 
-			List<Product> participantJsonList = mapper.readValue(productsToCreate, new TypeReference<List<Product>>() {
-			});
+			List<Product> participantJsonList = mapper.readValue(productsToCreate, new TypeReference<List<Product>>() {});
 			participantJsonList.forEach(productStub::create);
 			logg.info("Finished creating all dummy products");
 		} catch (Exception e) {
 			logg.error("An error occurred while trying to create all dummy products", e);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static void initializeUserDB() {
-		try {
-			logg.info("Attempting to create all Customers");
-			
-			//DAO from DI
-			DaoBase<Wishlist> wishlistStub = (DaoBase<Wishlist>) new InitialContext().lookup("java:global/mystuff/WishlistDaoImpl");
-			DaoBase<Customer> customerStub = (DaoBase<Customer>) new InitialContext().lookup("java:global/mystuff/CustomerDaoImpl");
-			DaoBase<Product> productStub = (DaoBase<Product>) new InitialContext().lookup("java:global/mystuff/ProductDaoImpl");
-			DaoBase<Order> orderStub = (DaoBase<Order>) new InitialContext().lookup("java:global/mystuff/OrderDaoImpl");
-
-			//Create customer
-			List<Product> participantJsonList = productStub.getAll() ;
-			Customer customer = new Customer("Oren", "Hoffman", "oren", "oren@gmail.com");
-			customerStub.create(customer) ;
-			
-			//Get it back from ORM
-			customer  = customerStub.getAll().get(0) ;
-			
-			//Create the wishlist
-			Wishlist wishlist = new Wishlist(participantJsonList,customer);
-			wishlistStub.create(wishlist) ;
-			
-			//Create the order
-			Order order = new Order(new Date(), 66.3 , participantJsonList, customer) ;
-			orderStub.create(order) ;
-			//Update Customer
-			List<Order> orders =  customer.getOrders() ;
-			orders.add(order) ;
-			customer.setWishlist(wishlist);
-			
-			//Update back the customer
-			customerStub.update(customer) ;
-			
-			Optional<Customer> optionalCustomer = customerStub.get(1) ;
-			if (optionalCustomer.isPresent()) {
-				Customer createdCustomer = optionalCustomer.get() ;
-				
-				//Create the new order
-				List<Product> newProdList =  new ArrayList<>() ;
-				newProdList.add(participantJsonList.get(8));
-				Order newOrder = new Order(new Date(), 88.3 , newProdList, createdCustomer) ;
-				orderStub.create(newOrder) ;
-				
-				//Update Customer order
-				List<Order> oldOrders =  createdCustomer.getOrders() ;
-				oldOrders.add(newOrder) ;
-				
-				//Update user wishlist 
-				Wishlist oldWishlist = createdCustomer.getWishlist() ;
-				List<Product> newWishlistProducts = new ArrayList<>();
-				newWishlistProducts.add(participantJsonList.get(0));
-				newWishlistProducts.add(participantJsonList.get(1));
-				oldWishlist.setWishlistProducts(newWishlistProducts);
-				customerStub.update(customer) ;
-				
-				optionalCustomer = customerStub.get(1) ;
-				if (optionalCustomer.isPresent()) {
-					 createdCustomer = optionalCustomer.get() ; 
-					 String  customerJson = mapper.writeValueAsString(createdCustomer);
-					 System.err.println(customerJson);
-				}
-				
-				//New transaction 
-				//Create customer
-				participantJsonList = productStub.getAll() ;
-				customer = new Customer("Agatha", "Rotman", "agatha", "agatha@gmail.com");
-				customerStub.create(customer) ;
-				
-				//Get it back from ORM
-				customer  = customerStub.getAll().get(1) ;
-				
-				//Create the wishlist
-				wishlist = new Wishlist(participantJsonList,customer);
-				wishlistStub.create(wishlist) ;
-				createdCustomer.setWishlist(wishlist) ;
-				customerStub.update(createdCustomer) ;
-				
-				List<Customer> latestAllCustomers = customerStub.getAll() ;
-				 String  allCustomersJson = mapper.writeValueAsString(latestAllCustomers);
-				 System.err.println(allCustomersJson);
-				 
-				 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-				    executor.schedule(new Runnable() {
-						
-						@Override
-						public void run() {
-							try {
-								List<Customer> latestAllCustomers = customerStub.getAll();
-								String allCustomersJson = mapper.writeValueAsString(latestAllCustomers);
-								System.err.println(allCustomersJson);
-								
-								System.err.println("From here:\n");
-								
-								Optional<Wishlist>  wishlistOptional = wishlistStub.get(1) ;
-								if (wishlistOptional.isPresent()) {
-									Wishlist aishlists = wishlistOptional.get() ;
-									String aishlistsJson = mapper.writeValueAsString(aishlists);
-									System.err.println(aishlistsJson );
-								}
-
-								List<Wishlist> allWishlists = wishlistStub.getAll();
-								String allWishlistsJson = mapper.writeValueAsString(allWishlists);
-								System.err.println(allWishlistsJson);
-								
-								
-								
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-						}
-					}, 10, TimeUnit.SECONDS);
-					executor.shutdown();
-					executor.awaitTermination(6, TimeUnit.SECONDS);
-
-			}
-			logg.info("Finished creating all dummy Customer");
-		} catch (Exception e) {
-			logg.error("An error occurred while trying to create all dummy Customers", e);
-		}
-
 	}
 
 }

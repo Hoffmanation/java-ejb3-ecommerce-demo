@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import com.mystuff.dao.DaoBase;
+import com.mystuff.entity.Product;
 import com.mystuff.entity.Wishlist;
 
 @Stateless
@@ -32,10 +33,12 @@ public class WishlistDaoImpl extends DaoBase<Wishlist> {
 
 	@Override
 	public boolean delete(int wishlistId) {
-		int isSuccessful = em.createNamedQuery("deleteWishlistById", Wishlist.class)
-				.setParameter("wishlistId", wishlistId)
-				.executeUpdate();
-		return isSuccessful!=0;
+		Optional<Wishlist> optionalWishlist = this.get(wishlistId) ;
+		if (optionalWishlist.isPresent()) {
+			em.remove(optionalWishlist.get());	
+			return true ;
+		}
+		return false ;
 	}
 
 	@Override
@@ -46,9 +49,7 @@ public class WishlistDaoImpl extends DaoBase<Wishlist> {
 
 	@Override
 	public List<Wishlist> getAll() {
-		List<Wishlist> wishlists = em.createNamedQuery("getAllWishlists", Wishlist.class)
-			.getResultList();
-		return wishlists ;
+		return em.createNamedQuery("getAllWishlists", Wishlist.class).getResultList();
 	}
 
 	@Override

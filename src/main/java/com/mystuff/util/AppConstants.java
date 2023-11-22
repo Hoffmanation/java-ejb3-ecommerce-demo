@@ -27,5 +27,9 @@ public interface AppConstants {
 	public static final String DUMMY_PRODUCTS_FILE = "products.json";
 	public static final String UPLOAD_FILE_PATH = "C:/Users/The Hoff/wildfly-10.1.0.Final/standalone/deployments/mystuff.war/images/";
 	public static final String CUSTOMER_SESSION_ATTR = "customer_session";
+	public static final String SERVER_ERROR = "Server Error! unfortunately, the application cannot process your request at this time.";
+	public static final String AUTHORIZATION_PROPERTY = "Authorization";
+	public static final String NOT_AUTHORIZED= "You are not authorized to access this resource";
+	public static final String AUTHENTICATION_SCHEME = "Basic";
 
 }

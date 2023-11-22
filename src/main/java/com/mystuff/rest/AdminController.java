@@ -33,7 +33,7 @@
 //@Path("/admin")
 //@Produces(MediaType.APPLICATION_JSON)
 //@Consumes(MediaType.APPLICATION_JSON)
-//public class AdminResource {
+//public class AdminController {
 //
 //	@EJB
 //	private IAdminDao adminf;

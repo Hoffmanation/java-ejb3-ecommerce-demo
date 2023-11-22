@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "orders")
-
 @NamedQueries({ @NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order  AS o ORDER BY o.orderId ASC"),
 		@NamedQuery(name = "getOrderById", query = "SELECT o FROM Order  AS o WHERE o.orderId = :orderId"),
 		@NamedQuery(name = "getOrdersByCustomerId", query = "SELECT o FROM Order  AS o WHERE o.customer.cusomerId = :customerId"),
@@ -50,6 +49,7 @@ public class Order implements Serializable{
 
 	private double amount;
 
+	//Join table for order_product
 	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name="order_product",
      joinColumns={@JoinColumn(name="order_id")},
@@ -57,12 +57,14 @@ public class Order implements Serializable{
     uniqueConstraints=@UniqueConstraint(columnNames={"order_id","product_id"}))
 	private List<Product> products = new ArrayList<>();;
 
+	//Join table for customer_order
 	@ManyToOne(cascade = CascadeType.ALL )
 	@JoinTable(name = "customer_order", 
 	joinColumns = { @JoinColumn(name = "order_id") }, 
 	inverseJoinColumns = {@JoinColumn(name = "customer_id") },
     uniqueConstraints=@UniqueConstraint(columnNames={"order_id","customer_id"}))
    
+	//Due to stackOverFlow exception - Do not serialize the hole customer object, only his id as - "cusomerId"
   @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="cusomerId")
   @JsonIdentityReference(alwaysAsId=true) 
   @JsonProperty("cusomerId")

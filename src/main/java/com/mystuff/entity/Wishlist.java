@@ -22,12 +22,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "whishlist")
-
 @NamedQueries({
 	@NamedQuery(name = "getWishlistById", query = "SELECT w FROM Wishlist AS w WHERE w.whishlistId = :customerId"),
 	@NamedQuery(name = "getAllWishlists", query = "SELECT w FROM Wishlist  AS w ORDER BY w.whishlistId ASC"),
 	@NamedQuery(name = "deleteWishlistById", query = "DELETE FROM Wishlist AS w WHERE w.whishlistId = :customerId"),
-
 })
 
 public class Wishlist  implements Serializable{
@@ -36,6 +34,7 @@ public class Wishlist  implements Serializable{
 	@Id
 	private int whishlistId;
 
+	//Join table for wishlist_product
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "wishlist_product", 
 	joinColumns = { @JoinColumn(name = "wishlist_id") }, 
