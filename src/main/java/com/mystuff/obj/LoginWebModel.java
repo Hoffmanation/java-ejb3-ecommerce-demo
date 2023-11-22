@@ -1,15 +1,15 @@
 package com.mystuff.obj;
 
-public class LoginModel {
+public class LoginWebModel {
 	
 	private String email ;
 	private String password;
 	
-	public LoginModel() {
+	public LoginWebModel() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public LoginModel(String email, String password) {
+	public LoginWebModel(String email, String password) {
 		super();
 		this.email = email;
 		this.password = password;

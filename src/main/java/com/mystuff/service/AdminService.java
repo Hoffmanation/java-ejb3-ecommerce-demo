@@ -85,35 +85,7 @@
 //		return "" + wish.getWishlist().size();
 //	}
 //	
-//	@Override
-//	public Boolean signUp(String sirName, String familyName, String password, String email) throws MyStuffException {
-//		sirName = sirName.toLowerCase();
-//		familyName = familyName.toLowerCase();
-//		email = email.toLowerCase();
-//		try {
-//			Customer newCustomer = new Customer(sirName, familyName, password, email);
-//			em.persist(newCustomer);
-//		} catch (Exception e) {
-//			return false;
-//		}
-//		return true;
-//	}
-//	
-//	
-//	@Override
-//	public boolean login(String email, String password) {
-//		return IsUniqueUser(email.toLowerCase(), password);
-//	}
-//	
-//	@Override
-//	public boolean IsUniqueUser(String email, String password) {
-//		Customer customers = em.createNamedQuery("login", Customer.class).setParameter("password", password)
-//				.setParameter("email", email).getSingleResult();
-//		if (null != customers) {
-//			return true;
-//		}
-//		return false;
-//	}
+//
 //	
 //	@Override
 //	public List<Order> getCustomerOrderById(Integer customerId) {

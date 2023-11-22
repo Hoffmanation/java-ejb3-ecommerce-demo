@@ -29,12 +29,14 @@ import com.mystuff.obj.ProType;
 		@NamedQuery(name = "getAllProductByPriceChe", query = "SELECT p FROM Product AS p ORDER BY p.price asc"),
 		@NamedQuery(name = "searchProductByName", query = "SELECT p FROM Product p WHERE UPPER(p.name) LIKE :name"),
 		@NamedQuery(name = "getAllProductsByType", query = "SELECT p FROM Product p WHERE p.type = :type"),
-		@NamedQuery(name = "serchProductByPriceRange", query = "SELECT p FROM Product p WHERE p.price  BETWEEN  :price AND :price"),
+		@NamedQuery(name = "searchProductByPriceRange", query = "SELECT p FROM Product p WHERE p.price  BETWEEN :minPrice AND :maxPrice"),
 		@NamedQuery(name = "deleteProductById", query = "DELETE from Product p where p.productId=:productId"),
 
 })
-public class Product {
-
+public class Product implements Serializable{
+	private static final long serialVersionUID = 1906936250766173293L;
+	
+	
 	private int quantity;
 	@Id
 	@Column(name = "product_id")

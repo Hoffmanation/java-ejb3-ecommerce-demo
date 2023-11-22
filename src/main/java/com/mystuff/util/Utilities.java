@@ -3,8 +3,10 @@ package com.mystuff.util;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import javax.naming.InitialContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jboss.logging.Logger;
+import org.modelmapper.ModelMapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +29,8 @@ import com.mystuff.entity.Customer;
 import com.mystuff.entity.Order;
 import com.mystuff.entity.Product;
 import com.mystuff.entity.Wishlist;
-import com.mystuff.obj.SignupModel;
+import com.mystuff.obj.SignupWebModel;
+import com.mystuff.obj.dto.ModelDtoObject;
 
 /* Utility class 
  * @author Oren Hoffman
@@ -35,6 +39,18 @@ public abstract class Utilities {
 
 	private static final Logger logg = Logger.getLogger(Utilities.class);
 	private static final ObjectMapper mapper = new ObjectMapper();
+	private static final ModelMapper modelMapper = new ModelMapper();
+	
+	
+	public static <T> T convertToDto (Object convertFrom, Class<T> convertionClass) {
+	    return modelMapper.map(convertFrom, convertionClass);
+	}
+	
+	public static <T> List<T> convertAllToDto (List<? extends Serializable> convertFrom, Class<T> convertionClass) {
+		return convertFrom.stream()
+		.map(entity -> modelMapper.map(entity, convertionClass))
+		.collect(Collectors.toList());
+	}
 
 	/**
 	 * Validate email structure
@@ -53,17 +69,20 @@ public abstract class Utilities {
 	 * @param cart
 	 * @return {@link String} rather empty or contains error description
 	 */
-	public static String getSignUpErrors(SignupModel signupModel) {
+	public static String getSignUpErrors(SignupWebModel signupModel,Customer customerWithSameEmail) {
 		String loginError = StringUtils.EMPTY;
 		String firstPass = signupModel.getPassword();
 		String secondPass = signupModel.getSecondPassword();
 		String email = signupModel.getEmail();
+		boolean emailAlreadyExists = customerWithSameEmail != null;
 		if (!firstPass.equals(secondPass)) {
 			loginError = AppConstants.PASS_DONT_MATCH;
 		} else if (firstPass.length() > 10 || secondPass.length() > 10) {
 			loginError = AppConstants.PASS_LENGTH_NOT_VALID;
 		} else if (!IsValidEmail(email)) {
 			loginError = AppConstants.EMAIL_NOT_VALID;
+		} else if (emailAlreadyExists) {
+			loginError = AppConstants.EMAIL_EXISTS;
 		}
 		return loginError;
 	}
@@ -76,15 +95,15 @@ public abstract class Utilities {
 	 * @param cart
 	 * @return {@link String} rather empty or contains error description
 	 */
-//	public static String getChackOutErrors(Customer customer, CartDao cart) {
-//		String chackOutError = StringUtils.EMPTY;
-//		if (null == customer) {
-//			chackOutError = AppConstants.PLEASE_LOG_IN;
-//		} else if (cart.getCart().isEmpty()) {
-//			chackOutError = AppConstants.CART_IS_EMPTY;
-//		}
-//		return chackOutError;
-//	}
+	public static String getChackOutErrors(Customer customer, List<Product> cartProducts) {
+		String chackOutError = StringUtils.EMPTY;
+		if (null == customer) {
+			chackOutError = AppConstants.PLEASE_LOG_IN;
+		} else if (cartProducts.isEmpty()) {
+			chackOutError = AppConstants.CART_IS_EMPTY;
+		}
+		return chackOutError;
+	}
 
 	/**
 	 * Read dummy product list from local JSON file and Insert all products to the

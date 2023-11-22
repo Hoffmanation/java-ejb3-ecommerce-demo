@@ -1,5 +1,6 @@
 package com.mystuff.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,10 +33,11 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @NamedQueries({ @NamedQuery(name = "getAllOrders", query = "SELECT o FROM Order  AS o ORDER BY o.orderId ASC"),
 		@NamedQuery(name = "getOrderById", query = "SELECT o FROM Order  AS o WHERE o.orderId = :orderId"),
-		@NamedQuery(name = "getOrderByCustomerId", query = "SELECT o FROM Order  AS o WHERE o.customer.cusomerId = :customerId"),
+		@NamedQuery(name = "getOrdersByCustomerId", query = "SELECT o FROM Order  AS o WHERE o.customer.cusomerId = :customerId"),
 
 })
-public class Order {
+public class Order implements Serializable{
+	private static final long serialVersionUID = -6300981392612885499L;
 
 	@Id
 	@Column(name = "order_id")

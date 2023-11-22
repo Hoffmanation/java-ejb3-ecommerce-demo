@@ -1,12 +1,14 @@
 package com.mystuff.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import com.mystuff.dao.DaoBase;
 import com.mystuff.entity.Wishlist;
 
@@ -47,6 +49,24 @@ public class WishlistDaoImpl extends DaoBase<Wishlist> {
 		List<Wishlist> wishlists = em.createNamedQuery("getAllWishlists", Wishlist.class)
 			.getResultList();
 		return wishlists ;
+	}
+
+	@Override
+	public Wishlist getResultCustomQuery(String namedQuery, Map<String, Object> parameters) {
+		 TypedQuery<Wishlist> namedQueryStatment = em.createNamedQuery(namedQuery, Wishlist.class) ;
+		 if (parameters!=null&& !parameters.isEmpty()) {
+			 parameters.forEach((k,v) -> namedQueryStatment.setParameter(k,v));
+		}
+		 return namedQueryStatment.getSingleResult();
+	}
+
+	@Override
+	public List<Wishlist> getResultListCustomQuery(String namedQuery, Map<String, Object> parameters) {
+		 TypedQuery<Wishlist> namedQueryStatment = em.createNamedQuery(namedQuery, Wishlist.class) ;
+		 if (parameters!=null&& !parameters.isEmpty()) {
+			 parameters.forEach((k,v) -> namedQueryStatment.setParameter(k,v));
+		}
+		 return namedQueryStatment.getResultList();
 	}
 
 

@@ -1,5 +1,6 @@
 package com.mystuff.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 })
 
-public class Wishlist  {
+public class Wishlist  implements Serializable{
+	private static final long serialVersionUID = 250885203288254412L;
 
 	@Id
 	private int whishlistId;

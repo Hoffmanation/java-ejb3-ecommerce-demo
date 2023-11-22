@@ -1,5 +1,6 @@
 package com.mystuff.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,10 @@ import javax.persistence.Table;
 @NamedQueries({ @NamedQuery(name = "getAllCustomers", query = "SELECT c FROM Customer AS c ORDER BY c.cusomerId asc"),
 		@NamedQuery(name = "getCustomerByName", query = "SELECT c FROM Customer AS c WHERE UPPER(c.firstName) LIKE :firstName"),
 		@NamedQuery(name = "getCustomerByEmail", query = "SELECT c FROM Customer AS c WHERE c.email = :email"),
-		@NamedQuery(name = "getCustomerById", query = "SELECT c FROM Customer AS c WHERE c.cusomerId = :cusomerId"),
 		@NamedQuery(name = "getCustomerByEmailAndPassword", query = "SELECT c FROM Customer AS c WHERE c.password = :password AND c.email = :email"), })
 
-public class Customer {
+public class Customer implements Serializable {
+	private static final long serialVersionUID = -3240716900978864647L;
 
 	@Id
 	@Column(name = "customer_id")

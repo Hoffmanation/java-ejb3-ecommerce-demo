@@ -1,29 +1,36 @@
-package com.mystuff.obj;
+package com.mystuff.obj.dto;
 
-import javax.persistence.Column;
+import com.mystuff.obj.ProType;
 
-//TO DELETE
-public class ProductDetail {
+public class ProductDTO extends ModelDtoObject {
 
+	private int quantity;
+	private int productId;
 	private String name;
 	private double price;
 	private ProType type;
 	private String description;
 	private String imagePath;
 	private int stock;
-	
-	public ProductDetail() {
+
+	public ProductDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ProductDetail(String name, double price, ProType type, String description, String imagePath, int stock) {
-		super();
-		this.name = name;
-		this.price = price;
-		this.type = type;
-		this.description = description;
-		this.imagePath = imagePath;
-		this.stock = stock;
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
 	public String getName() {
@@ -73,7 +80,5 @@ public class ProductDetail {
 	public void setStock(int stock) {
 		this.stock = stock;
 	}
-	
-	
-	
+
 }
