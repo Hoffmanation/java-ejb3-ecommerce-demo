@@ -15,9 +15,10 @@
 			<property name="jboss.entity.manager.jndi.name" value="java:/EntityManager"/>
 			<property name="jboss.entity.manager.factory.jndi.name" value="java:/EntityManagerFactory"/>
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			<property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" /> <!-- Show SQL formatted -->
-	        <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/> <!-- DB Dialect -->
+			<property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.format_sql" value="false" /> <!-- Show SQL formatted -->
+	        <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>  <!-- DB Dialect -->
+	        <property name="hibernate.enable_lazy_load_no_trans" value="true" />  
 		</properties>
 
 	</persistence-unit>

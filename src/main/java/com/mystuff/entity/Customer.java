@@ -47,11 +47,11 @@ public class Customer implements Serializable {
 	@Column(name = "email",unique = true, updatable = false)
 	private String email;
 	
-	@OneToOne(fetch = FetchType.EAGER, mappedBy = "customer", cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
 	private Wishlist wishlist;
 	
-	@OneToMany(mappedBy="customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Order> orders = new ArrayList<>();
 	
 	@Enumerated(EnumType.STRING)

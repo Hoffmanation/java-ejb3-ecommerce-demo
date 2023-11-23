@@ -11,6 +11,7 @@ public interface AppConstants {
 	// User Messages
 	public static final String PASS_LENGTH_NOT_VALID = "*Password Cannot be more than 10 characters";;
 	public static final String EMAIL_NOT_VALID = "*Please enter a valid email";
+	public static final String FIELD_NOT_VALID = "*{} is required";
 	public static final String EMAIL_EXISTS = "email already in use";
 	public static final String PASS_DONT_MATCH = "*Looks like the passwords don't match";
 	public static final String BAD_LOGIN = "*Invalid password or username, Please try again";

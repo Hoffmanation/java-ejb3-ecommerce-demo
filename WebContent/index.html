@@ -15,6 +15,7 @@
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/respond.min.js"></script>
     
+    
     <style type="text/css">
     
  .grayBc{
@@ -97,7 +98,7 @@
 <body>
 
 
-<div id="main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" ng-init="customerSession()">
+<div id="main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" ng-init="handleCustomerSession()">
 
 
 
@@ -181,7 +182,7 @@
                         </div>
                     </td>
                     <td class="td_total">{{product.price}}$</td>
-                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.id) ; getCart() ; getCartSum()"/></td>
+                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId) ; getCart() ; getCartSum()"/></td>
                 </tr>
 
             </table>
@@ -201,9 +202,9 @@
     
 
         <div class="login_btns">
-            <a id="login" class="uppearcase" ng-show="loginBtnShow()" ng-click="cleanUpCredentials()">Login</a>
-            <a id="signup" class="uppearcase" ng-show="signupBtnShow()" ng-click="cleanUpCredentials()">Sign up</a>
-       		<a id="logout" class="uppearcase" style="margin-left: 200px;" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a>
+            <a id="login" class="uppearcase" ng-show="loginBtnShow()" ng-click="cleanUpVariables()">Login</a>
+            <a id="signup" class="uppearcase" ng-show="signupBtnShow()" ng-click="cleanUpVariables()">Sign up</a>
+       		<a id="logout" class="uppearcase" ng-click="logout()" ng-show="logoutBtnShow()">Logout</a>
         </div>
         
 
@@ -357,7 +358,7 @@
                         </div>
                     </td>
                     <td class="td_total">{{product.price}}$</td>
-                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.id) ; getCart() ; getCartSum()"/></td>
+                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId) ; getCart() ; getCartSum()"/></td>
                 </tr>
 
             </table>
@@ -425,7 +426,7 @@
 
         <!--------------------- Products ----------------------->
         <!-- Product Modal --> 
-        <div id="prod_modal" class="modal" data-ng-init="getAllProductById(product.id)" >
+        <div id="prod_modal" class="modal" data-ng-init="getAllProductById(product.productId)" >
             <div class="prod_modal_container" data-ng-repeat="product in PrintAllProductsById">
 
                 <div class="prod_img">
@@ -439,7 +440,7 @@
                     <!--<button class="con_shopping_btn">< &nbsp; Continue Shopping</button>-->
                     <span class="prod_cat">{{product.type}}</span>
                     <h2 class="spaced">{{product.name}}</h2>
-                    <span class="prod_code uppearcase">Sku: {{product.id}}</span>
+                    <span class="prod_code uppearcase">Sku: {{product.productId}}</span>
 
                     <div class="prod_actions" data-ng-controller="CustomerController">
                         <span class="prod_price">{{product.price}}$</span>
@@ -458,7 +459,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.id)" onclick="count_prods()">+ Add to cart</button>
+                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)" onclick="count_prods()">+ Add to cart</button>
                         <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
                     </div>
 
@@ -496,12 +497,12 @@
            <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
            
             <ul class="row grid" id="PrintAllProducs" data-ng-init="getAllProducts()">
-                <li id="{{product.id}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="product in PrintAllProducts | filter:query | orderBy:sortField:reverse" >
+                <li id="{{product.productId}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="product in PrintAllProducts | filter:query | orderBy:sortField:reverse" >
                  
                     <div class="img_container">
                         <img src="{{product.imagePath}}" alt="" />
                     </div>
-                    <div class="prod_details" data-ng-click="getProductById(product.id)">
+                    <div class="prod_details" data-ng-click="getProductById(product.productId)">
                         <div class="prod_titlecat">
                             <span class="prod_title">{{product.name}}</span>
                             <span class="prod_cat">{{product.type}}</span>
@@ -509,15 +510,15 @@
                         <div class="prod_pricebtns" data-ng-controller="CustomerController">
                             <span class="prod_price">{{product.price}}$</span>
                             <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
-                            <button class="add_to_cart_btn" data-ng-click="addToCart(product.id)">+ Add to cart</button>
+                            <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)">+ Add to cart</button>
                         </div>
                     </div>
 
-                    <div class="prod_overlay" data-ng-click="getProductById(product.id)">
+                    <div class="prod_overlay" data-ng-click="getProductById(product.productId)">
                         <span class="prod_overlay_title">{{product.name}}</span>
                         <span class="prod_overlay_cat">{{product.type}}</span>
                         <div class="prod_overlay_btns" data-ng-controller="CustomerController">
-                            <button class="add_to_cart_btn" data-ng-click="addToCart(product.id)">+ Add to cart</button>
+                            <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)">+ Add to cart</button>
                             <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i> 
                         </div>
                         <span class="prod_overlay_price">{{product.price}}$</span>
@@ -1030,7 +1031,6 @@
 		min_price = $("#value-lower").html();
 		max_price = $("#value-upper").html();
 	});
-
 	
     </script>
     
@@ -1039,24 +1039,10 @@
 
     MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location ,$timeout){
     	
+        /* Local Variables */
+        $scope.authKeyName = "mystuffAuth"
     	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer";
 		$scope.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    	
-        
-		
-		$scope.cleanUpCredentials = function(){
-			$scope.email = "";
-	    	$scope.password = "";
-	    	$scope.name ="";
-	    	$scope.f_name ="";
-	    	$scope.secondPassword ="";
-	    	$scope.adminLoginMessage ="" ;
-	    	$scope.loginMessage ="" ;
-	    	$scope.signupMessage ="" ;
-		}
-		
-	 
     	$scope.cartAmount =0 ;
     	$scope.reverse =true ; 
 		$scope.bool = true ;
@@ -1064,8 +1050,10 @@
 		$scope.loginBtnKey = true;
 		$scope.signupBtnKey = true;
 		$scope.myAccountKey = true;
-	
-		$scope.myAccountShow = function () {
+        $scope.PrintAllProducts = []
+
+       /* Buttons Handlers */
+        $scope.myAccountShow = function () {
 		    return $scope.myAccountKey ;
 		};
 		
@@ -1079,46 +1067,10 @@
 		$scope.signupBtnShow = function () {
 		    return $scope.signupBtnKey ;
 		}; 
-		
-		$scope.showLoader = function(){
-			jQuery('.lds-grid').show();
-			/* jQuery("body").addClass("grayBc"); */
-		}
-		
-		$scope.hideLoader = function(){
-			jQuery('.lds-grid').hide();
-			/* $("body").removeClass("grayBc"); */
-		}
 
-	  	$scope.customerSession = function(){
-    		url = $scope.baseUrl+"/customerSession" ; 
-    		$http.get(url).then(
-    				function(response){
-    					if(response.data.email!=null) {
-    						jQuery('#login_modal').hide();
-    						jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +response.data.name + '!</div>');
-    						$scope.logoutBtnKey = true;
-    						$scope.loginBtnKey = false;
-    						$scope.signupBtnKey = false;
-    						$scope.myAccountKey = true;
-    					}
-    					if (response.data==""){
-    						$scope.logoutBtnKey = false;
-    						$scope.loginBtnKey = true;
-    						$scope.signupBtnKey = true;
-    						$scope.myAccountKey = false;
-    					}
-    				}, function(response){   
-    					if(response.data.message=="*You'r not looged in"){
-    						$scope.logoutBtnKey = false;
-    						$scope.loginBtnKey = true;
-    						$scope.signupBtnKey = true;
-    						$scope.myAccountKey = false
-    					}
-    					
-    				});
-    	}
-	
+        /* Http Clients */
+
+        //Login the user
 	 	$scope.login = function(){
 		var email = $scope.email ;
 		var password = $scope.password ; 
@@ -1130,35 +1082,31 @@
 	        headers: {
 	        	'Content-Type': 'application/json',
 	        	'Accept': 'application/json',
-	     
 	        	},
-	    }).then(function mySuccess(response) {
-	    	$scope.loginMessage = response.data;
-			if ($scope.loginMessage.flag==true){
-				jQuery('#login_modal .modal_content').slideUp(function(){
-					jQuery('#login_modal').hide();
-					jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +$scope.loginMessage.additionalAtt + '!</div>');
-					jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +$scope.loginMessage.additionalAtt + '!</div>');
-					$scope.customerSession();
-				});		
+	    })
+        .then(function mySuccess(response) {
+	    	$scope.loginResponse =  response.data;
+			if ($scope.loginResponse.succesfullOpt==true){
+                    $scope.saveUserInfoInStorage(credentials) ;
+					$scope.handleCustomerSession();
+                    return ;
 			}
 		
-			else {
-				$scope.loginMessage = $scope.loginMessage.message ;
-			}
+			$scope.loginMessage = $scope.loginResponse.message ;
 	    }, function myError(response) {
-	    	$scope.loginMessage = "*Please fill all the empty fields";
+            $scope.loginResponse =  response.data;
+            $scope.loginMessage = $scope.loginResponse.message ;
 	    });
 	 	}
 		
 
 	 	$scope.signUp = function(){
-	 		var name = $scope.name;
-	 		var f_name = $scope.f_name ;
+	 		var firstName = $scope.name;
+	 		var surName = $scope.f_name ;
 			var password = $scope.password ; 
 			var secondPassword = $scope.secondPassword ; 
 			var email = $scope.email ;
-		 	var credentials = {name,f_name,password,secondPassword,email} ;
+		 	var credentials = {firstName,surName,password,secondPassword,email} ;
 		 	
 			$http({
 		        method : "POST",
@@ -1167,22 +1115,22 @@
 		        headers: {
 		        	'Content-Type': 'application/json',
 		        	'Accept': 'application/json',
-		     
 		        	},
-		    }).then(function mySuccess(response) {
-		    	$scope.signupMessage = response.data.message;
-				if (response.data.flag==true){
-					jQuery('#signup_modal .modal_content').slideUp(function(){
-						jQuery('#signup_modal').hide();
-							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' + response.data.additionalAtt + '! and thank you for registered to Mystuff©</div>');
-							jQuery('#logout').attr("style","margin-left: 600px;");
-							$scope.customerSession();
-					});		
-				}
-		    }, function myError(response) {
-		    	$scope.signupMessage = "*Please fill all the empty fields";
-		    });
-		 	}
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.loginResponse =  response.data;
+			if ($scope.loginResponse.succesfullOpt==true){
+                    $scope.saveUserInfoInStorage(credentials) ;
+					$scope.handleCustomerSession();
+                    return ;
+			}
+		
+			$scope.signupMessage = $scope.loginResponse.additionalInfo ;
+	    }, function myError(response) {
+            $scope.signupMessage =  response.data;
+            $scope.signupMessage = $scope.signupMessage.additionalInfo ;
+	    });
+	 	}
 	 	
 
 
@@ -1225,12 +1173,12 @@
 		    
 		    
        	$scope.getAllProducts = function(){
-       		$scope.showLoader();
+       		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl+"/getAllProducts" ; 
     		$http.get(url).then(
     				function(response){
     					$scope.PrintAllProducts = response.data ;
-    				 	 $scope.hideLoader();  
+                        $scope.showOrHideLoader(false); 
     				}, function(response){
     					$scope.errormessage = response.data.message;
     				});
@@ -1238,17 +1186,6 @@
     		
     	}
 
-    	$scope.updateCustomer = function(){
-    		url = $scope.baseUrl + "/updateCustomer/"+ $scope.name +"/"+ $scopre.password +"/"+ $scopre.email;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
      	$scope.getProductByName = function(){
     		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
     		console.log(url);
@@ -1263,12 +1200,13 @@
     	} 
     	
     	$scope.getProductById = function(prodId){
-    		$scope.showLoader();
+            $scope.PrintAllProductsById = null ;
+    		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getProductById/"+ prodId;
     		$http.get(url).then(
     				function(response){
-    					$scope.hideLoader();
-    					$scope.PrintAllProductsById.push(response.data) ;
+    					$scope.showOrHideLoader(false);
+                        $scope.PrintAllProductsById = [response.data] ;
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
@@ -1278,12 +1216,12 @@
     	
     	// get products by excpencive/cheep
     	$scope.getAllProductByPriceEx = function(){
-    		$scope.showLoader();
+    		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getAllProductByPriceEx/";
     		console.log(url);
     		$http.get(url).then(
     				function(response){
-    					$scope.hideLoader();
+    					$scope.showOrHideLoader(false);
     						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx; 
         					$scope.PrintAllProducts = response.data ;
 
@@ -1294,11 +1232,11 @@
     	
     	
     	$scope.getAllProductByPriceChe = function(){
-    		$scope.showLoader();
+    		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getAllProductByPriceChe/";
     		$http.get(url).then(
     				function(response){
-    					$scope.hideLoader();
+    					$scope.showOrHideLoader(false);
     					if ($scope.bool==true){
     						$scope.getAllProductByPriceEx();
     						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx;
@@ -1319,11 +1257,11 @@
     	
     	$scope.getAllProductsByType = function(){
     		$scope.PrintAllProducts = [] ;
-    		$scope.showLoader();
+    		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getAllProductsByType/"+$scope.Type;
     		$http.get(url).then(
     				function(response){
-    					$scope.hideLoader();
+    					$scope.showOrHideLoader(false);
     					if($scope.Type!=false) {
     					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
     					$scope.PrintAllProducts = response.data;
@@ -1437,13 +1375,13 @@
  
     	
     	$scope.searchProductByPrice = function(){
-    		$scope.showLoader();
+    		$scope.showOrHideLoader(true);
     		var min_price = document.getElementById ( "value-lower" ).innerText ;
     	    var  max_price = document.getElementById ( "value-upper" ).innerText ; 
     		url = $scope.baseUrl + "/searchProductByPrice/" + min_price + "/" + max_price ;
     		$http.get(url).then(
     				function(response){	
-    					$scope.hideLoader();
+    					$scope.showOrHideLoader(false);
     					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
     					$scope.PrintAllProducts = response.data ;
 
@@ -1465,8 +1403,77 @@
     	};
     	
 
+        /* Helper methods */
 
-    	});
+        //In user logged in - show welcome message
+        $scope.handleCustomerSession = function(){
+            var userInfo = $scope.getUserInfoFromStorage() ;
+            $('#welcome_msg').empty();
+            if(userInfo){
+                jQuery('#login_modal .modal_content')
+                .slideUp(function(){
+                    jQuery('#login_modal').hide();
+                    jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                            'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');
+                });	
+                jQuery('#signup_modal .modal_content')
+                .slideUp(function(){
+						jQuery('#signup_modal').hide();
+                }); 
+                $scope.logoutBtnKey = true;
+                $scope.loginBtnKey = false;
+                $scope.signupBtnKey = false;
+                $scope.myAccountKey = true;
+                return ;
+            }
+            $scope.logoutBtnKey = false;
+            $scope.loginBtnKey = true;
+            $scope.signupBtnKey = true;
+            $scope.myAccountKey = false
+    	}
+
+        //Logout use by removing info from Local Storage
+        $scope.logout = function(){
+            $window.localStorage.removeItem($scope.authKeyName) ;
+            $scope.handleCustomerSession();
+        } 
+
+        //Get User indo from Local Storage
+        $scope.getUserInfoFromStorage = function(){
+            $scope.localStorageInfo =  $window.localStorage.getItem($scope.authKeyName) ;
+            if($scope.localStorageInfo){
+                return JSON.parse($scope.localStorageInfo) ;
+            }
+        }
+
+        //Handle post login operations
+        $scope.saveUserInfoInStorage = function(credentials){
+            credentials.basic = btoa(credentials.email+''+credentials.password) ;
+            $scope.userInfo = JSON.stringify(credentials) ;
+            $window.localStorage.setItem($scope.authKeyName, $scope.userInfo) ;
+        }
+
+        
+		$scope.cleanUpVariables = function(){
+			$scope.email = "";
+	    	$scope.password = "";
+	    	$scope.name ="";
+	    	$scope.f_name ="";
+	    	$scope.secondPassword ="";
+	    	$scope.adminLoginMessage ="" ;
+	    	$scope.loginMessage ="" ;
+	    	$scope.signupMessage ="" ;
+		}
+		
+		$scope.showOrHideLoader = function(show){
+            if(show){
+                jQuery('.lds-grid').show();
+                return ;
+            }
+            jQuery('.lds-grid').hide();
+		}
+
+    });
 
     </script>
 </body>

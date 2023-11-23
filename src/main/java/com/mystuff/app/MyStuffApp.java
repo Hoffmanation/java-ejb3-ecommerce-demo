@@ -19,11 +19,13 @@ public class MyStuffApp {
 
 	@EJB
 	private ProductDaoImpl productDaoStub;
+	@EJB
+	private CustomerDaoImpl  customerDaoStub;
 
 	@PostConstruct
 	public void init() {
 		logg.info("MyStuff Init applicaiton...");
-		Utilities.initializeDB(productDaoStub);
+		Utilities.initializeDB(productDaoStub,customerDaoStub);
 		logg.info("MyStuff Init applicaiton finished");
 	}
 

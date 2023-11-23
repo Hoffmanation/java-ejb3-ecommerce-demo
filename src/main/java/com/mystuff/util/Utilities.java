@@ -1,21 +1,19 @@
 package com.mystuff.util;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.naming.InitialContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -26,12 +24,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mystuff.dao.DaoBase;
 import com.mystuff.entity.Customer;
-import com.mystuff.entity.Order;
 import com.mystuff.entity.Product;
-import com.mystuff.entity.Wishlist;
 import com.mystuff.obj.SignupWebModel;
 import com.mystuff.obj.UserRole;
-import com.mystuff.obj.dto.ModelDtoObject;
 
 /* Utility class 
  * @author Oren Hoffman
@@ -85,18 +80,32 @@ public abstract class Utilities {
 	 */
 	public static String getSignUpErrors(SignupWebModel signupModel,Customer customerWithSameEmail) {
 		String loginError = StringUtils.EMPTY;
-		String firstPass = signupModel.getPassword();
-		String secondPass = signupModel.getSecondPassword();
-		String email = signupModel.getEmail();
-		boolean emailAlreadyExists = customerWithSameEmail != null;
-		if (!firstPass.equals(secondPass)) {
-			loginError = AppConstants.PASS_DONT_MATCH;
-		} else if (firstPass.length() > 10 || secondPass.length() > 10) {
-			loginError = AppConstants.PASS_LENGTH_NOT_VALID;
-		} else if (!IsValidEmail(email)) {
-			loginError = AppConstants.EMAIL_NOT_VALID;
-		} else if (emailAlreadyExists) {
-			loginError = AppConstants.EMAIL_EXISTS;
+		try {
+			String firstPass = signupModel.getPassword();
+			String secondPass = signupModel.getSecondPassword();
+			String email = signupModel.getEmail();
+			boolean emailAlreadyExists = customerWithSameEmail != null;
+			if (!firstPass.equals(secondPass)) {
+				loginError = AppConstants.PASS_DONT_MATCH;
+			} else if (firstPass.length() > 10 || secondPass.length() > 10) {
+				loginError = AppConstants.PASS_LENGTH_NOT_VALID;
+			} else if (!IsValidEmail(email)) {
+				loginError = AppConstants.EMAIL_NOT_VALID;
+			} else if (emailAlreadyExists) {
+				loginError = AppConstants.EMAIL_EXISTS;
+			}
+
+			BeanInfo beanInfo = Introspector.getBeanInfo(SignupWebModel.class);
+			for (PropertyDescriptor propertyDesc : beanInfo.getPropertyDescriptors()) {
+				String propertyName = propertyDesc.getName();
+				Object value = propertyDesc.getReadMethod().invoke(signupModel);
+				if (StringUtils.isEmpty(value.toString())) {
+					loginError = AppConstants.FIELD_NOT_VALID.replace("{}", propertyName);
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logg.error("An error occurred while trying to validate SignupWebModel");
 		}
 		return loginError;
 	}
@@ -125,7 +134,7 @@ public abstract class Utilities {
 	 * 
 	 * @param productStub
 	 */
-	public static void initializeDB(DaoBase<Product> productStub) {
+	public static void initializeDB(DaoBase<Product> productStub, DaoBase<Customer> customerStub) {
 		InputStream is = null;
 		try {
 			logg.info("Attempting to create all products from products.json");
@@ -136,10 +145,15 @@ public abstract class Utilities {
 
 			List<Product> participantJsonList = mapper.readValue(productsToCreate, new TypeReference<List<Product>>() {});
 			participantJsonList.forEach(productStub::create);
+			
+			//Create ADMIN customer
+			Customer orenCustomer = new Customer("Oren", "Hoffman", "oren", "oren@gmail.com", UserRole.ADMIN);
+			customerStub.create(orenCustomer) ;
 			logg.info("Finished creating all dummy products");
 		} catch (Exception e) {
 			logg.error("An error occurred while trying to create all dummy products", e);
 		}
 	}
+
 
 }

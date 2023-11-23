@@ -55,7 +55,7 @@ public class CustomerController {
 		WebResponse webResponse = securityService.signUp(signupModel);
 		if (webResponse.isSuccesfullOpt()) {
 			this.login(new LoginWebModel(signupModel.getEmail(), signupModel.getPassword()), request);
-			return Response.status(200).entity(webResponse).build();
+			return Response.status(201).entity(webResponse).build();
 		}
 		return Response.status(500).entity(webResponse).build();
 	}
@@ -70,7 +70,7 @@ public class CustomerController {
 		if (webResponse.isSuccesfullOpt()) {
 			return Response.status(200).entity(webResponse).build();
 		}
-		return Response.status(401).entity(webResponse).build();
+		return Response.status(500).entity(webResponse).build();
 	}
 
 	@GET
