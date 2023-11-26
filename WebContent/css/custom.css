@@ -346,6 +346,11 @@ header {
 	color:red;
 }
 
+#error_msg, #signup_msg{
+	margin:10px 0px 0px;
+	color:red;
+}
+
 #signup {
 	font-family: 'Open Sans', sans-serif;
 	top: 50px;

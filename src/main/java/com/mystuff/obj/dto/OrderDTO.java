@@ -3,14 +3,16 @@ package com.mystuff.obj.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mystuff.entity.Product;
 
+@JsonInclude(JsonInclude .Include.NON_NULL)
 public class OrderDTO extends ModelDtoObject {
 
 	private int orderId;
 	private Date timestamp;
 	private double amount;
-	private List<Product> products;
+	private List<ProductDTO> products;
 
 	public OrderDTO() {
 		// TODO Auto-generated constructor stub
@@ -40,11 +42,11 @@ public class OrderDTO extends ModelDtoObject {
 		this.amount = amount;
 	}
 
-	public List<Product> getProducts() {
+	public List<ProductDTO> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<Product> products) {
+	public void setProducts(List<ProductDTO> products) {
 		this.products = products;
 	}
 

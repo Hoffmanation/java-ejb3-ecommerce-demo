@@ -12,9 +12,10 @@
     <link href="css/custom.css" rel="stylesheet" />
     <link href="css/nouislider.min.css" rel="stylesheet">
     
+
+    
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/respond.min.js"></script>
-    
     
     <style type="text/css">
     
@@ -224,6 +225,15 @@
         <a id="browse_stuff" class="uppearcase" href="#products_container">
             Browse stuff
         </a>
+
+        <!-- Error Modal -->
+        <div id="error_modal" class="modal">
+            <div class="modal_content">
+                <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
+                <h2 class="uppearcase spaced">Mystuff Message</h2>
+                <div id="error_msg">{{genericErrorMessage}}</div>
+            </div>
+        </div>
         
          <!-- Admin Modal -->
         <div id="admin_modal" class="modal">
@@ -232,7 +242,7 @@
                 <h2 class="uppearcase spaced">Admin Login</h2>
                  <input type="text" placeholder="Username"  data-ng-model="email" style="margin-top:35px;" />
                 <input type="password" placeholder="Password" data-ng-model="password"/>
-                <div id="login_msg">{{adminLoginMessage}}</div>
+                <div id="admin_login_msg">{{adminLoginMessage}}</div>
                  <button id="login_btn" data-ng-click="adminLogin()" onclick="show_login_msg()">Login</button>
             </div>
         </div>
@@ -291,6 +301,8 @@
             </div>
         </div>
     </header>
+
+
 
     <!----------------------- NAV BAR ------------------------->
     <div id="navbar" class="row">
@@ -750,6 +762,7 @@
             var about_modal = document.getElementById('about_modal');
             var contact_modal = document.getElementById('contact_modal');
             var admin_modal = document.getElementById('admin_modal');
+            var error_modal = document.getElementById('error_modal');
             
             // Get the buttons that opens the modals
             var login_btn = document.getElementById("login");
@@ -773,7 +786,7 @@
             	admin_modal.style.display = "block";
             	 login_modal.style.display = "none";
             }
-            
+
          	// Side nav > my account link
             $("#mySidenav > a:nth-of-type(2)").click(function(){
             	account_modal.style.display = "block";
@@ -829,6 +842,8 @@
             	about_modal.style.display = "none";
             	contact_modal.style.display = "none";
             	admin_modal.style.display = "none";
+                error_modal.style.display = "none";
+                error_msg.style.display = "none";  
             	
             }
 
@@ -841,6 +856,7 @@
             
             var login_msg = document.getElementById("login_msg");
 			var signup_msg = document.getElementById("signup_msg");
+            var error_msg = document.getElementById("error_msg");
 
 		
             function show_signup_msg () {
@@ -854,12 +870,15 @@
             
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function (event) {
-      /*           if (event.target == login_modal) {
+                if (event.target == error_modal) {
+                    error_modal.style.display = "none";
+                } 
+               if (event.target == login_modal) {
                     login_modal.style.display = "none";
-                } */
-           /*      if (event.target == signup_modal) {
+                } 
+                 if (event.target == signup_modal) {
                     signup_modal.style.display = "none";
-                } */
+                } 
                 if (event.target == prod_modal) {
                     prod_modal.style.display = "none";
                 }
@@ -1051,6 +1070,7 @@
 		$scope.signupBtnKey = true;
 		$scope.myAccountKey = true;
         $scope.PrintAllProducts = []
+        $scope.genericErrorMessage = "asdfasdas" ;
 
        /* Buttons Handlers */
         $scope.myAccountShow = function () {
@@ -1068,9 +1088,7 @@
 		    return $scope.signupBtnKey ;
 		}; 
 
-        /* Http Clients */
-
-        //Login the user
+        /* Login/Signup/logout API*/
 	 	$scope.login = function(){
 		var email = $scope.email ;
 		var password = $scope.password ; 
@@ -1098,6 +1116,12 @@
             $scope.loginMessage = $scope.loginResponse.message ;
 	    });
 	 	}
+
+        //Logout is done by removing user info from Local Storage
+        $scope.logout = function(){
+            $window.localStorage.removeItem($scope.authKeyName) ;
+            $scope.handleCustomerSession();
+        } 
 		
 
 	 	$scope.signUp = function(){
@@ -1126,52 +1150,53 @@
 			}
 		
 			$scope.signupMessage = $scope.loginResponse.additionalInfo ;
-	    }, function myError(response) {
-            $scope.signupMessage =  response.data;
-            $scope.signupMessage = $scope.signupMessage.additionalInfo ;
-	    });
+            }, function myError(response) {
+                $scope.signupMessage =  response.data;
+                $scope.signupMessage = $scope.signupMessage.additionalInfo ;
+            });
 	 	}
 	 	
 
 
-		 	$scope.adminLogin = function(){
-		 		if($scope.isMobile!=true){
+		 	// $scope.adminLogin = function(){
+		 	// 	if($scope.isMobile!=true){
 		 			
-				var email = $scope.email ;
-				var password = $scope.password ; 
-			 	var credentials = {email , password} ;
-				$http({
-			        method : "POST",
-			        url : $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/admin/login",
-			        data : credentials,
-			        headers: {
-			        	'Content-Type': 'application/json',
-			        	'Accept': 'application/json',
+			// 	var email = $scope.email ;
+			// 	var password = $scope.password ; 
+			//  	var credentials = {email , password} ;
+			// 	$http({
+			//         method : "POST",
+			//         url : $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/admin/login",
+			//         data : credentials,
+			//         headers: {
+			//         	'Content-Type': 'application/json',
+			//         	'Accept': 'application/json',
 			     
-			        	},
-			    }).then(function mySuccess(response) {
-			    	$scope.adminLoginMessage = response.data.message;
-					if (response.data.flag==true){
-						jQuery('#admin_modal .modal_content').slideUp(function(){
-							jQuery('#login_modal').hide();
-						});	
+			//         	},
+			//     }).then(function mySuccess(response) {
+			//     	$scope.adminLoginMessage = response.data.message;
+			// 		if (response.data.flag==true){
+			// 			jQuery('#admin_modal .modal_content').slideUp(function(){
+			// 				jQuery('#login_modal').hide();
+			// 			});	
 						
-					    $timeout(function () {
-					    	$window.location.href ='admin.html';	
-					    }, 500);
-					}
-			    }, function myError(response) {
-			    	$scope.adminLoginMessage = "*Please fill all the empty fields";
-			    });
-		 		}
-		 		else {
+			// 		    $timeout(function () {
+			// 		    	$window.location.href ='admin.html';	
+			// 		    }, 500);
+			// 		}
+			//     }, function myError(response) {
+			//     	$scope.adminLoginMessage = "*Please fill all the empty fields";
+			//     });
+		 	// 	}
+		 	// 	else {
 		 			
-		 			$scope.adminLoginMessage = "*Canot access Admin Console from this device." ;
-		 		}
-			 	}
+		 	// 		$scope.adminLoginMessage = "*Canot access Admin Console from this device." ;
+		 	// 	}
+			//  	}
 		    
 		    
-		    
+		
+        /*  Products API*/
        	$scope.getAllProducts = function(){
        		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl+"/getAllProducts" ; 
@@ -1182,8 +1207,6 @@
     				}, function(response){
     					$scope.errormessage = response.data.message;
     				});
-    		
-    		
     	}
 
      	$scope.getProductByName = function(){
@@ -1195,8 +1218,6 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-    		
-    		
     	} 
     	
     	$scope.getProductById = function(prodId){
@@ -1210,11 +1231,8 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-    		
-    		
     	}
-    	
-    	// get products by excpencive/cheep
+
     	$scope.getAllProductByPriceEx = function(){
     		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getAllProductByPriceEx/";
@@ -1251,7 +1269,6 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-
     	}
     	
     	
@@ -1274,8 +1291,26 @@
     				
     				});
     	}
+
+        $scope.searchProductByPrice = function(){
+    		$scope.showOrHideLoader(true);
+    		var min_price = document.getElementById( "value-lower" ).innerText ;
+    	    var  max_price = document.getElementById( "value-upper" ).innerText ; 
+    		url = $scope.baseUrl + "/searchProductByPrice/" + min_price + "/" + max_price ;
+    		$http.get(url).then(
+    				function(response){	
+    					$scope.showOrHideLoader(false);
+    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
+    					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+    					$scope.getAllProducts();
+						$scope.PrintAllProducts = response.data;
+    				});
+    	}
     	
     	
+        /* Orders API */
     	$scope.getAllCustomerOrdersById = function(){
     		url = $scope.baseUrl + "/getAllCustomerOrdersById/";
     		$http.get(url).then(
@@ -1284,45 +1319,38 @@
     				}, function(response){
     					$scope.infomessage = response.data.message;
     				});
-    		
-    		
     	}
     	
-    	$scope.addToCart = function(prodIdNum){
-    		url = $scope.baseUrl + "/addToCart/" + prodIdNum ;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProducts = response.data;
-    				}, function(response){
-    					$scope.PrintAllProducts = response.data;
-    				});
-    		
-    		
-    	}
+        /* Cat (wishlist) API*/
 
-    	$scope.getCartSum = function(){
-    		url = $scope.baseUrl + "/getCartSum";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.sum = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
 
-    	$scope.getCartSize = function(){
-    		url = $scope.baseUrl + "/getCartsize";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.cartAmount = response.data; 
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
+        $scope.addToCart = function(prodIdNum ){
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl + "/addToCart/" + prodIdNum ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.addToCartResponse =  response.data;
+			if ($scope.addToCartResponse.succesfullOpt==true){
+                $scope.PrintAllProducts = response.data;
+                return ;
+			}
+		
+			$scope.genericErrorMessage = $scope.addToCartResponse.additionalInfo ;
+            }, function myError(response) {
+                $scope.addToCartResponse =  response.data;
+                $scope.genericErrorMessage = $scope.addToCartResponse.additionalInfo ;
+                $scope.showOrHideErrorMessage(true) ;
+            });
+	 	}
 
-    	
+
     	$scope.removeFromCart = function(removeIdNum){
     		url = $scope.baseUrl + "/removeFromCart/" + removeIdNum;
     		$http.get(url).then(
@@ -1372,44 +1400,15 @@
     				});
     	}
     	
- 
-    	
-    	$scope.searchProductByPrice = function(){
-    		$scope.showOrHideLoader(true);
-    		var min_price = document.getElementById ( "value-lower" ).innerText ;
-    	    var  max_price = document.getElementById ( "value-upper" ).innerText ; 
-    		url = $scope.baseUrl + "/searchProductByPrice/" + min_price + "/" + max_price ;
-    		$http.get(url).then(
-    				function(response){	
-    					$scope.showOrHideLoader(false);
-    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
-    					$scope.PrintAllProducts = response.data ;
-
-    				}, function(response){
-    					$scope.getAllProducts();
-						$scope.PrintAllProducts = response.data;
-    				});
-    		
-    	}
- 	
-    	$scope.logout = function(){
-    		url = $scope.baseUrl + "/logout";
-    		$http.get(url).then(
-    				function(response){
-    					$window.location.reload();
-    				}, function(response){
-    					$scope.errormessage = "Please log in first ! ";
-    				});
-    	};
-    	
 
         /* Helper methods */
 
         //In user logged in - show welcome message
         $scope.handleCustomerSession = function(){
             var userInfo = $scope.getUserInfoFromStorage() ;
+            var userInfoString =  JSON.stringify(userInfo) ;
             $('#welcome_msg').empty();
-            if(userInfo){
+            if(userInfoString.lenght != 0 && userInfoString != '{}'){
                 jQuery('#login_modal .modal_content')
                 .slideUp(function(){
                     jQuery('#login_modal').hide();
@@ -1432,11 +1431,6 @@
             $scope.myAccountKey = false
     	}
 
-        //Logout use by removing info from Local Storage
-        $scope.logout = function(){
-            $window.localStorage.removeItem($scope.authKeyName) ;
-            $scope.handleCustomerSession();
-        } 
 
         //Get User indo from Local Storage
         $scope.getUserInfoFromStorage = function(){
@@ -1444,11 +1438,12 @@
             if($scope.localStorageInfo){
                 return JSON.parse($scope.localStorageInfo) ;
             }
+            return {} ;
         }
 
         //Handle post login operations
         $scope.saveUserInfoInStorage = function(credentials){
-            credentials.basic = btoa(credentials.email+''+credentials.password) ;
+            credentials.basic = btoa(credentials.email+':'+credentials.password) ;
             $scope.userInfo = JSON.stringify(credentials) ;
             $window.localStorage.setItem($scope.authKeyName, $scope.userInfo) ;
         }
@@ -1463,6 +1458,7 @@
 	    	$scope.adminLoginMessage ="" ;
 	    	$scope.loginMessage ="" ;
 	    	$scope.signupMessage ="" ;
+            $scope.genericErrorMessage ="" ;
 		}
 		
 		$scope.showOrHideLoader = function(show){
@@ -1472,6 +1468,20 @@
             }
             jQuery('.lds-grid').hide();
 		}
+
+        $scope.showOrHideErrorMessage= function(show) {
+            if(show){
+                jQuery('#error_modal').show();
+                return ;
+            }
+
+            jQuery('#error_modal .modal_content')
+                .slideUp(function(){
+                    jQuery('#login_modal').hide();
+                });	
+        }
+
+
 
     });
 

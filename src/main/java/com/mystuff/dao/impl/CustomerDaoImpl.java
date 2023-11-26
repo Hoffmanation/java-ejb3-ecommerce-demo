@@ -28,13 +28,7 @@ public class CustomerDaoImpl extends DaoBase<Customer> {
 
 	@Override
 	public Customer update(Customer customer) {
-		Customer cus = null ; 
-		try {
-			cus = em.merge(customer); 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return  cus ;
+			return em.merge(customer); 
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package com.mystuff.obj.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mystuff.obj.ProType;
 
+@JsonInclude(JsonInclude .Include.NON_NULL)
 public class ProductDTO extends ModelDtoObject {
 
 	private int quantity;

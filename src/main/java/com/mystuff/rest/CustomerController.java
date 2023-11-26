@@ -18,26 +18,27 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.jboss.logging.Logger;
 
+import com.mystuff.entity.Customer;
 import com.mystuff.obj.LoginWebModel;
 import com.mystuff.obj.ProType;
 import com.mystuff.obj.SignupWebModel;
 import com.mystuff.obj.WebResponse;
-import com.mystuff.obj.dto.CustomerDTO;
 import com.mystuff.obj.dto.OrderDTO;
 import com.mystuff.obj.dto.ProductDTO;
+import com.mystuff.obj.dto.WishlistDTO;
+import com.mystuff.rest.security.AppSecurityContext;
 import com.mystuff.service.CustomerService;
 import com.mystuff.service.SecurityService;
-import com.mystuff.util.AppConstants;
 import com.mystuff.util.MyStuffException;
-import com.mystuff.util.Utilities;
 
 @Path("/customer")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RolesAllowed({"CUSTOMER"})
+@RolesAllowed({"CUSTOMER", "ADMIN"})
 public class CustomerController {
 	private static final Logger logger= Logger.getLogger(CustomerController.class);
 
@@ -46,6 +47,10 @@ public class CustomerController {
 
 	@EJB
 	private CustomerService customerService;
+	
+	/*
+	 * Customer Login/SignUp
+	 */
 
 	@POST
 	@Path("/signUp")
@@ -72,6 +77,11 @@ public class CustomerController {
 		}
 		return Response.status(500).entity(webResponse).build();
 	}
+	
+	/*
+	 * ProductsAPI
+	 */
+
 
 	@GET
 	@Path("/getAllProducts")
@@ -120,7 +130,7 @@ public class CustomerController {
 			ProductDTO productDto = customerService.getProductById(id);
 			return Response.status(200).entity(productDto).build();
 		} catch (MyStuffException e) {
-			return Response.status(404).entity(new WebResponse(e.getMessage(), false)).build();
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
 		}
 
 	}
@@ -137,90 +147,81 @@ public class CustomerController {
 	@GET
 	@Path("/getAllCustomerOrdersById")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllCustomerOrdersById(@Context HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		CustomerDTO logedinCustomer = (CustomerDTO) session.getAttribute(AppConstants.CUSTOMER_SESSION_ATTR);
-		List<OrderDTO> orders = customerService.getAllCustomerOrdersById(logedinCustomer.getCustomerId()) ;
+	public Response getAllCustomerOrdersById(@Context SecurityContext securityContext) {
+		AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
+		List<OrderDTO> orders = customerService.getAllCustomerOrdersById(logedInUser.getPrincipalId()) ;
 		return Response.status(200).entity(orders).build();
 	}
 
+	/*
+	 * Order API
+	 */
 	@POST
 	@Path("/getOrderByOrderId")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrderByOrderId(Integer orderId, @Context HttpServletRequest request) {
+	public Response getOrderByOrderId(Integer orderId) {
 		OrderDTO order = customerService.getCustomerOrdersById(orderId) ;
 		return Response.status(200).entity(order).build();
 	}
 
-//	@GET
-//	@Path("/getCartSize")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public int getCartsize(@Context HttpServletRequest request) throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		return cart.getCartsize();
-//	}
-//
-//	@GET
-//	@Path("/addToCart/{productId}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public boolean addToCart(@PathParam("productId") int productId, @Context HttpServletRequest request)
-//			throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		if (cart.addToCart(custf.getProductById(productId))) {
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//	@GET
-//	@Path("/getCart")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Product[] getCart(@Context HttpServletRequest request) throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		return cart.getCart().toArray(new Product[0]);
-//	}
-//
-//	@GET
-//	@Path("/getCartSum")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Message getCartSum(@Context HttpServletRequest request) throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		return new Message("" + cart.getCartSum());
-//	}
-//
-//	@GET
-//	@Path("/removeFromCart/{productId}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Message removeFromCart(@PathParam("productId") int productId, @Context HttpServletRequest request)
-//			throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		cart.removeFromCart(custf.getProductById(productId));
-//		return new Message("Product #" + productId + " was removed from cart ");
-//	}
-//
-//	@GET
-//	@Path("/checkOut")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Message chackOut(@Context HttpServletRequest request) throws Exception {
-//		HttpSession session = request.getSession(false);
-//		Customer customer = (Customer) session.getAttribute(CUSTOMER_SESSION_ATTR);
-//		CartDao cart = getStubFromSession(request);
-//
-//		String signUpError = Utilities.getChackOutErrors(customer, cart);
-//		if (StringUtils.isNotEmpty(signUpError)) {
-//			return new Message(signUpError);
-//		}
-//		cart.checkOut(customer);
-//		return new Message("Your order has been processed, Thank you for shopping at Mystuff");
-//	}
-//
-//	@PUT
-//	@Path("/ClearCart")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public void ClearCart(@Context HttpServletRequest request) throws Exception {
-//		CartDao cart = getStubFromSession(request);
-//		cart.ClearCart();
-//	}
+	
+	/*
+	 * Cart API
+	 */
+	@POST
+	@Path("/addToCart/{productId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addToCart(@PathParam("productId") int productId, @Context SecurityContext securityContext) {
+		try {
+			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
+			WishlistDTO WishListDto = customerService.addToWishlist(productId, logedInUser.getPrincipalId());
+			return Response.status(200).entity(WishListDto).build();
+		} catch (MyStuffException e) {
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
+		}
+	}
+	
+	@POST
+	@Path("/getCart")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCart(@Context SecurityContext securityContext)  {
+		try {
+			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
+			WishlistDTO WishListDto = customerService.getWishlistDTO(logedInUser.getPrincipalId());
+			return Response.status(200).entity(WishListDto).build();
+		} catch (MyStuffException e) {
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
+		}
+	}
+
+
+	@POST
+	@Path("/removeFromCart/{productId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeFromCart(@PathParam("productId") int productId, @Context SecurityContext securityContext) {
+		try {
+			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
+			WishlistDTO WishListDto = customerService.removeFromWishlist(productId,logedInUser.getPrincipalId());
+			return Response.status(200).entity(WishListDto).build();
+		} catch (MyStuffException e) {
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
+		}
+	}
+
+	@GET
+	@Path("/checkOut")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response chackOut(@Context HttpServletRequest request, @Context SecurityContext securityContext)  {
+		try {
+			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
+			OrderDTO orderDTO = customerService.chackOut(logedInUser.getPrincipalId());
+			return Response.status(200).entity(orderDTO ).build();
+		} catch (MyStuffException e) {
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
+		}
+	}
+
+
 
 
 }

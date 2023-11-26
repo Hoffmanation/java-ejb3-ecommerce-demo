@@ -18,7 +18,7 @@ public interface AppConstants {
 	public static final String BAD_SIGNUP = "*there was a problem with sign up please try again later";
 	public static final String GOOD_LOGIN = "You have successfully logged in";
 	public static final String GOOD_SIGNUP = "You have successfully signed up";
-	public static final String PLEASE_LOG_IN = "Plaese login first !";
+	public static final String PLEASE_LOG_IN = "Plaese login first";
 	public static final String CART_IS_EMPTY = "Your cart is empty!";
 	public static final String NO_CUSTOMER_SESSION = "You're not looged in";
 	public static final String UNAUTHORIZED = "You're not looged in";

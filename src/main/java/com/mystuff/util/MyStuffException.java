@@ -11,6 +11,10 @@ public class MyStuffException extends Exception {
 	public MyStuffException(String message) {
 	        super(message);
 	    }
+	
+	public MyStuffException(String message, int entityId) {
+        super(String.format(message + ", Entity ID: %d", entityId));
+    }
 
 	    public MyStuffException(String message, Throwable throwable) {
 	        super(message, throwable);

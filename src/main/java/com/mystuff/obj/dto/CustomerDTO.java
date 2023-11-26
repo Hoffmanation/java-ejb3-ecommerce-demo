@@ -1,7 +1,9 @@
 package com.mystuff.obj.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mystuff.obj.UserRole;
 
+@JsonInclude(JsonInclude .Include.NON_NULL)
 public class CustomerDTO extends ModelDtoObject {
 
 	private int customerId;

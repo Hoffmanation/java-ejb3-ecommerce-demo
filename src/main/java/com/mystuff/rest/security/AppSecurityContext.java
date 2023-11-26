@@ -3,24 +3,24 @@ package com.mystuff.rest.security;
 import java.security.Principal;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.SecurityContext;
 
 import com.mystuff.obj.SecurityModel;
+import com.mystuff.obj.dto.CustomerDTO;
 
 /**
- * Customer implementation of the JAX RS SecurityContext
- * Store user after authentication in a SecurityContext object shared by the WEB container
+ * Customer implementation of the JAX RS SecurityContext Store user after
+ * authentication in a SecurityContext object shared by the WEB container
  */
 public class AppSecurityContext implements SecurityContext {
 
-	//List of Roles that exists on the requested resource
-	//Corresponded to @RolesAllowed("THE-ROLE")
-	private final List<String>requiredRoles;
-	//User authentication info to be validate
-	private final SecurityModel securityModeluser;
+	// List of Roles that exists on the requested resource
+	// Corresponded to @RolesAllowed("THE-ROLE")
+	private final List<String> requiredRoles;
+	// User authentication info to be validate
+	private final CustomerDTO securityModeluser;
 
-	public AppSecurityContext(List<String> requiredRoles, SecurityModel securityModeluser) {
+	public AppSecurityContext(List<String> requiredRoles, CustomerDTO securityModeluser) {
 		this.requiredRoles = requiredRoles;
 		this.securityModeluser = securityModeluser;
 	}
@@ -37,7 +37,7 @@ public class AppSecurityContext implements SecurityContext {
 
 	@Override
 	public boolean isUserInRole(String role) {
-		return securityModeluser!=null && securityModeluser.getRole().name().equals(role);
+		return securityModeluser != null && securityModeluser.getRole().name().equals(role);
 	}
 
 	@Override
@@ -50,9 +50,13 @@ public class AppSecurityContext implements SecurityContext {
 		return "Basic";
 	}
 
-	//Validate user contain desired role
+	// Validate user contain desired role
 	public boolean isUserAllow() {
 		return requiredRoles.stream().anyMatch(requiredRole -> requiredRole.equals(securityModeluser.getRole().name()));
+	}
+
+	public int getPrincipalId() {
+		return this.securityModeluser.getCustomerId();
 	}
 
 }

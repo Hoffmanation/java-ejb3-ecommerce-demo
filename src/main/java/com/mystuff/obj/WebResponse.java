@@ -25,12 +25,14 @@ public class WebResponse {
 		this.message = message;
 		this.succesfullOpt = flag;
 		this.modelDtoObject = modelDtoObject;
+		this.additionalInfo = message;
 	}
 
 	public WebResponse(String message, boolean flag) {
 		super();
 		this.message = message;
 		this.succesfullOpt = flag;
+		this.additionalInfo = message;
 	}
 
 	public String getMessage() {

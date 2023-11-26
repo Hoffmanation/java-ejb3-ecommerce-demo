@@ -1,6 +1,6 @@
 [
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Lenovo Edge 2 I7",
         "price": 200,
         "type": "TECHNOLOGY",
@@ -11,7 +11,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "HP Color Laser Jet 1025NW w/2",
         "price": 22,
         "type": "TECHNOLOGY",
@@ -22,7 +22,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "VTG 70's leather motorcycle",
         "price": 66,
         "type": "CLOTHING",
@@ -33,7 +33,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "New Portable Refrigerator",
         "price": 200,
         "type": "APPLIANCES",
@@ -44,7 +44,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Real Hand Carved Cow Skull & Horns",
         "price": 66,
         "type": "DECORATION",
@@ -55,7 +55,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Whole wood coffee table from switz wood",
         "price": 77,
         "type": "FURNITURE",
@@ -66,7 +66,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "New Hot 9 Solid Pure Colour Lounge Couch",
         "price": 666,
         "type": "FURNITURE",
@@ -77,7 +77,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Goplus 500W Folding Electric Treadmill",
         "price": 500,
         "type": "SPORT",
@@ -88,7 +88,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Yamaha U3 52'' Studio Upright Piano",
         "price": 500,
         "type": "MUSIC",
@@ -99,7 +99,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Xbox One S Console \"sky\" Edition",
         "price": 260,
         "type": "TECHNOLOGY",
@@ -110,7 +110,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "ClosetMaid 1608 5ft. to 8 Ft. Closet Organizer Kit, White",
         "price": 150,
         "type": "FURNITURE",
@@ -121,7 +121,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Vermont Castings Encore Flexburn",
         "price": 460,
         "type": "APPLIANCES",
@@ -132,7 +132,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Heloise Women's A-Line Sleeveless Pleated Little Cocktail Party Dress",
         "price": 90,
         "type": "CLOTHING",
@@ -143,7 +143,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Adidas Originals ARD1 Low Men's Court Sneakers Shoes",
         "price": 50,
         "type": "CLOTHING",
@@ -154,7 +154,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Men Women Tree Belt Buckle Round Silver Metal 60's Item",
         "price": 150,
         "type": "CLOTHING",
@@ -165,7 +165,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Gold's Gym Dumbbell Power Set",
         "price": 210,
         "type": "SPORT",
@@ -176,7 +176,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Cobra KING F7 ONE Length Irons golf club",
         "price": 785,
         "type": "SPORT",
@@ -187,7 +187,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Dali's The Metamorphosis of Narcissus",
         "price": 115,
         "type": "DECORATION",
@@ -198,7 +198,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Marshall JVM 100W Stack head",
         "price": 115,
         "type": "MUSIC",
@@ -209,7 +209,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Panasonic MC-CG917 Vacuum Cleaner",
         "price": 115,
         "type": "APPLIANCES",
@@ -220,7 +220,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Bronze metal lion sculpture handmade",
         "price": 2500,
         "type": "DECORATION",
@@ -231,7 +231,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Jacaru ?Wallaroo Suede? Hat",
         "price": 70,
         "type": "CLOTHING",
@@ -242,7 +242,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "GeForce GTX 1080 Graphics Card",
         "price": 70,
         "type": "TECHNOLOGY",
@@ -253,7 +253,7 @@
         
     },
     {
-        "quantity": 0,
+        "quantity": 5000,
         "name": "Juliette Teardrop Oval Mirror",
         "price": 55,
         "type": "DECORATION",

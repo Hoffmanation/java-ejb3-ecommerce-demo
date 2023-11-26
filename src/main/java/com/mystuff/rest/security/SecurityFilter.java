@@ -14,6 +14,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
@@ -54,7 +55,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 
 		if (!userIsAuthorized(requestContext, rolesAllowed, method)) {
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
-					.entity(new WebResponse(AppConstants.NOT_AUTHORIZED, false)).build());
+					.entity(new WebResponse(AppConstants.NOT_AUTHORIZED, false,AppConstants.PLEASE_LOG_IN)).build());
 		}
 
 	}
@@ -72,6 +73,8 @@ public class SecurityFilter implements ContainerRequestFilter {
 			return true;
 		}
 
+		MultivaluedMap<String, String> val = requestContext.getHeaders() ; 
+		System.err.println(val);
 		// Fetch authorization header
 		String authorizationHeader = requestContext.getHeaderString(AppConstants.AUTHORIZATION_PROPERTY);
 
@@ -102,8 +105,7 @@ public class SecurityFilter implements ContainerRequestFilter {
 			if (webResponse.isSuccesfullOpt()) {
 				//Check user Role
 				CustomerDTO customerDto = (CustomerDTO) webResponse.getModelDtoObject();
-				SecurityModel securityModel = new SecurityModel(customerDto.getEmail(), customerDto.getRole());
-				final AppSecurityContext securityContext = new AppSecurityContext(Arrays.asList(rolesAllowed.value()) , securityModel);
+				final AppSecurityContext securityContext = new AppSecurityContext(Arrays.asList(rolesAllowed.value()) , customerDto);
 				if (securityContext.isUserAllow()){
 					requestContext.setSecurityContext(securityContext);
 					return true ;

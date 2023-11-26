@@ -155,5 +155,11 @@ public abstract class Utilities {
 		}
 	}
 
+	
+	public static double getCartSum(List<Product> wishlistProducts) {
+		return wishlistProducts.stream().map(x -> x.getPrice())
+				  .collect(Collectors.summingDouble(Double::doubleValue));
+	}
+
 
 }
