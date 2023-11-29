@@ -11,19 +11,21 @@
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/custom.css" rel="stylesheet" />
     <link href="css/nouislider.min.css" rel="stylesheet">
-    
+
+
+
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/respond.min.js"></script>
 
 </head>
 <body>
-	<div id="admin_main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" >
+	<div id="admin_main" data-ng-app="MyStuffCustomerApp" data-ng-controller="AdminController" ng-init="handleCustomerSession()">
 
     <!------------------------ HEADER ------------------------->
 	    <header id="admin_header">
 	
 	        <div class="login_btns">
-	            <a id="login" class="uppearcase" ng-click="logout()">Back to MyStuff</a>
+	            <a id="login" class="uppearcase" href="index.html">Back to MyStuff</a>
 	        </div>
 	
 	        <div id="side_logo">
@@ -34,8 +36,8 @@
         <div id="admin_wrapper" class="">
                 <h2 class="uppearcase spaced">Welcome, Admin!</h2>
                 <ul class="admin_nav">
-                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_mng');">Manage Products</a></li>
-                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'cust_mng');">Manage Customers</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'prod_mng');" data-ng-click="getAllProducts()">Manage Products</a></li>
+                        <li><a href="javascript:void(0)" class="tablink" onclick="openTab(event, 'cust_mng');" data-ng-click="getAllCutsomers()">Manage Customers</a></li>
                         <li class="slider"></li>
                     </ul>
 
@@ -77,7 +79,7 @@
 	                        </div>
 	                        
 	                        <!--Remove Product  -->
-	                        <div id="remove_prod" class="action_form" ng-init="getAllProducts()">
+	                        <div id="remove_prod" class="action_form">
 				                 <table class="cart_table" >
 				                <tr class="cart_titles">
 				                    <th></th>
@@ -106,7 +108,7 @@
                     </div>
                     
                     <!--Manage Customers  -->
-                    <div id="cust_mng" class="admin_tabs" ng-init="getAllCutsomers()">
+                    <div id="cust_mng" class="admin_tabs">
 		              	<table class="cart_table" >
 			                <tr class="cart_titles">
 			                    <th>#</th>
@@ -116,8 +118,8 @@
 			                </tr>
 			                
 			                <tr class="cart_row" data-ng-repeat="cust in PrintAllCustomers">
-	                            <td>{{cust.id}}</td>
-	                            <td>{{cust.name}} {{cust.f_name}}</td>
+	                            <td>{{cust.customerId}}</td>
+	                            <td>{{cust.firstName}} {{cust.surName}}</td>
 	                            <td>{{cust.password}}</td>
 	                            <td>{{cust.email}}</td>
 			                </tr>
@@ -219,19 +221,25 @@
     <script type="text/javascript">
     var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
 
-    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope,$location){
+    MyStuffCustomerApp.controller("AdminController", function($scope, $window, $http, $rootScope,$location){
     	
     	
     	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/admin";
-    	
+		$scope.baseCustomerUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer";
+		$scope.authKeyName = "mystuffAuth" ;
+
         $scope.uploadImage = function(){
-       	 url = $scope.baseUrl+"/uploadImage" ; 
-   		 var f = document.getElementById('uploadedFile').files[0] ;
-            var fd = new FormData();
-            fd.append('uploadedFile', f); 
-           $http.post(url, fd, {
-              transformRequest: angular.identity,
-              headers: {'Content-Type': undefined}
+			var userCredentials = $scope.getUserInfoFromStorage() ;
+       		url = $scope.baseUrl+"/uploadImage" ; 
+   			var f = document.getElementById('uploadedFile').files[0] ;
+        	var fd = new FormData();
+        	fd.append('uploadedFile', f); 
+            $http.post(url, fd, {
+            	transformRequest: angular.identity,
+				headers: {
+		        	'Content-Type': undefined ,
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
            })
            .success(function(){
            })
@@ -240,6 +248,7 @@
         }
         
 	 	$scope.createProduct = function(){
+			var userCredentials = $scope.getUserInfoFromStorage() ;
 	 		var f = document.getElementById('uploadedFile').files[0] ;
 			var name = $scope.name ;
 			var description = $scope.description ; 
@@ -256,67 +265,101 @@
 		        headers: {
 		        	'Content-Type': 'application/json',
 		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
 		        	},
 		    }).then(function mySuccess(response) {
-		    	  $scope.uploadImage(); 
-		    	$scope.createProductMessage = response.data;
-			
-
+		    		$scope.uploadImage(); 
+		    		$scope.createProductMessage = response.data;
 		    }, function myError(response) {
-		    	$scope.createProductMessage = response.data;
+		       	$scope.createProductMessage = response.data;
 		    });
 		 	}
-			
 
-		
-   
-     	$scope.getAllCutsomers = function(){
-    		url = $scope.baseUrl+"/getAllCutsomers" ; 
+			        
+		$scope.getAllProducts = function(){
+       		$scope.showOrHideLoader(true);
+    		url = $scope.baseCustomerUrl+"/getAllProducts" ; 
     		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllCustomers = response.data ;
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    	}
-     	
-         
-       	$scope.getAllProducts = function(){
-    		url = $scope.baseUrl+"/getAllProducts" ; 
-    		$http.get($location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer/getAllProducts").then(
     				function(response){
     					$scope.PrintAllProducts = response.data ;
+                        $scope.showOrHideLoader(false); 
     				}, function(response){
     					$scope.errormessage = response.data.message;
+                        $scope.showOrHideLoader(false); 
     				});
     	}
 
-       	
+		$scope.getAllCutsomers = function(){
+            $scope.showOrHideLoader(true);
+			var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl+"/getAllCutsomers" ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+			$scope.PrintAllCustomers = response.data ;
+            }, function myError(response) {
+                $scope.showOrHideLoader(false);
+            });
+	 	}
 
-    	
-    	$scope.getProductArrayById = function(giveme){
-    		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProductsById = response.data ;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
+		//In user logged in - show welcome message
+		$scope.handleCustomerSession = function(){
+            var userInfo = $scope.getUserInfoFromStorage() ;
+            var userInfoString =  JSON.stringify(userInfo) ;
+
+			if(userInfoString.lenght != 0 && userInfoString != '{}'){
+				$http({
+					method : "POST",
+					url : $scope.baseCustomerUrl +"/login/",
+					data : {email:userInfo.email, password:userInfo.password},
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json',
+						},
+	    		})
+				.then(function mySuccess(response) {
+					$scope.loginResponse =  response.data;
+					if ($scope.loginResponse.succesfullOpt==true && $scope.loginResponse.modelDtoObject.role == "ADMIN"){
+						setTimeout(function(){
+							jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+									'font-weight:normal;">Welcome, Administrator</span>' + userInfo.email + '</div>');           
+						}, 0);
+						return ;
+					}
+					$window.location.href = 'index.html';
+				}, function myError(response) {
+					$scope.loginResponse =  response.data;
+					$scope.loginMessage = $scope.loginResponse.message ;
+				});
+			}
+			else {
+				$window.location.href = 'index.html';
+			}
     	}
 
- 
-    	$scope.logout = function(){
-    		url = $scope.baseUrl + "/logout";
-    		$http.get(url).then(
-    				function(response){
-    					$window.location.href ='index.html';
-    				}, function(response){
-    					$scope.errormessage = "Please log in first ! ";
-    				});
-    	};
+   
+		//Get User indo from Local Storage
+		$scope.getUserInfoFromStorage = function(){
+            $scope.localStorageInfo =  $window.localStorage.getItem($scope.authKeyName) ;
+            if($scope.localStorageInfo){
+                return JSON.parse($scope.localStorageInfo) ;
+            }
+            return {} ;
+        }
+
+		$scope.showOrHideLoader = function(show){
+            if(show){
+                jQuery('.lds-grid').show();
+                return ;
+            }
+            jQuery('.lds-grid').hide();
+		}
     });
     </script>
 </body>

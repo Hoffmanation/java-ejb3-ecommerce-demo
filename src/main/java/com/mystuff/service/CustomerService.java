@@ -48,7 +48,7 @@ public class CustomerService {
 
 	public List<ProductDTO> getAllProducts() {
 		 List<Product> products  = productDaoStub.getAll();
-		  return Utilities.convertAllToDto(products, ProductDTO.class) ;
+		  return Utilities.convertListToOrFromDto(products, ProductDTO.class) ;
 	}
 
 	public List<ProductDTO> searchProductByPriceRange(double minPrice, double maxPrice) {
@@ -56,44 +56,44 @@ public class CustomerService {
 		parameters.put("minPrice", minPrice);
 		parameters.put("maxPrice", maxPrice);
 		List<Product> products  = productDaoStub.getResultListCustomQuery("searchProductByPriceRange", parameters);
-		return Utilities.convertAllToDto(products, ProductDTO.class) ;
+		return Utilities.convertListToOrFromDto(products, ProductDTO.class) ;
 	}
 
 	public List<ProductDTO> getAllProductByPriceEx() {
 		List<Product> products  = productDaoStub.getResultListCustomQuery("getAllProductByPriceEx", null);
-		return Utilities.convertAllToDto(products, ProductDTO.class) ;
+		return Utilities.convertListToOrFromDto(products, ProductDTO.class) ;
 	}
 
 	public List<ProductDTO> getAllProductByPriceChe() {
 		List<Product> products  = productDaoStub.getResultListCustomQuery("getAllProductByPriceChe", null);
-		return Utilities.convertAllToDto(products, ProductDTO.class) ;
+		return Utilities.convertListToOrFromDto(products, ProductDTO.class) ;
 	}
 
 	public ProductDTO getProductById(int productId) throws MyStuffException   {
 		Optional<Product> optionalProduct = productDaoStub.get(productId);
 		Product product = optionalProduct.orElseThrow(() -> new MyStuffException("Record not found"));
-		return Utilities.convertToDto(product, ProductDTO.class);
+		return Utilities.convertToOrFromDto(product, ProductDTO.class);
 	}
 
 	public List<ProductDTO> getAllProductsByType(ProType  type) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("type", type);
 		List<Product> products  = productDaoStub.getResultListCustomQuery("getAllProductsByType", parameters);
-		return Utilities.convertAllToDto(products, ProductDTO.class) ;
+		return Utilities.convertListToOrFromDto(products, ProductDTO.class) ;
 	}
 
 	public List<OrderDTO> getAllCustomerOrdersById(int customerId) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("customerId", customerId);
 		List<Order> orders  = orderDaoStub.getResultListCustomQuery("getOrdersByCustomerId", parameters);
-		return Utilities.convertAllToDto(orders , OrderDTO.class) ;
+		return Utilities.convertListToOrFromDto(orders , OrderDTO.class) ;
 	}
 
 	public OrderDTO getCustomerOrdersById(int orderId) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("orderId", orderId);
 		Order order  = orderDaoStub.getResultCustomQuery("getOrderById", parameters);
-		return Utilities.convertToDto(order , OrderDTO.class) ;
+		return Utilities.convertToOrFromDto(order , OrderDTO.class) ;
 	}
 	
 	public WishlistDTO addToWishlist(int productId, int customerId) throws MyStuffException {
@@ -103,7 +103,7 @@ public class CustomerService {
 		if (!customerWishlist.getWishlistProducts().contains(product)) {
 				customerWishlist.getWishlistProducts().add(product) ;
 				wishlistDaoStub.update(customerWishlist) ;
-				return Utilities.convertToDto(customerWishlist , WishlistDTO.class) ;
+				return Utilities.convertToOrFromDto(customerWishlist , WishlistDTO.class) ;
 		  }
 		
 		throw new MyStuffException("Record already exists" , productId) ;
@@ -113,12 +113,12 @@ public class CustomerService {
 		Wishlist customerWishlist =  this.getCustomerWishlist(customerId);
 		customerWishlist.getWishlistProducts().removeIf(product -> product.getProductId() == productId) ;
 		wishlistDaoStub.update(customerWishlist) ;
-		return Utilities.convertToDto(customerWishlist , WishlistDTO.class) ;
+		return Utilities.convertToOrFromDto(customerWishlist , WishlistDTO.class) ;
 	}
 
 	public WishlistDTO getWishlistDTO(int customerId) throws MyStuffException {
 		Wishlist customerWishlist = this.getCustomerWishlist(customerId) ;
-		return Utilities.convertToDto(customerWishlist , WishlistDTO.class) ;
+		return Utilities.convertToOrFromDto(customerWishlist , WishlistDTO.class) ;
 	}
 	
 	private Wishlist getCustomerWishlist(int customerId) throws MyStuffException {
@@ -153,7 +153,7 @@ public class CustomerService {
 			customerDaoStub.update(customer) ;
 			customerWishlist.setWishlistProducts(new ArrayList<>());
 			wishlistDaoStub.update(customerWishlist) ;
-			return Utilities.convertToDto(order , OrderDTO.class) ;
+			return Utilities.convertToOrFromDto(order , OrderDTO.class) ;
 		}	
 		
 		throw new MyStuffException(AppConstants.EMPTY_WISHLIST) ;

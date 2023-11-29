@@ -46,7 +46,7 @@ public abstract class Utilities {
 	 * @param convertionClass
 	 * @return T new instance of the requested object
 	 */
-	public static <T> T convertToDto (Object convertFrom, Class<T> convertionClass) {
+	public static <T> T convertToOrFromDto (Object convertFrom, Class<T> convertionClass) {
 	    return modelMapper.map(convertFrom, convertionClass);
 	}
 	
@@ -57,7 +57,7 @@ public abstract class Utilities {
 	 * @param convertionClass
 	 * @return T new instance of the requested object
 	 */
-	public static <T> List<T> convertAllToDto (List<? extends Serializable> convertFrom, Class<T> convertionClass) {
+	public static <T> List<T> convertListToOrFromDto (List<? extends Serializable> convertFrom, Class<T> convertionClass) {
 		return convertFrom.stream()
 		.map(entity -> modelMapper.map(entity, convertionClass))
 		.collect(Collectors.toList());

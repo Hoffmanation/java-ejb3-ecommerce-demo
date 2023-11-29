@@ -1,5 +1,7 @@
 package com.mystuff.obj;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mystuff.obj.dto.ModelDtoObject;
 
@@ -9,29 +11,38 @@ public class WebResponse {
 	private boolean succesfullOpt;
 	private String additionalInfo;
 	private ModelDtoObject modelDtoObject;
+	private List<? extends  ModelDtoObject> modelDtoList;
 
 	public WebResponse() {
 	}
 
-	public WebResponse(String message, boolean flag, String additionalInfo) {
+	public WebResponse(String message, boolean succesfullOpt, String additionalInfo) {
 		super();
 		this.message = message;
-		this.succesfullOpt = flag;
+		this.succesfullOpt = succesfullOpt;
 		this.additionalInfo = additionalInfo;
 	}
 
-	public WebResponse(String message, boolean flag, ModelDtoObject modelDtoObject) {
+	public WebResponse(String message, boolean succesfullOpt, ModelDtoObject modelDtoObject) {
 		super();
 		this.message = message;
-		this.succesfullOpt = flag;
+		this.succesfullOpt = succesfullOpt;
 		this.modelDtoObject = modelDtoObject;
 		this.additionalInfo = message;
 	}
-
-	public WebResponse(String message, boolean flag) {
+	
+	public WebResponse(String message, boolean succesfullOpt, List<? extends  ModelDtoObject> modelDtoList) {
 		super();
 		this.message = message;
-		this.succesfullOpt = flag;
+		this.succesfullOpt = succesfullOpt;
+		this.modelDtoList = modelDtoList;
+		this.additionalInfo = message;
+	}
+
+	public WebResponse(String message, boolean succesfullOpt) {
+		super();
+		this.message = message;
+		this.succesfullOpt = succesfullOpt;
 		this.additionalInfo = message;
 	}
 
@@ -66,5 +77,15 @@ public class WebResponse {
 	public void setModelDtoObject(ModelDtoObject modelDtoObject) {
 		this.modelDtoObject = modelDtoObject;
 	}
+
+	public List<? extends ModelDtoObject> getModelDtoList() {
+		return modelDtoList;
+	}
+
+	public void setModelDtoList(List<? extends ModelDtoObject> modelDtoList) {
+		this.modelDtoList = modelDtoList;
+	}
+	
+	
 
 }

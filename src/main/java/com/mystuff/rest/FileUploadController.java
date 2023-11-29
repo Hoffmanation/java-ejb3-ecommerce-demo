@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.mail.event.FolderAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -24,6 +25,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import com.mystuff.util.AppConstants;
 
 @Path("/admin")
+@RolesAllowed({ "ADMIN" })
 public class FileUploadController {
 
 	@POST
@@ -76,11 +78,6 @@ public class FileUploadController {
 
 	}
 
-	/**
-	 * header sample { Content-Type=[image/png], Content-Disposition=[form-data;
-	 * name="file"; filename="filename.extension"] }
-	 **/
-	// get uploaded filename, is there a easy way in RESTEasy?
 	private String getFileName(MultivaluedMap<String, String> header) {
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
 		for (String filename : contentDisposition) {
@@ -93,7 +90,6 @@ public class FileUploadController {
 		return "unknown";
 	}
 
-	// save to somewhere
 	private void writeFile(byte[] content, String filename) throws IOException {
 		File file = new File(filename);
 

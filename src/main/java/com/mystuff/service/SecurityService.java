@@ -54,7 +54,7 @@ public class SecurityService {
 		parameters.put("password", password);
 		Customer loginCustomer =  customerDaoStub.getResultCustomQuery("getCustomerByEmailAndPassword", parameters) ;
 		if (loginCustomer!=null) {
-			CustomerDTO customerDto = Utilities.convertToDto(loginCustomer, CustomerDTO.class) ;
+			CustomerDTO customerDto = Utilities.convertToOrFromDto(loginCustomer, CustomerDTO.class) ;
 			return new WebResponse(AppConstants.GOOD_LOGIN, true, customerDto) ;
 		}
 		return new WebResponse(AppConstants.BAD_LOGIN, false) ;

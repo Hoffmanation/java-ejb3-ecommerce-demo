@@ -5,13 +5,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+
 	<link href="images/favicon.png" rel="icon" type="image/png" />
     <link href="https://fonts.googleapis.com/css?family=Varela" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/custom.css" rel="stylesheet" />
     <link href="css/nouislider.min.css" rel="stylesheet">
-    
+
 
 
     <script type="text/javascript" src="js/angular.min.js"></script>
@@ -243,7 +244,7 @@
                  <input type="text" placeholder="Username"  data-ng-model="email" style="margin-top:35px;" />
                 <input type="password" placeholder="Password" data-ng-model="password"/>
                 <div id="admin_login_msg">{{adminLoginMessage}}</div>
-                 <button id="login_btn" data-ng-click="adminLogin()" onclick="show_login_msg()">Login</button>
+                 <button id="login_btn" data-admin="admin" data-ng-click="login($event)" onclick="show_login_msg()">Login</button>
             </div>
         </div>
 
@@ -321,7 +322,7 @@
                     <img src="images/cart_icon.png" alt="" style="width:16px;" />
                     <span class="notification-counter">{{cartSize}}</span>
                 </div>
-                <a href="my-account.html"><img src="images/account_icon.png" alt="" style="width:16px;" /></a>
+                <a ng-click="handleCustomerSession('myAccount')"><img src="images/account_icon.png" alt="" style="width:16px; cursor: pointer;" /></a>
             </div>
         </div>
     </div>
@@ -1086,7 +1087,7 @@
 		}; 
 
         /* Login/Signup/logout API*/
-	 	$scope.login = function(){
+	 	$scope.login = function(event){
 		var email = $scope.email ;
 		var password = $scope.password ; 
 	 	var credentials = {email , password} ;
@@ -1104,6 +1105,10 @@
 			if ($scope.loginResponse.succesfullOpt==true){
                     $scope.saveUserInfoInStorage(credentials) ;
                     $scope.getCart();
+                    if(event && event.srcElement.attributes["data-admin"]) {
+                        $scope.handleCustomerSession('adminLogin');
+                        return ;
+                    }
 					$scope.handleCustomerSession('login');
                     return ;
 			}
@@ -1416,46 +1421,6 @@
     		
     		
 
-
-
-		 	// $scope.adminLogin = function(){
-		 	// 	if($scope.isMobile!=true){
-		 			
-			// 	var email = $scope.email ;
-			// 	var password = $scope.password ; 
-			//  	var credentials = {email , password} ;
-			// 	$http({
-			//         method : "POST",
-			//         url : $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/admin/login",
-			//         data : credentials,
-			//         headers: {
-			//         	'Content-Type': 'application/json',
-			//         	'Accept': 'application/json',
-			     
-			//         	},
-			//     }).then(function mySuccess(response) {
-			//     	$scope.adminLoginMessage = response.data.message;
-			// 		if (response.data.flag==true){
-			// 			jQuery('#admin_modal .modal_content').slideUp(function(){
-			// 				jQuery('#login_modal').hide();
-			// 			});	
-						
-			// 		    $timeout(function () {
-			// 		    	$window.location.href ='admin.html';	
-			// 		    }, 500);
-			// 		}
-			//     }, function myError(response) {
-			//     	$scope.adminLoginMessage = "*Please fill all the empty fields";
-			//     });
-		 	// 	}
-		 	// 	else {
-		 			
-		 	// 		$scope.adminLoginMessage = "*Canot access Admin Console from this device." ;
-		 	// 	}
-			//  	}
-        
-
-
         /* Helper methods */
 
         //In user logged in - show welcome message
@@ -1464,6 +1429,23 @@
             var userCart = $scope.getUserCartFromStorage() ;
             var userCerString =  JSON.stringify(userCart) ;
             switch (action) {
+                case 'adminLogin':
+                    jQuery('#welcome_msg').empty();
+                    jQuery('#admin_modal .modal_content')
+                    .slideUp(function(){
+                        jQuery('#admin_modal').hide();
+                        jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                                'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');
+                    });	
+                    $scope.logoutBtnKey = true;
+                    $scope.loginBtnKey = false;
+                    $scope.signupBtnKey = false;
+                    $scope.myAccountKey = true;
+                    $timeout(function () {
+					    	$window.location.href ='admin.html';	
+					    }, 0);
+                break;
+
                 case 'login':
                     jQuery('#welcome_msg').empty();
                     jQuery('#login_modal .modal_content')
@@ -1537,6 +1519,18 @@
                     jQuery('#login_modal .modal_content').show() ;
                     break;
 
+                case 'myAccount':
+                var userInfo = $scope.getUserInfoFromStorage() ;
+                    var userInfoString =  JSON.stringify(userInfo) ;
+                    if(userInfoString.lenght != 0 && userInfoString != '{}'){
+                        $window.location.href = 'my-account.html';
+                    }
+                    else {
+                        $rootScope.globalErrorMessage = "Please login first!" ;
+                        $scope.showOrHideErrorMessage(true) ;
+                    }
+                    break;
+
                 default:
                     console.error(`action, was not found ${action}.`);
                 }
@@ -1607,8 +1601,6 @@
                 return ;
             }
         }
-
-
 
     });
 

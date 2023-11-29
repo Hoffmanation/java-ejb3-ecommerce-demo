@@ -42,10 +42,14 @@ public class CustomerDaoImpl extends DaoBase<Customer> {
 		return  em.createNamedQuery("getAllCustomers", Customer.class).getResultList();
 	}
 
-	//Cannot Delete customer
 	@Override
-	public boolean delete(int id) {
-		return false;
+	public boolean delete(int cusomerId) {
+		Optional<Customer> optionalCustomer =  this.get(cusomerId) ;
+		if (optionalCustomer.isPresent()) {
+			em.remove(optionalCustomer.get());
+			return true ;
+		}
+		return  false; 
 	}
 
 	@Override

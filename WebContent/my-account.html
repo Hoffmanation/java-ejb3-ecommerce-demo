@@ -17,7 +17,7 @@
 
 </head>
 <body>
-	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="handleCustomerSession()">
+	<div id="main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerAccountController" ng-init="handleCustomerSession()">
 
 
     <!------------------------ Side nav ------------------------->
@@ -559,7 +559,7 @@
     
     
     <script type="text/javascript">
-    var CustomerAccountApp = angular.module("CustomerAccountApp", []);
+    var CustomerAccountApp = angular.module("MyStuffCustomerApp", []);
 
     CustomerAccountApp.controller("CustomerAccountController", function($scope, $window, $http, $rootScope,$location){
     	
@@ -619,7 +619,6 @@
 	 	
         //In user logged in - show welcome message
         $scope.handleCustomerSession = function(){
-            debugger ;
             var userInfo = $scope.getUserInfoFromStorage() ;
             var userInfoString =  JSON.stringify(userInfo) ;
             if(userInfoString.lenght != 0 && userInfoString != '{}'){
@@ -644,7 +643,7 @@
             }
             
             else {
-                $window.location.href = '/index.html';
+                $window.location.href = 'index.html';
             }
     	}
 
