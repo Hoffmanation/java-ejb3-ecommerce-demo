@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.SecurityContext;
 
+import com.mystuff.obj.AppPrincipal;
 import com.mystuff.obj.SecurityModel;
 import com.mystuff.obj.dto.CustomerDTO;
 
@@ -27,12 +28,7 @@ public class AppSecurityContext implements SecurityContext {
 
 	@Override
 	public Principal getUserPrincipal() {
-		return new Principal() {
-			@Override
-			public String getName() {
-				return securityModeluser.getEmail();
-			}
-		};
+		return new AppPrincipal(securityModeluser) ;
 	}
 
 	@Override

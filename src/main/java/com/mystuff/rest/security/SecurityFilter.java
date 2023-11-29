@@ -73,13 +73,11 @@ public class SecurityFilter implements ContainerRequestFilter {
 			return true;
 		}
 
-		MultivaluedMap<String, String> val = requestContext.getHeaders() ; 
-		System.err.println(val);
 		// Fetch authorization header
 		String authorizationHeader = requestContext.getHeaderString(AppConstants.AUTHORIZATION_PROPERTY);
 
 		// If no authorization information present; block access
-		if (authorizationHeader == null || StringUtils.isEmpty(authorizationHeader)) {
+		if (authorizationHeader == null || StringUtils.isEmpty(authorizationHeader) || authorizationHeader.contains("undefined")) {
 			return false;
 		}
 

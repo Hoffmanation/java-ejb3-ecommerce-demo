@@ -1,11 +1,14 @@
 package com.mystuff.obj.dto;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mystuff.obj.ProType;
 
 @JsonInclude(JsonInclude .Include.NON_NULL)
-public class ProductDTO extends ModelDtoObject {
-
+public class ProductDTO extends ModelDtoObject implements Serializable{
+	private static final long serialVersionUID = 8886191333597387937L;
+	
 	private int quantity;
 	private int productId;
 	private String name;

@@ -23,6 +23,7 @@ public interface AppConstants {
 	public static final String NO_CUSTOMER_SESSION = "You're not looged in";
 	public static final String UNAUTHORIZED = "You're not looged in";
 	public static final String GOOD_LOGOUT = "You are secsussfully loged out";
+	public static final String NEW_ORDER = "Your order has been successfully received";
 
 	// Misc Constants
 	public static final String DUMMY_PRODUCTS_FILE = "products.json";
@@ -32,5 +33,7 @@ public interface AppConstants {
 	public static final String AUTHORIZATION_PROPERTY = "Authorization";
 	public static final String NOT_AUTHORIZED= "You are not authorized to access this resource";
 	public static final String AUTHENTICATION_SCHEME = "Basic";
+	public static final String OPT_SUCCESSFUL = "Successfully retrieved data";
+	public static final String EMPTY_WISHLIST = "Your cart is empty !";
 
 }

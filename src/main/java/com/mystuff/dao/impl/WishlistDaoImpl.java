@@ -43,8 +43,8 @@ public class WishlistDaoImpl extends DaoBase<Wishlist> {
 
 	@Override
 	public Optional<Wishlist> get(int wishlistId) {
-		Wishlist Wishlist = em.find(Wishlist.class, wishlistId) ;
-		return Optional.of(Wishlist) ;
+		Wishlist wishlist = em.find(Wishlist.class, wishlistId) ;
+		return Optional.ofNullable(wishlist);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,6 +49,12 @@ public class Wishlist  implements Serializable{
 	@JoinColumn(name = "customer_id")
 	@JsonIgnore
 	private Customer customer;
+	
+	@Transient
+	private int size ;
+	
+	@Transient
+	private int sum ;
 
 	public Wishlist() {
 	}
@@ -85,5 +92,25 @@ public class Wishlist  implements Serializable{
 	public String toString() {
 		return "Wishlist [whishlistId=" + customer.getCusomerId() + "]";
 	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getSum() {
+		return sum;
+	}
+
+	public void setSum(int sum) {
+		this.sum = sum;
+	}
+	
+	
+	
+	
 
 }

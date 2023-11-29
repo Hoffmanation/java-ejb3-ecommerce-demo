@@ -17,17 +17,16 @@
 
 </head>
 <body>
-	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="getAllCustomerOrdersById() ; customerSession()">
+	<div id="main" data-ng-app="CustomerAccountApp" data-ng-controller="CustomerAccountController" ng-init="handleCustomerSession()">
 
 
     <!------------------------ Side nav ------------------------->
     <div id="mySidenav" class="sidenav">
         <img src="images/logo_dark.png" alt="" />
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="my-account.html"><img src="images/account_icon_side.png" alt="" />My Account</a>
-        <a href="javascript:void(0)" data-ng-click="getCart() ; getCartSum(); getCartsize()"><img src="images/cart_icon_side.png" alt="" />My Cart</a>
+        <a href="index.html"><img src="images/account_icon_side.png" alt="" />Home</a>
         <a href="javascript:void(0)"><img src="images/info_icon_side.png" alt="" />About</a>
-        <a href="javascript:void(0)"><img src="images/contact_icon_side.png" alt="" />Contact</a>
+        <a href="https://www.oren-hoffman.com/" target="_blank"><img src="images/contact_icon_side.png" alt="" />Contact</a>
     </div>
     
     <!-- About Modal -->
@@ -86,79 +85,12 @@
                 <input type="text" maxlength="50" data-ng-model="searchPro" placeholder="Search something to buy..." />
                 <span id="nav_search" class="fa fa-search" data-ng-click="searchProductByName()"></span>
             </div>
-            <div class="nav_right_icons">
-                <div id="cart" class="notification-container" data-ng-click="getCart() ; getCartSum(); getCartsize()" >
-                    <img src="images/cart_icon.png" alt="" style="width:16px;" />
-                    <span class="notification-counter">0</span>
-                </div>
-                <a href="index.html"><img src="images/favicon.png" alt="" style="width:16px;" /></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Nav Bar > Cart Modal -->
-    <div id="cart_modal" class="modal">
-        <div class="modal_content" style="max-width:960px">
-            <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
-            <h2 class="uppearcase spaced">Your Cart</h2>
-
-            <table class="cart_table" >
-
-                <tr class="cart_titles">
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th></th>
-                </tr>
-
-                <tr class="cart_row" data-ng-repeat="product in PrintCart">
-                    <td class="td_prod">
-                        <div>
-                            <img src="{{product.imagePath}}" alt="" />
-                        </div>
-                        <div>
-                            <span>{{product.name}}</span>
-                            <span>{{product.type}}</span>
-
-                        </div>
-                    </td>
-                    <td class="td_qty">
-                        <div class="prod_quantity">
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                    </button>
-                                </span>
-                                <input type="text" name="quant[1]" class="form-control input-number" value="1" min="1" max="10">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="td_total">{{product.price}}$</td>
-                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.id) ; getCart() ; getCartSum()"/></td>
-                </tr>
-
-            </table>
-
-            <div class="cart_sum">
-                <span>Total</span>
-                <span>{{sum}}</span>
-                <span>{{conformation}}</span>
-                <span>{{errormessage}}</span>
-                <button id="checkout_btn" data-ng-click="checkOut()">Proceed to Checkout</button>
-            </div>
-            
         </div>
     </div>
 
     <a href="javascript:" id="return-to-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
     <!---------------------- Main section ------------------------>
-    <div id="products_container" class="row" data-ng-init="getAllCustomerOrdersById()">
+    <div id="products_container" class="row">
         <!-- order list -->
       
         <div id="orders" class="col-md-12 col-sm-12 col-xs-12">
@@ -171,15 +103,12 @@
                     <div class="order_details">
 	                    <div class="order_idprods">
 		                    <span class="order_id">Order No. {{order.orderId}}</span>
-		                    <div class="order_prods">
-		                        <span class="order_prod">{{order.productsArray}}</span></br>
-		                    </div>
 		                 </div>
 
 	                    <div class="order_pricedate">
-	                        <span class="order_price">{{order.cartSize}} products</span>
-	                        <span class="order_price">Total price: {{order.payment}}$</span>
-	                        <span class="date_stamp">Date: {{order.dateStamp}}</span>
+	                        <span class="order_price">{{order.size}} products</span>
+	                        <span class="order_price">Total price: {{order.sum}}$</span>
+	                        <span class="order_price">Date: {{order.timestamp}}</span>
 	                    </div>
                     </div>
                     <div ng-click="show = !show" class="prod_overlay" style="width: 100%;height: 100%;position: absolute;top: 0;"></div>
@@ -193,15 +122,12 @@
                     <div class="order_details">
 	                    <div class="order_idprods">
 		                    <span class="order_id">Order ID: {{order.orderId}}</span>
-		                    <div class="order_prods">
-		                        <span class="order_prod">{{order.productsArray}}</span></br>
-		                    </div>
 		                 </div>
 		                 
 	                    <div class="order_pricedate">
-	                        <span class="order_price">{{order.cartSize}} products</span>
-	                        <span class="order_price">Total price: {{order.payment}}</span>
-	                        <span class="date_stamp">Date: {{order.dateStamp}}</span>
+	                        <span class="order_price">{{order.size}} products</span>
+	                        <span class="order_price">Total price: {{order.sum}}$</span>
+	                        <span class="order_price">Date: {{order.timestamp}}</span>
 	                    </div>
                     </div>
                     <img class="close" src="images/close_icon.png" onclick="close_modal()" ng-click="show=!show"/>
@@ -431,7 +357,6 @@
         
             // Get the modals
             var order_prod_modal = document.getElementById('order_prod_modal');
-            var cart_modal = document.getElementById('cart_modal');
             var about_modal = document.getElementById('about_modal');
             var contact_modal = document.getElementById('contact_modal');
             var account_modal = document.getElementById('account_modal');
@@ -441,19 +366,11 @@
             var prod_det = document.getElementsByClassName("prod_details");
             var cart_btn = document.getElementById("cart");
 
-            // When the user clicks on the buttons, open the modals
-            cart_btn.onclick = function () {
-                cart_modal.style.display = "block";
-            }
             
          	// Side nav > my account link
             $("#mySidenav > a:nth-of-type(2)").click(function(){
             	account_modal.style.display = "block";
             });
-            // Side nav > my cart link
-            $("#mySidenav > a:nth-of-type(3)").click(function(){
-            	cart_modal.style.display = "block";
-            });  
          	// Side nav > about link
             $("#mySidenav > a:nth-of-type(4)").click(function(){
             	about_modal.style.display = "block";
@@ -486,14 +403,10 @@
          	 });
 
             
-            $("#cart_modal .close").click(function(){
-            
-            });
             
             // When the user clicks on (x), close the modals
             function close_modal() {
             	order_prod_modal.style.display = "none";
-            	cart_modal.style.display = "none";
             	about_modal.style.display = "none";
             	contact_modal.style.display = "none";
            
@@ -503,9 +416,6 @@
             // When the user clicks anywhere outside of the modal, close it
             window.onclick = function (event) {
  
-                if (event.target == cart_modal) {
-                    cart_modal.style.display = "none";
-                }
                 if (event.target == about_modal) {
                 	about_modal.style.display = "none";
                 }
@@ -514,6 +424,9 @@
                 }
                 if (event.target == about_modal) {
                 	account_modal.style.display = "none";
+                }
+                if (event.target == order_prod_modal) {
+                	order_prod_modal.style.display = "none";
                 }
             }
 
@@ -651,205 +564,101 @@
     CustomerAccountApp.controller("CustomerAccountController", function($scope, $window, $http, $rootScope,$location){
     	
     	$scope.baseUrl =$location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer" ;
-    	$scope.reverse =true ; 
-		$scope.bool = true ;
-		$scope.CustomerOrderProducts=[] ;
-
-		
-		$scope.customerSession = function(){
-    		url = $scope.baseUrl+"/customerSession" ; 
-    		$http.get(url).then(
-    				function(response){
-    					if(response.data.email!=null) {
-    						jQuery('#login_modal').hide();
-    						jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b; font-weight:normal;">Welcome, </span>' +response.data.name + '!</div>');
-    					}
-    					if (response.data==""){
-    						$window.location.href = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/" ;
-    					}
-    				}, function(response){   
-    					if(response.data.message=="You'r not looged in"){
-    						$window.location.href = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/" ;
-    					}
-    				});
-    	}
-
-    	$scope.getProductByName = function(){
-    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
-    	$scope.getProductArrayById = function(giveme){
-    		url = $scope.baseUrl + "/getProductArrayById/"+ giveme;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProductsById = response.data ;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    
+        $scope.authKeyName = "mystuffAuth" ;
     	
     	$scope.getAllCustomerOrdersById = function(){
-    		url = $scope.baseUrl + "/getAllCustomerOrdersById/" ;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.orders = response.data;
-    			/* 		  for (var i=0; i<$scope.CustomerOrders.length; i++) {
-    						  $scope.CustomerOrderProducts.push($scope.CustomerOrders[i].products) ;
-    					    }
-    			
-    					$scope.CustomerOrderProducts ; */
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	$scope.bindOrderId=function(orderId) {
-    			$scope.orederId =orderId  ; 
-    			return $scope.orederId ;
-    	}
-    	
-	 	$scope.getOrderByOrderId = function(){
-	 		$scope.customerOrederId = $scope.bindOrderId();
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
 			$http({
 		        method : "POST",
-		        url : $scope.baseUrl +"/getOrderByOrderId/",
-		        data : $scope.customerOrederId ,
+		        url : $scope.baseUrl +"/getAllCustomerOrdersById/",
 		        headers: {
 		        	'Content-Type': 'application/json',
 		        	'Accept': 'application/json',
-		     
+                    'Authorization' : 'Basic ' + userCredentials.basic
 		        	},
 		    }).then(function mySuccess(response) {
-		    	$scope.customerOrder = response.data;
+		    	$scope.orders =  response.data;
+                $scope.showOrHideLoader(false);
 		    }, function myError(response) {
-		    	
+		    	$scope.showOrHideLoader(false);
 		    });
-		 	}
+		 }
     	
+    	
+	 	$scope.getOrderByOrderId = function(orederId){
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl +"/getOrderByOrderId/",
+		        data : orederId ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+                $scope.orders = [response.data] ;
+                $scope.showOrHideLoader(false);
+            }, function myError(response) {
+                $scope.newOrderResponse =  response.data;
+                $scope.showOrHideLoader(false);
+            });
+	 	}
+    	
+        //Get User indo from Local Storage
+        $scope.getUserInfoFromStorage = function(){
+            $scope.localStorageInfo =  $window.localStorage.getItem($scope.authKeyName) ;
+            if($scope.localStorageInfo){
+                return JSON.parse($scope.localStorageInfo) ;
+            }
+            return {} ;
+        }
 	 	
-    	$scope.addToCart = function(prodIdNum){
-    		url = $scope.baseUrl + "/addToCart/" + prodIdNum ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProducts = response.data;
-    				}, function(response){
-    					$scope.PrintAllProducts = response.data;
-    				});
-    		
-    		
+        //In user logged in - show welcome message
+        $scope.handleCustomerSession = function(){
+            debugger ;
+            var userInfo = $scope.getUserInfoFromStorage() ;
+            var userInfoString =  JSON.stringify(userInfo) ;
+            if(userInfoString.lenght != 0 && userInfoString != '{}'){
+                setTimeout(function(){
+                    jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                            'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');           
+                }, 0);
+                $scope.logoutBtnKey = true;
+                $scope.loginBtnKey = false;
+                $scope.signupBtnKey = false;
+                $scope.myAccountKey = true;
+
+                var urlParams = new URLSearchParams(window.location.search);
+                var orderId = urlParams.get('orderId');
+                
+                if(orderId){
+                    $scope.getOrderByOrderId(orderId)
+                }
+                else {
+                    $scope.getAllCustomerOrdersById();
+                }
+            }
+            
+            else {
+                $window.location.href = '/index.html';
+            }
     	}
 
-    	$scope.getCartSum = function(){
-    		url = $scope.baseUrl + "/getCartSum";
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.sum = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	$scope.getCartSize = function(){
-    		url = $scope.baseUrl + "/getCartsize";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.cartAmount = response.data; 
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
+        $scope.showOrHideLoader = function(show){
+            if(show){
+                jQuery('.lds-grid').show();
+                return ;
+            }
+            jQuery('.lds-grid').hide();
+		}
 
 
-    	
-    	$scope.removeFromCart = function(removeIdNum){
-    		url = $scope.baseUrl + "/removeFromCart/" + removeIdNum;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.getCartSum();
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
+    });
 
-    	}
-    	
-    	$scope.getCart = function(){
-    		url = $scope.baseUrl + "/getCart" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	$scope.checkOut = function(){
-    		url = $scope.baseUrl + "/checkOut" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.conformation = response.data.message;
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-
-    	$scope.ClearCart = function(){
-    		url = $scope.baseUrl + "/ClearCart/" ;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-
-    	$scope.logout = function(){
-    		url = $scope.baseUrl + "/logout";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message ;
-    				}, function(response){
-    					$scope.errormessage = "Please log in first ! ";
-    				});
-    	};
-
-    	});
-
-    	
-    
     </script>
     <!---------------------------------------->
 </body>

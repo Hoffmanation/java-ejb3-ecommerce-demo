@@ -2,6 +2,7 @@
 //
 //import java.util.Date;
 //
+//import javax.annotation.security.RolesAllowed;
 //import javax.ejb.EJB;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpSession;
@@ -33,6 +34,7 @@
 //@Path("/admin")
 //@Produces(MediaType.APPLICATION_JSON)
 //@Consumes(MediaType.APPLICATION_JSON)
+//@RolesAllowed({"ADMIN"})
 //public class AdminController {
 //
 //	@EJB
@@ -136,14 +138,6 @@
 //		return adminf.getCustomerByName(name);
 //	}
 //
-//	@GET
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Path("/getOrderById/{id}")
-//	public Order getOrderById(@PathParam("id") int id, @Context HttpServletRequest request) throws MyStuffException {
-//		HttpSession session = request.getSession(false);
-//		session.getAttribute("admin");
-//		return adminf.getOrderById(id);
-//	}
 //
 //	@DELETE
 //	@Produces(MediaType.APPLICATION_JSON)
@@ -160,29 +154,16 @@
 //		}
 //	}
 //
-//	/*
-//	 * @GET
-//	 * 
-//	 * @Produces(MediaType.APPLICATION_JSON)
-//	 * 
-//	 * @Path("/getCustomerById}") public Customer getCustomerById(int
-//	 * customerId, @Context HttpServletRequest request) throws MyStuffException {
-//	 * HttpSession session = request.getSession(false);
-//	 * session.getAttribute("admin"); return adminf.getCustomerById(customerId); }
-//	 */
 //
-//	@GET
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Path("/logout")
-//	public Response logout(@Context HttpServletRequest request) throws Exception {
-//		HttpSession session = request.getSession(false);
-//		try {
-//			session.invalidate();
-//			request = null;
-//			return Response.status(200).entity(new CustomMessage("Admin logout successfully", true, "")).build();
-//		} catch (Exception e) {
-//			return Response.status(200).entity(new CustomMessage("Admin is not logged in ! ", false, "")).build();
-//		}
-//	}
+//
+//	  @Produces(MediaType.APPLICATION_JSON)
+//	  @Path("/getCustomerById}") 
+//	  public Customer getCustomerById(int
+//	 customerId, @Context HttpServletRequest request) throws MyStuffException {
+//	  HttpSession session = request.getSession(false);
+//	  session.getAttribute("admin"); return adminf.getCustomerById(customerId); }
+//	 
+//
+//
 //
 //}

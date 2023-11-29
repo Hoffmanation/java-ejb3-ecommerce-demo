@@ -11,6 +11,10 @@ body {
     overflow-x: hidden;
 }
 
+#error_modal {
+	z-index: 5000;
+}
+
 .main_overlay {
 	background-color: rgba(0, 0, 0, 0.6);
 	width: 100%;

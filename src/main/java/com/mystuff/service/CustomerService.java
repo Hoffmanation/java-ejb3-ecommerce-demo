@@ -23,6 +23,7 @@ import com.mystuff.obj.dto.OrderDTO;
 import com.mystuff.obj.dto.ProductDTO;
 import com.mystuff.obj.dto.WishlistDTO;
 import com.mystuff.rest.CustomerController;
+import com.mystuff.util.AppConstants;
 import com.mystuff.util.MyStuffException;
 import com.mystuff.util.Utilities;
 
@@ -99,9 +100,13 @@ public class CustomerService {
 		Optional<Product> optionalProduct = productDaoStub.get(productId) ;
 		Product product = optionalProduct.orElseThrow(() -> new MyStuffException("Record not found")) ;
 		Wishlist customerWishlist =  this.getCustomerWishlist(customerId);
-		customerWishlist.getWishlistProducts().add(product) ;
-		wishlistDaoStub.update(customerWishlist) ;
-		return Utilities.convertToDto(customerWishlist , WishlistDTO.class) ;
+		if (!customerWishlist.getWishlistProducts().contains(product)) {
+				customerWishlist.getWishlistProducts().add(product) ;
+				wishlistDaoStub.update(customerWishlist) ;
+				return Utilities.convertToDto(customerWishlist , WishlistDTO.class) ;
+		  }
+		
+		throw new MyStuffException("Record already exists" , productId) ;
 	}
 
 	public WishlistDTO removeFromWishlist(int productId, int customerId) throws MyStuffException {
@@ -117,12 +122,17 @@ public class CustomerService {
 	}
 	
 	private Wishlist getCustomerWishlist(int customerId) throws MyStuffException {
+		Wishlist customerWishlist = null ;
 		Optional<Wishlist> wishlistOptional = wishlistDaoStub.get(customerId) ;
-		Wishlist customerWishlist = wishlistOptional.orElseThrow(() -> new MyStuffException("Record not found", customerId)) ;
-		if (customerWishlist == null) {
+		if (!wishlistOptional.isPresent()) {
 			Optional<Customer> customerOptional = customerDaoStub.get(customerId) ;
 			Customer customer = customerOptional.orElseThrow(() -> new MyStuffException("Record not found", customerId)) ;
 			customerWishlist = wishlistDaoStub.create(new Wishlist(new ArrayList<>() , customer)) ;
+			customer.setWishlist(customerWishlist);
+			customerDaoStub.update(customer);
+		}
+		else {
+			customerWishlist = wishlistOptional.get() ;
 		}
 		return customerWishlist ;
 	}
@@ -146,7 +156,7 @@ public class CustomerService {
 			return Utilities.convertToDto(order , OrderDTO.class) ;
 		}	
 		
-		throw new MyStuffException("wishlistProducts is invalid", customerId) ;
+		throw new MyStuffException(AppConstants.EMPTY_WISHLIST) ;
 	}
 
 }

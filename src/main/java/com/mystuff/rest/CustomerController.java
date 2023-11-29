@@ -1,13 +1,11 @@
 package com.mystuff.rest;
 
 import java.util.List;
-
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,10 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-
 import org.jboss.logging.Logger;
-
-import com.mystuff.entity.Customer;
 import com.mystuff.obj.LoginWebModel;
 import com.mystuff.obj.ProType;
 import com.mystuff.obj.SignupWebModel;
@@ -30,10 +25,11 @@ import com.mystuff.obj.WebResponse;
 import com.mystuff.obj.dto.OrderDTO;
 import com.mystuff.obj.dto.ProductDTO;
 import com.mystuff.obj.dto.WishlistDTO;
-import com.mystuff.rest.security.AppSecurityContext;
 import com.mystuff.service.CustomerService;
 import com.mystuff.service.SecurityService;
+import com.mystuff.util.AppConstants;
 import com.mystuff.util.MyStuffException;
+import com.mystuff.util.Utilities;
 
 @Path("/customer")
 @Produces(MediaType.APPLICATION_JSON)
@@ -81,8 +77,6 @@ public class CustomerController {
 	/*
 	 * ProductsAPI
 	 */
-
-
 	@GET
 	@Path("/getAllProducts")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -144,18 +138,18 @@ public class CustomerController {
 		return Response.status(200).entity(productDto).build();
 	}
 
-	@GET
-	@Path("/getAllCustomerOrdersById")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllCustomerOrdersById(@Context SecurityContext securityContext) {
-		AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
-		List<OrderDTO> orders = customerService.getAllCustomerOrdersById(logedInUser.getPrincipalId()) ;
-		return Response.status(200).entity(orders).build();
-	}
-
 	/*
 	 * Order API
 	 */
+	@POST
+	@Path("/getAllCustomerOrdersById")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllCustomerOrdersById(@Context SecurityContext securityContext) {
+		int customerId = Utilities.getLogedInCustomerId(securityContext) ;
+		List<OrderDTO> orders = customerService.getAllCustomerOrdersById(customerId) ;
+		return Response.status(200).entity(orders).build();
+	}
+
 	@POST
 	@Path("/getOrderByOrderId")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -163,19 +157,32 @@ public class CustomerController {
 		OrderDTO order = customerService.getCustomerOrdersById(orderId) ;
 		return Response.status(200).entity(order).build();
 	}
+	
+	@POST
+	@Path("/checkOut")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response chackOut(@Context HttpServletRequest request, @Context SecurityContext securityContext)  {
+		try {
+			int customerId = Utilities.getLogedInCustomerId(securityContext) ;
+			OrderDTO orderDTO = customerService.chackOut(customerId);
+			return Response.status(200).entity(new WebResponse(AppConstants.NEW_ORDER,true, orderDTO)).build();
+		} catch (MyStuffException e) {
+			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
+		}
+	}
 
 	
 	/*
-	 * Cart API
+	 * Wishlist API
 	 */
 	@POST
 	@Path("/addToCart/{productId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addToCart(@PathParam("productId") int productId, @Context SecurityContext securityContext) {
 		try {
-			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
-			WishlistDTO WishListDto = customerService.addToWishlist(productId, logedInUser.getPrincipalId());
-			return Response.status(200).entity(WishListDto).build();
+			int customerId = Utilities.getLogedInCustomerId(securityContext) ;
+			WishlistDTO WishListDto = customerService.addToWishlist(productId, customerId);
+			return Response.status(201).entity(new WebResponse(AppConstants.OPT_SUCCESSFUL, true, WishListDto)).build();
 		} catch (MyStuffException e) {
 			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
 		}
@@ -186,9 +193,9 @@ public class CustomerController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCart(@Context SecurityContext securityContext)  {
 		try {
-			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
-			WishlistDTO WishListDto = customerService.getWishlistDTO(logedInUser.getPrincipalId());
-			return Response.status(200).entity(WishListDto).build();
+			int customerId = Utilities.getLogedInCustomerId(securityContext) ;
+			WishlistDTO wishListDto = customerService.getWishlistDTO(customerId);
+			return Response.status(200).entity(new WebResponse(AppConstants.OPT_SUCCESSFUL, true, wishListDto)).build();
 		} catch (MyStuffException e) {
 			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
 		}
@@ -200,26 +207,15 @@ public class CustomerController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeFromCart(@PathParam("productId") int productId, @Context SecurityContext securityContext) {
 		try {
-			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
-			WishlistDTO WishListDto = customerService.removeFromWishlist(productId,logedInUser.getPrincipalId());
-			return Response.status(200).entity(WishListDto).build();
+			int customerId = Utilities.getLogedInCustomerId(securityContext) ;
+			WishlistDTO wishListDto = customerService.removeFromWishlist(productId,customerId);
+			return Response.status(200).entity(new WebResponse(AppConstants.OPT_SUCCESSFUL, true, wishListDto )).build();
 		} catch (MyStuffException e) {
 			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
 		}
 	}
 
-	@GET
-	@Path("/checkOut")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response chackOut(@Context HttpServletRequest request, @Context SecurityContext securityContext)  {
-		try {
-			AppSecurityContext logedInUser = (AppSecurityContext) securityContext ;
-			OrderDTO orderDTO = customerService.chackOut(logedInUser.getPrincipalId());
-			return Response.status(200).entity(orderDTO ).build();
-		} catch (MyStuffException e) {
-			return Response.status(500).entity(new WebResponse(e.getMessage(), false)).build();
-		}
-	}
+
 
 
 

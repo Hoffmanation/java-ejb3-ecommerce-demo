@@ -21,6 +21,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -69,6 +70,12 @@ public class Order implements Serializable{
   @JsonIdentityReference(alwaysAsId=true) 
   @JsonProperty("cusomerId")
 	private Customer customer;
+	
+	@Transient
+	private int size ;
+	
+	@Transient
+	private int sum ;
 
 	public Order() {
 
@@ -120,6 +127,22 @@ public class Order implements Serializable{
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getSum() {
+		return sum;
+	}
+
+	public void setSum(int sum) {
+		this.sum = sum;
 	}
 
 	@Override

@@ -13,7 +13,7 @@
     <link href="css/nouislider.min.css" rel="stylesheet">
     
 
-    
+
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/respond.min.js"></script>
     
@@ -99,7 +99,7 @@
 <body>
 
 
-<div id="main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" ng-init="handleCustomerSession()">
+<div id="main" data-ng-app="MyStuffCustomerApp" data-ng-controller="CustomerController" ng-init="handleCustomerSession('refresh')">
 
 
 
@@ -109,9 +109,9 @@
         <img src="images/logo_dark.png" alt="" />
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="my-account.html" ng-show="myAccountShow()"><img src="images/account_icon_side.png" alt="" />My Account</a>
-        <a href="javascript:void(0)" data-ng-click="getCart() ; getCartSum(); getCartSize()"><img src="images/cart_icon_side.png" alt="" />My Cart</a>
+        <a href="javascript:void(0)" data-ng-click="getCart()"><img src="images/cart_icon_side.png" alt="" />My Cart</a>
         <a href="javascript:void(0)"><img src="images/info_icon_side.png" alt="" />About</a>
-        <a href="javascript:void(0)"><img src="images/contact_icon_side.png" alt="" />Contact</a>
+        <a href="https://www.oren-hoffman.com/" target="_blank"><img src="images/contact_icon_side.png" alt="" />Contact</a>
     </div>
     
     <!-- About Modal -->
@@ -183,13 +183,13 @@
                         </div>
                     </td>
                     <td class="td_total">{{product.price}}$</td>
-                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId) ; getCart() ; getCartSum()"/></td>
+                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId)"/></td>
                 </tr>
 
             </table>
             <div class="cart_sum">
                 <span>Total</span>
-                <span>{{sum}}</span>
+                <span>{{cartSum}}$</span>
                 <span>{{conformation}}</span>
                 <span>{{errormessage}}</span>
                 <button id="checkout_btn" data-ng-click="checkOut()">Proceed to Checkout</button>
@@ -231,7 +231,7 @@
             <div class="modal_content">
                 <img class="close" src="images/close_icon.png" onclick="close_modal()"  />
                 <h2 class="uppearcase spaced">Mystuff Message</h2>
-                <div id="error_msg">{{genericErrorMessage}}</div>
+                <div id="error_msg">{{globalErrorMessage}}</div>
             </div>
         </div>
         
@@ -317,11 +317,11 @@
                 <span id="nav_search" class="fa fa-search" ></span>
             </div>
             <div class="nav_right_icons">
-                <div id="cart" class="notification-container" data-ng-click="getCartSize() ;getCart() ; getCartSum() " >
+                <div id="cart" class="notification-container" data-ng-click="getCart()" >
                     <img src="images/cart_icon.png" alt="" style="width:16px;" />
-                    <span class="notification-counter">{{cartAmount}}</span>
+                    <span class="notification-counter">{{cartSize}}</span>
                 </div>
-                <a ng-show="myAccountShow()" href="my-account.html"><img src="images/account_icon.png" alt="" style="width:16px;" /></a>
+                <a href="my-account.html"><img src="images/account_icon.png" alt="" style="width:16px;" /></a>
             </div>
         </div>
     </div>
@@ -337,7 +337,7 @@
                 <tr class="cart_titles">
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Total</th>
+                    <th>Price</th>
                     <th></th>
                 </tr>
 
@@ -370,17 +370,16 @@
                         </div>
                     </td>
                     <td class="td_total">{{product.price}}$</td>
-                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId) ; getCart() ; getCartSum()"/></td>
+                    <td class="td_remove"><img src="images/remove_icon.png" alt="" data-ng-click="removeFromCart(product.productId)"/></td>
                 </tr>
 
             </table>
-            <h2 id="empty_msg">{{cartMessage}}</h2>
-           <!--  <h2 id="empty_msg">{{cartIsEmpty}}</h2> -->
+            <h2 id="empty_msg" >{{cartMessage}}</h2>
+            <h2 id="empty_msg" ng-show="myvar != orderId"><a href="my-account.html?orderId={{orderId}}">View Your Order</a></h2>
 			</div>
             <div class="cart_sum">
                 <span>Total</span>
-                <span>{{sum}}</span>
-                <span>{{conformation}}</span>
+                <span>{{cartSum}}$</span>
                 <span>{{errormessage}}</span>
                 <button id="checkout_btn" data-ng-click="checkOut()">Proceed to Checkout</button>
             </div>
@@ -471,7 +470,7 @@
                                 </span>
                             </div>
                         </div>
-                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)" onclick="count_prods()">+ Add to cart</button>
+                        <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)">+ Add to cart</button>
                         <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
                     </div>
 
@@ -519,7 +518,7 @@
                             <span class="prod_title">{{product.name}}</span>
                             <span class="prod_cat">{{product.type}}</span>
                         </div>
-                        <div class="prod_pricebtns" data-ng-controller="CustomerController">
+                        <div class="prod_pricebtns">
                             <span class="prod_price">{{product.price}}$</span>
                             <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i>
                             <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)">+ Add to cart</button>
@@ -529,7 +528,7 @@
                     <div class="prod_overlay" data-ng-click="getProductById(product.productId)">
                         <span class="prod_overlay_title">{{product.name}}</span>
                         <span class="prod_overlay_cat">{{product.type}}</span>
-                        <div class="prod_overlay_btns" data-ng-controller="CustomerController">
+                        <div class="prod_overlay_btns">
                             <button class="add_to_cart_btn" data-ng-click="addToCart(product.productId)">+ Add to cart</button>
                             <i class="fa fa-heart-o wishlist_icon wishlist_icon_1" aria-hidden="true" title="Add to wishlist"></i> 
                         </div>
@@ -582,7 +581,7 @@
             
             
 			// Counter++ for cart icon
-			$('#prods').on("click", ".add_to_cart_btn", function () {
+/* 			$('#prods').on("click", ".add_to_cart_btn", function () {
                 var $counter = $('.notification-counter');
                 var val = parseInt($counter.text());
                 val++;
@@ -594,7 +593,7 @@
                 var val = parseInt($counter.text());
                 if ($counter.text() > 0) val--;
                 return $counter.css({ opacity: 0 }).text(val).css({ top: '-10px' }).animate({ top: '-1px', opacity: 1 }, 500);
-			});
+			}); */
 			
 
 			
@@ -843,8 +842,6 @@
             	contact_modal.style.display = "none";
             	admin_modal.style.display = "none";
                 error_modal.style.display = "none";
-                error_msg.style.display = "none";  
-            	
             }
 
             
@@ -1060,17 +1057,17 @@
     	
         /* Local Variables */
         $scope.authKeyName = "mystuffAuth"
+        $scope.cartKeyName = "mystuffCart"
     	$scope.baseUrl = $location.protocol() + '://'+ $location.host() +':'+  $location.port()+"/mystuff/rest/customer";
 		$scope.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    	$scope.cartAmount =0 ;
-    	$scope.reverse =true ; 
+    	$scope.reverse = true ; 
 		$scope.bool = true ;
 		$scope.logoutBtnKey = true;
 		$scope.loginBtnKey = true;
 		$scope.signupBtnKey = true;
 		$scope.myAccountKey = true;
-        $scope.PrintAllProducts = []
-        $scope.genericErrorMessage = "asdfasdas" ;
+        $scope.PrintAllProducts = [] ;
+        $scope.cartSize =  0 ;
 
        /* Buttons Handlers */
         $scope.myAccountShow = function () {
@@ -1106,7 +1103,8 @@
 	    	$scope.loginResponse =  response.data;
 			if ($scope.loginResponse.succesfullOpt==true){
                     $scope.saveUserInfoInStorage(credentials) ;
-					$scope.handleCustomerSession();
+                    $scope.getCart();
+					$scope.handleCustomerSession('login');
                     return ;
 			}
 		
@@ -1119,12 +1117,12 @@
 
         //Logout is done by removing user info from Local Storage
         $scope.logout = function(){
-            $window.localStorage.removeItem($scope.authKeyName) ;
-            $scope.handleCustomerSession();
+            $scope.handleCustomerSession('logout');
         } 
 		
 
 	 	$scope.signUp = function(){
+            $scope.showOrHideLoader(true);
 	 		var firstName = $scope.name;
 	 		var surName = $scope.f_name ;
 			var password = $scope.password ; 
@@ -1145,7 +1143,8 @@
 	    	$scope.loginResponse =  response.data;
 			if ($scope.loginResponse.succesfullOpt==true){
                     $scope.saveUserInfoInStorage(credentials) ;
-					$scope.handleCustomerSession();
+					$scope.handleCustomerSession("signUp");
+                    $scope.showOrHideLoader(false);
                     return ;
 			}
 		
@@ -1153,9 +1152,270 @@
             }, function myError(response) {
                 $scope.signupMessage =  response.data;
                 $scope.signupMessage = $scope.signupMessage.additionalInfo ;
+                $scope.showOrHideLoader(false);
             });
 	 	}
 	 	
+		    
+		
+        /*  Products API*/
+       	$scope.getAllProducts = function(){
+       		$scope.showOrHideLoader(true);
+    		url = $scope.baseUrl+"/getAllProducts" ; 
+    		$http.get(url).then(
+    				function(response){
+    					$scope.PrintAllProducts = response.data ;
+                        $scope.showOrHideLoader(false); 
+    				}, function(response){
+    					$scope.errormessage = response.data.message;
+                        $scope.showOrHideLoader(false); 
+    				});
+    	}
+
+     	$scope.getProductByName = function(){
+            $scope.showOrHideLoader(true);
+    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.infomessage = response.data.message;
+                        $scope.showOrHideLoader(false);
+    				}, function(response){
+    					$scope.infomessage = response.data.message;
+                        $scope.showOrHideLoader(false);
+    				});
+    	} 
+    	
+    	$scope.getProductById = function(prodId){
+    		$scope.showOrHideLoader(true);
+            $scope.PrintAllProductsById = null ;
+    		url = $scope.baseUrl + "/getProductById/"+ prodId;
+    		$http.get(url).then(
+    				function(response){
+    					$scope.showOrHideLoader(false);
+                        $scope.PrintAllProductsById = [response.data] ;
+    				}, function(response){
+                        $scope.showOrHideLoader(false);
+    					$scope.infomessage = response.data.message;
+    				});
+    	}
+
+    	$scope.getAllProductByPriceEx = function(){
+    		$scope.showOrHideLoader(true);
+    		url = $scope.baseUrl + "/getAllProductByPriceEx/";
+    		console.log(url);
+    		$http.get(url).then(
+    				function(response){
+    					$scope.showOrHideLoader(false);
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx; 
+        					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+                        $scope.showOrHideLoader(false);
+    					$scope.infomessage = response.data.message;
+    				});
+    	}
+    	
+    	$scope.getAllProductByPriceChe = function(){
+    		$scope.showOrHideLoader(true);
+    		url = $scope.baseUrl + "/getAllProductByPriceChe/";
+    		$http.get(url).then(
+    				function(response){
+    					$scope.showOrHideLoader(false);
+    					if ($scope.bool==true){
+    						$scope.getAllProductByPriceEx();
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx;
+    						$scope.bool = false;
+    					}
+    					else{
+    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceChe; 
+        					$scope.PrintAllProducts = response.data ;
+        					$scope.bool = true;
+    					}
+    					
+    				}, function(response){
+                        $scope.showOrHideLoader(false);
+    					$scope.infomessage = response.data.message;
+    				});
+    	}
+    	
+    	$scope.getAllProductsByType = function(){
+    		$scope.PrintAllProducts = [] ;
+    		$scope.showOrHideLoader(true);
+    		url = $scope.baseUrl + "/getAllProductsByType/"+$scope.Type;
+    		$http.get(url).then(
+    				function(response){
+    					$scope.showOrHideLoader(false);
+    					if($scope.Type!=false) {
+    					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
+    					$scope.PrintAllProducts = response.data;
+    					}
+    					else {
+    						$scope.getAllProducts();
+    						$scope.PrintAllProducts = response.data;
+    					}
+    				}, function(response){
+                        $scope.showOrHideLoader(false);
+    				});
+    	}
+
+        $scope.searchProductByPrice = function(){
+    		$scope.showOrHideLoader(true);
+    		var min_price = document.getElementById( "value-lower" ).innerText ;
+    	    var  max_price = document.getElementById( "value-upper" ).innerText ; 
+    		url = $scope.baseUrl + "/searchProductByPrice/" + min_price + "/" + max_price ;
+    		$http.get(url).then(
+    				function(response){	
+    					$scope.showOrHideLoader(false);
+    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
+    					$scope.PrintAllProducts = response.data ;
+
+    				}, function(response){
+                        $scope.showOrHideLoader(false);
+    					$scope.getAllProducts();
+						$scope.PrintAllProducts = response.data;
+    				});
+    	}
+
+    	
+        /* Cart (wishlist) API*/
+
+        $scope.addToCart = function(prodIdNum ){
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl + "/addToCart/" + prodIdNum ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.addToCartResponse =  response.data;
+			if ($scope.addToCartResponse.succesfullOpt==true){
+                $scope.cart = $scope.addToCartResponse.modelDtoObject ;
+                $scope.saveUserCartInStorage($scope.cart) ;
+                $scope.cartSize =  $scope.cart.size ;
+                $scope.cartSum = $scope.cart.sum ;
+                $scope.PrintCart = $scope.cart.wishlistProducts ;
+                $scope.showOrHideLoader(false);
+                return ;
+			}
+		
+			$scope.globalErrorMessage = $scope.addToCartResponse.additionalInfo ;
+            }, function myError(response) {
+                $scope.addToCartResponse =  response.data;
+                $rootScope.globalErrorMessage = $scope.addToCartResponse.additionalInfo ;
+                $scope.showOrHideErrorMessage(true) ;
+                $scope.showOrHideLoader(false);
+            });
+	 	}
+
+    	
+        $scope.getCart = function(prodIdNum ){
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl + "/getCart",
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.getCartResponse =  response.data;
+			if ($scope.getCartResponse.succesfullOpt==true){
+                $scope.cart = $scope.getCartResponse.modelDtoObject ;
+                $scope.saveUserCartInStorage($scope.cart) ;
+                $scope.cartSize =  $scope.cart.size ;
+                $scope.cartSum = $scope.cart.sum ;
+                $scope.PrintCart = $scope.cart.wishlistProducts ;
+                $scope.showOrHideLoader(false);
+                return ;
+			}
+		
+			$scope.globalErrorMessage = $scope.getCartResponse.additionalInfo ;
+            }, function myError(response) {
+                $scope.getCartResponse =  response.data;
+                $scope.globalErrorMessage = $scope.getCartResponse.additionalInfo ;
+                $scope.showOrHideErrorMessage(true) ;
+                $scope.showOrHideLoader(false);
+            });
+	 	}
+
+         $scope.removeFromCart = function(prodIdNum){
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl + "/removeFromCart/" + prodIdNum,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.getCartResponse =  response.data;
+			if ($scope.getCartResponse.succesfullOpt==true){
+                $scope.cart = $scope.getCartResponse.modelDtoObject ;
+                $scope.saveUserCartInStorage($scope.cart) ;
+                $scope.cartSize =  $scope.cart.size ;
+                $scope.cartSum = $scope.cart.sum ;
+                $scope.PrintCart = $scope.cart.wishlistProducts ;
+                $scope.showOrHideLoader(false);
+                return ;
+			}
+		
+			$scope.globalErrorMessage = $scope.getCartResponse.additionalInfo ;
+            }, function myError(response) {
+                $scope.getCartResponse =  response.data;
+                $scope.globalErrorMessage = $scope.getCartResponse.additionalInfo ;
+                $scope.showOrHideErrorMessage(true) ;
+                $scope.showOrHideLoader(false);
+            });
+	 	}
+
+        /* Orders API */
+    	
+        $scope.checkOut = function(){
+            $scope.showOrHideLoader(true);
+            var userCredentials = $scope.getUserInfoFromStorage() ;
+			$http({
+		        method : "POST",
+		        url : $scope.baseUrl + "/checkOut"  ,
+		        headers: {
+		        	'Content-Type': 'application/json',
+		        	'Accept': 'application/json',
+                    'Authorization' : 'Basic ' + userCredentials.basic
+		        	},
+		    })
+            .then(function mySuccess(response) {
+	    	$scope.newOrderResponse =  response.data;
+			if ($scope.newOrderResponse.succesfullOpt==true){
+                $scope.clearCart() ;
+                $scope.order = $scope.newOrderResponse.modelDtoObject ;
+                $scope.orderId = $scope.order.orderId ; 
+                $scope.cartMessage = $scope.newOrderResponse.message ;
+                $scope.showOrHideLoader(false);
+                return ;
+			}
+		
+			$scope.globalErrorMessage = $scope.newOrderResponse.additionalInfo ;
+            }, function myError(response) {
+                $scope.newOrderResponse =  response.data;
+                $rootScope.globalErrorMessage = $scope.newOrderResponse.additionalInfo ;
+                $scope.showOrHideErrorMessage(true) ;
+                $scope.showOrHideLoader(false);
+            });
+	 	}
+    		
+    		
+
 
 
 		 	// $scope.adminLogin = function(){
@@ -1193,242 +1453,93 @@
 		 	// 		$scope.adminLoginMessage = "*Canot access Admin Console from this device." ;
 		 	// 	}
 			//  	}
-		    
-		    
-		
-        /*  Products API*/
-       	$scope.getAllProducts = function(){
-       		$scope.showOrHideLoader(true);
-    		url = $scope.baseUrl+"/getAllProducts" ; 
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllProducts = response.data ;
-                        $scope.showOrHideLoader(false); 
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    	}
+        
 
-     	$scope.getProductByName = function(){
-    		url = $scope.baseUrl + "/getProductByName/"+ $scope.name;
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	} 
-    	
-    	$scope.getProductById = function(prodId){
-            $scope.PrintAllProductsById = null ;
-    		$scope.showOrHideLoader(true);
-    		url = $scope.baseUrl + "/getProductById/"+ prodId;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.showOrHideLoader(false);
-                        $scope.PrintAllProductsById = [response.data] ;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-
-    	$scope.getAllProductByPriceEx = function(){
-    		$scope.showOrHideLoader(true);
-    		url = $scope.baseUrl + "/getAllProductByPriceEx/";
-    		console.log(url);
-    		$http.get(url).then(
-    				function(response){
-    					$scope.showOrHideLoader(false);
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx; 
-        					$scope.PrintAllProducts = response.data ;
-
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
-    	
-    	$scope.getAllProductByPriceChe = function(){
-    		$scope.showOrHideLoader(true);
-    		url = $scope.baseUrl + "/getAllProductByPriceChe/";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.showOrHideLoader(false);
-    					if ($scope.bool==true){
-    						$scope.getAllProductByPriceEx();
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceEx;
-    						$scope.bool = false;
-    					}
-    					else{
-    						$scope.PrintAllProducts = $scope.PrintAllProductByPriceChe; 
-        					$scope.PrintAllProducts = response.data ;
-        					$scope.bool = true;
-    					}
-    					
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
-    	
-    	$scope.getAllProductsByType = function(){
-    		$scope.PrintAllProducts = [] ;
-    		$scope.showOrHideLoader(true);
-    		url = $scope.baseUrl + "/getAllProductsByType/"+$scope.Type;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.showOrHideLoader(false);
-    					if($scope.Type!=false) {
-    					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
-    					$scope.PrintAllProducts = response.data;
-    					}
-    					else {
-    						$scope.getAllProducts();
-    						$scope.PrintAllProducts = response.data;
-    					}
-    				}, function(response){
-    				
-    				});
-    	}
-
-        $scope.searchProductByPrice = function(){
-    		$scope.showOrHideLoader(true);
-    		var min_price = document.getElementById( "value-lower" ).innerText ;
-    	    var  max_price = document.getElementById( "value-upper" ).innerText ; 
-    		url = $scope.baseUrl + "/searchProductByPrice/" + min_price + "/" + max_price ;
-    		$http.get(url).then(
-    				function(response){	
-    					$scope.showOrHideLoader(false);
-    					$scope.PrintAllProducts = $scope.PrintAllsearchesByPriceRange; 
-    					$scope.PrintAllProducts = response.data ;
-
-    				}, function(response){
-    					$scope.getAllProducts();
-						$scope.PrintAllProducts = response.data;
-    				});
-    	}
-    	
-    	
-        /* Orders API */
-    	$scope.getAllCustomerOrdersById = function(){
-    		url = $scope.baseUrl + "/getAllCustomerOrdersById/";
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintAllCustomerOrdersById = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
-        /* Cat (wishlist) API*/
-
-
-        $scope.addToCart = function(prodIdNum ){
-            var userCredentials = $scope.getUserInfoFromStorage() ;
-			$http({
-		        method : "POST",
-		        url : $scope.baseUrl + "/addToCart/" + prodIdNum ,
-		        headers: {
-		        	'Content-Type': 'application/json',
-		        	'Accept': 'application/json',
-                    'Authorization' : 'Basic ' + userCredentials.basic
-		        	},
-		    })
-            .then(function mySuccess(response) {
-	    	$scope.addToCartResponse =  response.data;
-			if ($scope.addToCartResponse.succesfullOpt==true){
-                $scope.PrintAllProducts = response.data;
-                return ;
-			}
-		
-			$scope.genericErrorMessage = $scope.addToCartResponse.additionalInfo ;
-            }, function myError(response) {
-                $scope.addToCartResponse =  response.data;
-                $scope.genericErrorMessage = $scope.addToCartResponse.additionalInfo ;
-                $scope.showOrHideErrorMessage(true) ;
-            });
-	 	}
-
-
-    	$scope.removeFromCart = function(removeIdNum){
-    		url = $scope.baseUrl + "/removeFromCart/" + removeIdNum;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.getCart();
-    					$scope.getCartSum();
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-
-    	}
-    	
-    	$scope.getCart = function(){
-    		$scope.cartMessage = "" ;
-    		url = $scope.baseUrl + "/getCart" ;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.PrintCart = response.data;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	$scope.checkOut = function(){
-    		url = $scope.baseUrl + "/checkOut" ;
-    		$http.get(url).then(
-    				function(response){		
-    					$scope.cartMessage = response.data.message;
-    				}, function(response){
-    					$scope.errormessage = response.data.message;
-    				});
-    		
-    		
-    	}
-    	
-    	
-    	$scope.ClearCart = function(){
-    		url = $scope.baseUrl + "/ClearCart/" ;
-    		$http.get(url).then(
-    				function(response){
-    					$scope.infomessage = response.data.message;
-    				}, function(response){
-    					$scope.infomessage = response.data.message;
-    				});
-    	}
-    	
 
         /* Helper methods */
 
         //In user logged in - show welcome message
-        $scope.handleCustomerSession = function(){
+        $scope.handleCustomerSession = function(action){
             var userInfo = $scope.getUserInfoFromStorage() ;
-            var userInfoString =  JSON.stringify(userInfo) ;
-            $('#welcome_msg').empty();
-            if(userInfoString.lenght != 0 && userInfoString != '{}'){
-                jQuery('#login_modal .modal_content')
-                .slideUp(function(){
-                    jQuery('#login_modal').hide();
-                    jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
-                            'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');
-                });	
-                jQuery('#signup_modal .modal_content')
-                .slideUp(function(){
-						jQuery('#signup_modal').hide();
-                }); 
-                $scope.logoutBtnKey = true;
-                $scope.loginBtnKey = false;
-                $scope.signupBtnKey = false;
-                $scope.myAccountKey = true;
-                return ;
-            }
-            $scope.logoutBtnKey = false;
-            $scope.loginBtnKey = true;
-            $scope.signupBtnKey = true;
-            $scope.myAccountKey = false
+            var userCart = $scope.getUserCartFromStorage() ;
+            var userCerString =  JSON.stringify(userCart) ;
+            switch (action) {
+                case 'login':
+                    jQuery('#welcome_msg').empty();
+                    jQuery('#login_modal .modal_content')
+                    .slideUp(function(){
+                        jQuery('#login_modal').hide();
+                        jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                                'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');
+                    });	
+                    $scope.logoutBtnKey = true;
+                    $scope.loginBtnKey = false;
+                    $scope.signupBtnKey = false;
+                    $scope.myAccountKey = true;
+
+                    if(userCerString.lenght != 0 && userCerString != '{}'){
+                        $scope.cartSize = userCart.size ;
+                        $scope.cartSum = userCart.sum ;
+                    }
+                    break;
+
+                case 'signUp':
+                    jQuery('#welcome_msg').empty();
+                    jQuery('#signup_modal .modal_content')
+                    .slideUp(function(){
+                            jQuery('#signup_modal').hide();
+                            jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                                'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');
+                    }); 
+                    $scope.logoutBtnKey = true;
+                    $scope.loginBtnKey = false;
+                    $scope.signupBtnKey = false;
+                    $scope.myAccountKey = true;
+                    break;
+
+                case 'refresh':
+                    var userInfo = $scope.getUserInfoFromStorage() ;
+                    var userInfoString =  JSON.stringify(userInfo) ;
+                    if(userInfoString.lenght != 0 && userInfoString != '{}'){
+                        setTimeout(function(){
+                            jQuery('#header').prepend('<div id="welcome_msg"><span style="color:#e0452b;'+ 
+                                    'font-weight:normal;">Welcome, </span>' + userInfo.email + '</div>');           
+                        }, 0);
+                        $scope.logoutBtnKey = true;
+                        $scope.loginBtnKey = false;
+                        $scope.signupBtnKey = false;
+                        $scope.myAccountKey = true;
+                    }
+                    
+                    else {
+                        $scope.logoutBtnKey = false;
+                        $scope.loginBtnKey = true;
+                        $scope.signupBtnKey = true;
+                        $scope.myAccountKey = false
+                    }
+
+                    if(userCerString.lenght != 0 && userCerString != '{}'){
+                        $scope.cartSize = userCart.size ;
+                        $scope.cartSum = userCart.sum ;
+                    }
+                    break;
+
+                case 'logout':
+                    jQuery('#welcome_msg').empty();
+                    $scope.logoutBtnKey = false;
+                    $scope.loginBtnKey = true;
+                    $scope.signupBtnKey = true;
+                    $scope.myAccountKey = false
+                    $window.localStorage.removeItem($scope.authKeyName) ;
+                    $scope.clearCart() ;
+                    $scope.cleanUpVariables() ;
+                    jQuery('#signup_modal .modal_content').show() ;
+                    jQuery('#login_modal .modal_content').show() ;
+                    break;
+
+                default:
+                    console.error(`action, was not found ${action}.`);
+                }
     	}
 
 
@@ -1448,6 +1559,21 @@
             $window.localStorage.setItem($scope.authKeyName, $scope.userInfo) ;
         }
 
+        //Get cart info from local storage
+        $scope.getUserCartFromStorage = function(){
+            $scope.localStorageCart =  $window.localStorage.getItem($scope.cartKeyName) ;
+            if($scope.localStorageCart){
+                return JSON.parse($scope.localStorageCart) ;
+            }
+            return {} ;
+        }
+
+        //save cart info in local storage
+        $scope.saveUserCartInStorage = function(cart){
+            $scope.userCart = JSON.stringify(cart) ;
+            $window.localStorage.setItem($scope.cartKeyName, $scope.userCart) ;
+        }
+
         
 		$scope.cleanUpVariables = function(){
 			$scope.email = "";
@@ -1458,8 +1584,14 @@
 	    	$scope.adminLoginMessage ="" ;
 	    	$scope.loginMessage ="" ;
 	    	$scope.signupMessage ="" ;
-            $scope.genericErrorMessage ="" ;
 		}
+
+        $scope.clearCart = function(){
+            $window.localStorage.removeItem($scope.cartKeyName) ;
+            $scope.cartSize =  0 ;
+            $scope.cartSum = 0 ;
+            $scope.PrintCart = [] ;
+        }
 		
 		$scope.showOrHideLoader = function(show){
             if(show){
@@ -1474,11 +1606,6 @@
                 jQuery('#error_modal').show();
                 return ;
             }
-
-            jQuery('#error_modal .modal_content')
-                .slideUp(function(){
-                    jQuery('#login_modal').hide();
-                });	
         }
 
 

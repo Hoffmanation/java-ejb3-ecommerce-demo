@@ -7,13 +7,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
+import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -25,8 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mystuff.dao.DaoBase;
 import com.mystuff.entity.Customer;
 import com.mystuff.entity.Product;
+import com.mystuff.obj.AppPrincipal;
 import com.mystuff.obj.SignupWebModel;
 import com.mystuff.obj.UserRole;
+import com.mystuff.obj.dto.CustomerDTO;
 
 /* Utility class 
  * @author Oren Hoffman
@@ -155,10 +157,35 @@ public abstract class Utilities {
 		}
 	}
 
-	
-	public static double getCartSum(List<Product> wishlistProducts) {
-		return wishlistProducts.stream().map(x -> x.getPrice())
-				  .collect(Collectors.summingDouble(Double::doubleValue));
+	/**
+	 * Get Amount to pay for all products in the wishlist
+	 * @param wishlistProducts
+	 * @return
+	 */
+	public static double getCartSum(List<? extends Serializable> wishlistProducts) {
+		return  wishlistProducts
+		.stream()
+		.map(genericProduct -> {
+					try {
+						Method m = genericProduct.getClass().getMethod("getPrice");
+						return (double) m.invoke(genericProduct) ;
+					} catch (Exception e) {
+						logg.error("An error occurred while trying to getCartSum with reflection", e);
+					}
+					return 0.0 ;
+		})
+		.collect(Collectors.summingDouble(Double::doubleValue));
+	}
+
+	/**
+	 * Retrive application principal as the looged in user and return his ID
+	 * @param securityContext
+	 * @return PK of the logged in {@link CustomerDTO}
+	 */
+	public static int getLogedInCustomerId(SecurityContext securityContext) {
+		Principal principal = securityContext.getUserPrincipal() ;
+		AppPrincipal  logedInUser = (AppPrincipal) principal ;
+		return logedInUser.getPrincipalId() ;
 	}
 
 
