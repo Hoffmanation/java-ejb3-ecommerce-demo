@@ -62,6 +62,19 @@ public class CustomerController {
 	}
 
 	@POST
+	@Path("/loginGoogle")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response loginGoogle(LoginWebModel loginDetails, @Context HttpServletRequest request, @Context HttpServletResponse response) {
+		WebResponse webResponse = securityService.login(loginDetails.getEmail(), loginDetails.getPassword());
+		if (webResponse.isSuccesfullOpt()) {
+			response.setHeader("credentials", Utilities.convertToJson(loginDetails)) ;
+			return Response.status(200).entity(webResponse).build();
+		}
+		return Response.status(500).entity(webResponse).build();
+	}
+	
+	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)

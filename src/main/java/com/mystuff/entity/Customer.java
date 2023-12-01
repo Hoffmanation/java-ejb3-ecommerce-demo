@@ -41,7 +41,7 @@ public class Customer implements Serializable {
 	
 	private String surName;
 	
-	@Column(columnDefinition = "VARCHAR(10)")
+	@Column(columnDefinition = "VARCHAR(100)")
 	private String password;
 	
 	@Column(name = "email",unique = true, updatable = false)

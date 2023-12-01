@@ -10,9 +10,19 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,12 +30,14 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.jboss.logging.Logger;
 import org.modelmapper.ModelMapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mystuff.dao.DaoBase;
 import com.mystuff.entity.Customer;
 import com.mystuff.entity.Product;
 import com.mystuff.obj.AppPrincipal;
+import com.mystuff.obj.LoginWebModel;
 import com.mystuff.obj.SignupWebModel;
 import com.mystuff.obj.UserRole;
 import com.mystuff.obj.dto.CustomerDTO;
@@ -89,7 +101,7 @@ public abstract class Utilities {
 			boolean emailAlreadyExists = customerWithSameEmail != null;
 			if (!firstPass.equals(secondPass)) {
 				loginError = AppConstants.PASS_DONT_MATCH;
-			} else if (firstPass.length() > 10 || secondPass.length() > 10) {
+			} else if (firstPass.length() > 12) {
 				loginError = AppConstants.PASS_LENGTH_NOT_VALID;
 			} else if (!IsValidEmail(email)) {
 				loginError = AppConstants.EMAIL_NOT_VALID;
@@ -149,7 +161,8 @@ public abstract class Utilities {
 			participantJsonList.forEach(productStub::create);
 			
 			//Create ADMIN customer
-			Customer orenCustomer = new Customer("Oren", "Hoffman", "oren", "oren@gmail.com", UserRole.ADMIN);
+			String password = Utilities.encrypt("oren", "oren", "oren@gmail.com") ;
+			Customer orenCustomer = new Customer("Oren", "Hoffman", password, "oren@gmail.com", UserRole.ADMIN);
 			customerStub.create(orenCustomer) ;
 			logg.info("Finished creating all dummy products");
 		} catch (Exception e) {
@@ -187,6 +200,77 @@ public abstract class Utilities {
 		AppPrincipal  logedInUser = (AppPrincipal) principal ;
 		return logedInUser.getPrincipalId() ;
 	}
+	
+	
+	/**
+	 * Encrypt User parrword with AES algorithm 
+	 * @param strToEncrypt
+	 * @param secretKey
+	 * @param salt
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String encrypt(String strToEncrypt, String secretKey, String salt) throws Exception {
+			SecureRandom secureRandom = new SecureRandom();
+			byte[] iv = new byte[16];
+			secureRandom.nextBytes(iv);
+			IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt.getBytes(), 65536, 256);
+			SecretKey tmp = factory.generateSecret(spec);
+			SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivspec);
+
+			byte[] cipherText = cipher.doFinal(strToEncrypt.getBytes("UTF-8"));
+			byte[] encryptedData = new byte[iv.length + cipherText.length];
+			System.arraycopy(iv, 0, encryptedData, 0, iv.length);
+			System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
+
+			return Base64.getEncoder().encodeToString(encryptedData);
+	}
+	
+	/**
+	 * Decrypt User parrword with AES algorithm 
+	 * @param strToEncrypt
+	 * @param secretKey
+	 * @param salt
+	 * @return
+	 * @throws Exception 
+	 */
+	public static String decrypt(String strToDecrypt, String secretKey, String salt) throws Exception {
+			byte[] encryptedData = Base64.getDecoder().decode(strToDecrypt);
+			byte[] iv = new byte[16];
+			System.arraycopy(encryptedData, 0, iv, 0, iv.length);
+			IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt.getBytes(), 65536, 256);
+			SecretKey tmp = factory.generateSecret(spec);
+			SecretKeySpec secretKeySpec = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivspec);
+
+			byte[] cipherText = new byte[encryptedData.length - 16];
+			System.arraycopy(encryptedData, 16, cipherText, 0, cipherText.length);
+
+			byte[] decryptedText = cipher.doFinal(cipherText);
+			return new String(decryptedText, "UTF-8");
+	}
+
+	public static String convertToJson(Object object) {
+		try {
+			return mapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 
 
 }

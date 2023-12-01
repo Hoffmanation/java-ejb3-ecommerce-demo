@@ -531,15 +531,18 @@ header {
 }
 
 .modal_content #fblogin_btn {
-	background-color: #3b5998;
+	position: absolute;
+    bottom: 273px;
+    width: 40%;
+    padding: 11px;
+    text-align: -webkit-center;
+
+	background-color: #1a73e8;
 	border-radius: 50px;
 	margin-top: 20px;
 	color: #fff;
-	padding: 15px;
 	font-size: 16px;
 	border: 0;
-	width: 48%;
-	text-align: center;
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	font-weight: bold;
@@ -560,7 +563,7 @@ header {
 	font-weight: bold;
 }
 
-.modal_content #fblogin_btn i {
+.modal_content # i {
 	font-size: 19px;
 	vertical-align: middle;
 }

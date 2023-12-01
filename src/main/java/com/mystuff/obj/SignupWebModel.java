@@ -1,15 +1,24 @@
 package com.mystuff.obj;
 
 public class SignupWebModel {
-	
-	private String firstName ;
-	private String surName ;
-	private String password ;
-	private String secondPassword ;
-	private String email ;
-	
+
+	private String firstName;
+	private String surName;
+	private String password;
+	private String secondPassword;
+	private String email;
+
 	public SignupWebModel() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public SignupWebModel(String firstName, String surName, String password, String secondPassword, String email) {
+		super();
+		this.firstName = firstName;
+		this.surName = surName;
+		this.password = password;
+		this.secondPassword = secondPassword;
+		this.email = email;
 	}
 
 	public String getFirstName() {
@@ -51,7 +60,5 @@ public class SignupWebModel {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-
 
 }

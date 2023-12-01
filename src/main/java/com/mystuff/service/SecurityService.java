@@ -1,5 +1,6 @@
 package com.mystuff.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,31 +34,48 @@ public class SecurityService {
 	private CustomerDaoImpl customerDaoStub;
 
 	public WebResponse signUp(@NotNull SignupWebModel signupModel) {
-		Customer customerWithSameEmail = customerDaoStub.getResultCustomQuery("getCustomerByEmail", 
-				Collections.singletonMap("email", signupModel.getEmail())) ;
-
+		Customer customerWithSameEmail = this.getCustomerByEmail(signupModel.getEmail());
 		String signUpError = Utilities.getSignUpErrors(signupModel,customerWithSameEmail);
 		if (StringUtils.isNotEmpty(signUpError)) {
 			logger.error("Failde to signUp, Error message: " + signUpError);
 			return new WebResponse(AppConstants.BAD_SIGNUP, false,signUpError) ;
 		}
-
-		Customer newCustomer = new Customer(signupModel.getFirstName(), signupModel.getSurName(), 
-				signupModel.getPassword(), signupModel.getEmail(),UserRole.CUSTOMER);
-		customerDaoStub.create(newCustomer); 
-		return new WebResponse(AppConstants.GOOD_SIGNUP, true) ;
+		
+		try {
+			//Encrypt Password and create the new user 
+			String encryptedPassword = Utilities.encrypt(signupModel.getPassword(), signupModel.getPassword(), signupModel.getEmail()) ;
+			Customer newCustomer = new Customer(signupModel.getFirstName(), signupModel.getSurName(), 
+					encryptedPassword, signupModel.getEmail(),UserRole.CUSTOMER);
+			customerDaoStub.create(newCustomer); 
+			CustomerDTO customerDto = Utilities.convertToOrFromDto(newCustomer, CustomerDTO.class) ;
+			return new WebResponse(AppConstants.GOOD_SIGNUP, true,customerDto) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new WebResponse(AppConstants.BAD_SIGNUP, false,e.getMessage()) ;
+		}
 	}
 
 	public WebResponse login(String email, String password) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("email", email);
-		parameters.put("password", password);
-		Customer loginCustomer =  customerDaoStub.getResultCustomQuery("getCustomerByEmailAndPassword", parameters) ;
-		if (loginCustomer!=null) {
-			CustomerDTO customerDto = Utilities.convertToOrFromDto(loginCustomer, CustomerDTO.class) ;
-			return new WebResponse(AppConstants.GOOD_LOGIN, true, customerDto) ;
+		try {
+			Customer loginCustomer = this.getCustomerByEmail(email);
+			String decryptedPassword = 
+					loginCustomer != null
+					? Utilities.decrypt(loginCustomer.getPassword(), password, email)
+					: StringUtils.EMPTY;
+
+			if (decryptedPassword.equals(password)) {
+				CustomerDTO customerDto = Utilities.convertToOrFromDto(loginCustomer, CustomerDTO.class);
+				return new WebResponse(AppConstants.GOOD_LOGIN, true, customerDto);
+			}
+		} catch (Exception e) {
+			logger.error(String.format("An error occurred while trying to login user, customer email: %s", email));
 		}
-		return new WebResponse(AppConstants.BAD_LOGIN, false) ;
+		return new WebResponse(AppConstants.BAD_LOGIN, false);
+	}
+	
+	public Customer getCustomerByEmail(String email) {
+		return  customerDaoStub.getResultCustomQuery("getCustomerByEmail", 
+				Collections.singletonMap("email", email)) ;
 	}
 
 }

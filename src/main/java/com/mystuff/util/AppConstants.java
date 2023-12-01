@@ -9,7 +9,7 @@ package com.mystuff.util;
 public interface AppConstants {
 
 	// User Messages
-	public static final String PASS_LENGTH_NOT_VALID = "*Password Cannot be more than 10 characters";;
+	public static final String PASS_LENGTH_NOT_VALID = "*Password Cannot be more than 12 characters";;
 	public static final String EMAIL_NOT_VALID = "*Please enter a valid email";
 	public static final String FIELD_NOT_VALID = "*{} is required";
 	public static final String EMAIL_EXISTS = "email already in use";
@@ -32,7 +32,8 @@ public interface AppConstants {
 	public static final String SERVER_ERROR = "Server Error! unfortunately, the application cannot process your request at this time.";
 	public static final String AUTHORIZATION_PROPERTY = "Authorization";
 	public static final String NOT_AUTHORIZED= "You are not authorized to access this resource";
-	public static final String AUTHENTICATION_SCHEME = "Basic";
+	public static final String BASIC = "Basic";
+	public static final String BEARER = "Bearer";
 	public static final String OPT_SUCCESSFUL = "Successfully retrieved data";
 	public static final String EMPTY_WISHLIST = "Your cart is empty !";
 
