@@ -20,11 +20,30 @@
 
 	<dependencies>
 
+		<!--
+		https://mvnrepository.com/artifact/org.jboss.spec.javax.annotation/jboss-annotations-api_1.2_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.annotation</groupId>
+			<artifactId>jboss-annotations-api_1.2_spec</artifactId>
+			<version>1.0.2.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
 			<version>3.1.0</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.jboss.spec.javax.ws.rs/jboss-jaxrs-api_2.0_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ws.rs</groupId>
+			<artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
 		</dependency>
 
 
@@ -35,7 +54,6 @@
 			<artifactId>google-api-client</artifactId>
 			<version>1.27.0</version>
 		</dependency>
-
 
 
 		<dependency>
@@ -147,13 +165,17 @@
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-ejb-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<ejbVersion>3.2</ejbVersion>
-				</configuration>
-			</plugin>
+		
+       <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warSourceDirectory>WebContent</warSourceDirectory>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+		
 		</plugins>
+		
 	</build>
 </project>

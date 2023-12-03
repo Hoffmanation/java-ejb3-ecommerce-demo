@@ -26,7 +26,7 @@ public interface AppConstants {
 	public static final String NEW_ORDER = "Your order has been successfully received";
 
 	// Misc Constants
-	public static final String DUMMY_PRODUCTS_FILE = "products.json";
+	public static final String DUMMY_PRODUCTS_FILE = System.getenv("mystuff_products") ;
 	public static final String UPLOAD_FILE_PATH = "C:/Users/oren/wildfly-10.0.0.Final/standalone/deployments/mystuff.war/images/";
 	public static final String CUSTOMER_SESSION_ATTR = "customer_session";
 	public static final String SERVER_ERROR = "Server Error! unfortunately, the application cannot process your request at this time.";

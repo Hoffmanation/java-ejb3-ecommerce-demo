@@ -262,5 +262,15 @@
         "stock": 1
         
         
+    },
+        {
+        "quantity": 5000,
+        "name": "Samsung - 55' Class S90C OLED 4K UHD Smart Tizen TV",
+        "price": 500,
+        "type": "TECHNOLOGY",
+        "description": "Prepare to be captivated. Whether you prefer dramatic thrillers or fantasy football, lose yourself in the viewing adventure w ith a contrast rich picture. Let your picture do the talking with the sleek and thin LaserSlim design. You’ll see pure blacks, bright whites and dramatic color, while the audio pulls you into the action thanks to Dolby Atmos built in and Object Tracking Sound Lite. The Samsung OLED experience doesn’t stop there shifting adventures is a breeze with access to the latest Smart TV apps and Samsung Gaming Hub. ¹ ¹High speed internet connection, additional gaming service subscriptions and compatible controller required. ",
+        "imagePath": "best-big-screen-tv.webp",
+        "stock": 1
+        
     }
 ]

@@ -4,16 +4,18 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,6 @@ import com.mystuff.dao.DaoBase;
 import com.mystuff.entity.Customer;
 import com.mystuff.entity.Product;
 import com.mystuff.obj.AppPrincipal;
-import com.mystuff.obj.LoginWebModel;
 import com.mystuff.obj.SignupWebModel;
 import com.mystuff.obj.UserRole;
 import com.mystuff.obj.dto.CustomerDTO;
@@ -149,14 +150,8 @@ public abstract class Utilities {
 	 * @param productStub
 	 */
 	public static void initializeDB(DaoBase<Product> productStub, DaoBase<Customer> customerStub) {
-		InputStream is = null;
 		try {
-			logg.info("Attempting to create all products from products.json");
-			is = Utilities.class.getClassLoader().getResourceAsStream(AppConstants.DUMMY_PRODUCTS_FILE);
-			String productsToCreate = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
-					.lines()
-					.collect(Collectors.joining("\n"));
-
+			String productsToCreate = new String(Files.readAllBytes(Paths.get(AppConstants.DUMMY_PRODUCTS_FILE ))) ;
 			List<Product> participantJsonList = mapper.readValue(productsToCreate, new TypeReference<List<Product>>() {});
 			participantJsonList.forEach(productStub::create);
 			

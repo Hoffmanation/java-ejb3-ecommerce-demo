@@ -3,7 +3,6 @@ package com.mystuff.rest.security;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.StringTokenizer;
@@ -25,7 +24,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.util.Base64;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
