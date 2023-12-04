@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 <!--     <meta name="google-signin-client_id" content="746803060778-6ek771o3b26qj7cd8mu4ta82mcoqaqu4.apps.googleusercontent.com"> -->
 
-
-
 	<link href="images/favicon.png" rel="icon" type="image/png" />
     <link href="https://fonts.googleapis.com/css?family=Varela" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
@@ -219,7 +217,7 @@
             <!------- SEARCH ------->
             <div class="search"> 
                  <input type="text" maxlength="50"  placeholder="Search something to buy..." ng-model="query"/>
-           		 <a id="main_search" class="fa fa-search" href="#products_container"></a>					
+           		 <a id="main_search" data-ng-click="searchProducts({query})" class="fa fa-search" href="#products_container"></a>					
             </div>
             
      
@@ -276,6 +274,7 @@
                     data-callback="onGoogleSignIn"
                     data-nonce=""
                     data-auto_select="true"
+                    data-skip_prompt_cookie="mystuffAuth"
                     data-itp_support="true">
                     </div>
 
@@ -567,12 +566,12 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/nouislider.min.js"></script>
   <!--   <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script> -->
-    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script src="https://accounts.google.com/gsi/client?onload=init" async></script>
 
 
     <script type="text/javascript" defer>
 
-/*     function init() {
+     function init() {
         gapi.load('auth2', function() {
             gapi.auth2.init({
                 client_id: '746803060778-6ek771o3b26qj7cd8mu4ta82mcoqaqu4.apps.googleusercontent.com'
@@ -581,7 +580,7 @@
             })
         })
     }
- */
+ 
 
 /*  window.onload = function () {
     google.accounts.id.initialize({
@@ -1094,7 +1093,7 @@
 
     var MyStuffCustomerApp = angular.module("MyStuffCustomerApp", []);
 
-    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location ,$timeout){
+    MyStuffCustomerApp.controller("CustomerController", function($scope, $window, $http, $rootScope, $location ,$timeout,$q){
     	
         /* Local Variables */
         $scope.authKeyName = "mystuffAuth"
@@ -1238,13 +1237,30 @@
 	 	
 		
         /*  Products API*/
-       	$scope.getAllProducts = function(){
+
+        $scope.searchProducts = async function(searchWord){
+            $scope.showOrHideLoader(true);
+            if(!$scope.PrintAllProducts || $scope.PrintAllProducts.length < 25){
+                $scope.getAllProducts(function(prods){
+                    $scope.PrintAllProducts = prods.filter((element) => element.name.toLowerCase().includes(searchWord.query.toLowerCase()));
+                })
+                return ;
+            }
+            $scope.PrintAllProducts = $scope.PrintAllProducts.filter((element) => element.name.toLowerCase().includes(searchWord.query.toLowerCase()));
+            $scope.showOrHideLoader(false);
+
+        }
+
+    		
+
+       	$scope.getAllProducts = function(callback){
        		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl+"/getAllProducts" ; 
     		$http.get(url).then(
     				function(response){
     					$scope.PrintAllProducts = response.data ;
                         $scope.showOrHideLoader(false); 
+                        if(callback) return callback($scope.PrintAllProducts) ;
     				}, function(response){
     					$scope.errormessage = response.data.message;
                         $scope.showOrHideLoader(false); 
@@ -1335,6 +1351,7 @@
                         $scope.showOrHideLoader(false);
     				});
     	}
+
 
         $scope.searchProductByPrice = function(){
     		$scope.showOrHideLoader(true);
@@ -1502,6 +1519,7 @@
             var userCerString =  JSON.stringify(userCart) ;
             switch (action) {
                 case 'adminLogin':
+                    document.cookie = $scope.authKeyName + "=" + userInfo.email ;
                     jQuery('#welcome_msg').empty();
                     jQuery('#admin_modal .modal_content')
                     .slideUp(function(){
@@ -1519,6 +1537,7 @@
                 break;
 
                 case 'login':
+                document.cookie = $scope.authKeyName + "=" + userInfo.email ;
                     jQuery('#welcome_msg').empty();
                     jQuery('#login_modal .modal_content')
                     .slideUp(function(){
@@ -1538,6 +1557,7 @@
                     break;
 
                 case 'signUp':
+                document.cookie = $scope.authKeyName + "=" + userInfo.email ;
                     jQuery('#welcome_msg').empty();
                     jQuery('#signup_modal .modal_content')
                     .slideUp(function(){
@@ -1579,6 +1599,7 @@
                     break;
 
                 case 'logout':
+                    document.cookie = $scope.authKeyName + "=" + userInfo.email + " ; expires=Thu, 01 Jan 1970 00:00:00 UTC;" ;
                     jQuery('#welcome_msg').empty();
                     $scope.logoutBtnKey = false;
                     $scope.loginBtnKey = true;
