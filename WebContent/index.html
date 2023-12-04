@@ -414,7 +414,7 @@
         <div id="options_bar" class="col-lg-12 ">
             <div class="row">
                 <div class="col-md-2 col-sm-4 col-xs-3">
-                    <span class="items_found"></span>
+                    <span class="items_found">{{PrintAllProducts.length}}</span>
                     <span id="items_found_a">items</span>
                 </div>
                 <div class="col-md-9 col-sm-6 col-xs-6">
@@ -528,7 +528,7 @@
            <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
            
             <ul class="row grid" id="PrintAllProducs" data-ng-init="getAllProducts()">
-                <li id="{{product.productId}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="product in PrintAllProducts | filter:query | orderBy:sortField:reverse" >
+                <li id="{{product.productId}}" class="col-lg-2 col-md-3 col-sm-6 col-xs-12 prod" data-ng-repeat="product in PrintAllProducts">
                  
                     <div class="img_container">
                         <img src="{{product.imagePath}}" alt="" />
@@ -663,16 +663,6 @@
 	                	}); 	
                 }
             });
-            
-            
-            var timeout = setTimeout(getUpdates, 0);
-            getUpdates();
-            // Update the "items found" number
-            function getUpdates() {
-	            var n = $(".prod").length;
-	            $(".items_found").text(n);
-	            timeout = setTimeout(getUpdates, 50);
-            }
             
 
             // Switch between grid & list views
@@ -1119,6 +1109,7 @@
 		$scope.myAccountKey = true;
         $scope.PrintAllProducts = [] ;
         $scope.cartSize =  0 ;
+        $scope.PrintCart = [] ;
 
        /* Buttons Handlers */
         $scope.myAccountShow = function () {
@@ -1170,38 +1161,38 @@
 
 	 	$scope.login = function(event){
             $scope.showOrHideLoader(true);
-		var email = $scope.email ;
-		var password = $scope.password ; 
-	 	var credentials = {email , password} ;
-		$http({
-	        method : "POST",
-	        url : $scope.baseUrl +"/login/",
-	        data : credentials,
-	        headers: {
-	        	'Content-Type': 'application/json',
-	        	'Accept': 'application/json',
-	        	},
-	    })
-        .then(function mySuccess(response) {
-            $scope.showOrHideLoader(false);
-	    	$scope.loginResponse =  response.data;
-			if ($scope.loginResponse.succesfullOpt==true){
-                    $scope.saveUserInfoInStorage(credentials) ;
-                    $scope.getCart();
-                    if(event && event.srcElement.attributes["data-admin"]) {
-                        $scope.handleCustomerSession('adminLogin');
+            var email = $scope.email ;
+            var password = $scope.password ; 
+            var credentials = {email , password} ;
+            $http({
+                method : "POST",
+                url : $scope.baseUrl +"/login/",
+                data : credentials,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    },
+            })
+            .then(function mySuccess(response) {
+                $scope.showOrHideLoader(false);
+                $scope.loginResponse =  response.data;
+                if ($scope.loginResponse.succesfullOpt==true){
+                        $scope.saveUserInfoInStorage(credentials) ;
+                        $scope.getCart();
+                        if(event && event.srcElement.attributes["data-admin"]) {
+                            $scope.handleCustomerSession('adminLogin');
+                            return ;
+                        }
+                        $scope.handleCustomerSession('login');
                         return ;
-                    }
-					$scope.handleCustomerSession('login');
-                    return ;
-			}
-		
-			$scope.loginMessage = $scope.loginResponse.message ;
-	    }, function myError(response) {
-            $scope.showOrHideLoader(false);
-            $scope.loginResponse =  response.data;
-            $scope.loginMessage = $scope.loginResponse.message ;
-	    });
+                }
+            
+                $scope.loginMessage = $scope.loginResponse.message ;
+            }, function myError(response) {
+                $scope.showOrHideLoader(false);
+                $scope.loginResponse =  response.data;
+                $scope.loginMessage = $scope.loginResponse.message ;
+            });
 	 	}
 
         //Logout is done by removing user info from Local Storage
@@ -1245,7 +1236,6 @@
             });
 	 	}
 	 	
-		    
 		
         /*  Products API*/
        	$scope.getAllProducts = function(){
@@ -1329,14 +1319,12 @@
     	}
     	
     	$scope.getAllProductsByType = function(){
-    		$scope.PrintAllProducts = [] ;
     		$scope.showOrHideLoader(true);
     		url = $scope.baseUrl + "/getAllProductsByType/"+$scope.Type;
     		$http.get(url).then(
     				function(response){
     					$scope.showOrHideLoader(false);
     					if($scope.Type!=false) {
-    					$scope.PrintAllProducts = $scope.PrintAllProductsByType;
     					$scope.PrintAllProducts = response.data;
     					}
     					else {

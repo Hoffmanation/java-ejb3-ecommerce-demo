@@ -4,14 +4,11 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
@@ -29,6 +26,9 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.logging.Logger;
 import org.modelmapper.ModelMapper;
 
@@ -151,8 +151,19 @@ public abstract class Utilities {
 	 */
 	public static void initializeDB(DaoBase<Product> productStub, DaoBase<Customer> customerStub) {
 		try {
-			String productsToCreate = new String(Files.readAllBytes(Paths.get(AppConstants.DUMMY_PRODUCTS_FILE ))) ;
-			List<Product> participantJsonList = mapper.readValue(productsToCreate, new TypeReference<List<Product>>() {});
+			DefaultHttpClient client = new DefaultHttpClient();
+	        HttpGet request = new HttpGet(AppConstants.DUMMY_PRODUCTS_PATH);
+	        request.addHeader("User-Agent", "PostmanRuntime/7.35.0"); 
+	        request.addHeader("Accept", "*/*"); 
+	        request.addHeader("Accept-Encoding", "gzip, deflate, br"); 
+	        request.addHeader("Connection", "keep-alive"); 
+	        HttpResponse execute = client.execute(request);
+	        InputStream ips  = execute.getEntity().getContent();
+	        String products = new BufferedReader(new InputStreamReader(ips, StandardCharsets.UTF_8))
+	        	        .lines()
+	        	        .collect(Collectors.joining("\n"));
+	        
+			List<Product> participantJsonList = mapper.readValue(products, new TypeReference<List<Product>>() {});
 			participantJsonList.forEach(productStub::create);
 			
 			//Create ADMIN customer
