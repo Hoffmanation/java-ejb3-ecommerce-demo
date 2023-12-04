@@ -1,7 +1,7 @@
 # java-ejb3-ecommerce-demo (MyStuff)
-What started as my Senior year final project at the university back in 2015 turn to a full open source project after some improvements and code update.
-This Java J2EE 7 back-end application demonstrate an online dynamic E-commerce platform where the user can add products to his cart and make order.
-It has 2 login interfaces - Admin & Customer, written in EJB 3.0 along with Hibernate and angularJs on the client side, implementing Restful Web Services (Jax-rs) and authorization/authentication for EJB Security.
+What started as my Senior year final project at the university back in 2015 turn to a full open source project after some improvements and code updates.<br />
+This Java J2EE 7 back-end application demonstrate an online dynamic E-commerce platform where the user can add products to his cart and make order. <br />
+It has 2 login interfaces - Admin & Customer, written in EJB 3.0 along with Hibernate and angularJs on the client side, implementing Restful Web Services (Jax-rs) and authorization/authentication for EJB Security. <br />
 
 Demo can be found in the following  this link https://oren-hoffman.com/mytuff/
 
